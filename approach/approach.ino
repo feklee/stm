@@ -1,21 +1,20 @@
 /*
-  Inspired by: http://www.instructables.com/id/BYJ48-Stepper-Motor
-
-  (C) 2015 by STM project at Fab Lab Berlin / Science Hack Days, released under
-  the WTFPL <http://www.wtfpl.net/>.
+  For explanation of motor control, see:
+  <http://www.instructables.com/id/BYJ48-Stepper-Motor>
 */
 
-#define IN0 8
-#define IN1 9
-#define IN2 10
-#define IN3 11
+#define MOTOR_PIN0 8
+#define MOTOR_PIN1 9
+#define MOTOR_PIN2 10
+#define MOTOR_PIN3 11
+#define SIGNAL_PIN A0
 
 void setup() {
   Serial.begin(9600);
-  pinMode(IN0, OUTPUT);
-  pinMode(IN1, OUTPUT);
-  pinMode(IN2, OUTPUT);
-  pinMode(IN3, OUTPUT);
+  pinMode(MOTOR_PIN0, OUTPUT);
+  pinMode(MOTOR_PIN1, OUTPUT);
+  pinMode(MOTOR_PIN2, OUTPUT);
+  pinMode(MOTOR_PIN3, OUTPUT);
   prompt();
 }
 
@@ -26,18 +25,30 @@ void prompt() {
 void loop() {
   String s;
   int steps;
+  float maxSignal = 1 /* V */;
 
   if (Serial.available() > 0) {
     s = Serial.readString();
+    s.trim();
     Serial.println(s.toInt());
-    steps = s.toInt();
-    rotate(abs(steps), steps > 0);
+    steps = abs(s.toInt()); // overflow possible
+    rotate(abs(steps), s.charAt(0) != '-', maxSignal);
+    Serial.print("Signal (V): ");
+    Serial.println(signal());
     prompt();
   }
 }
 
-void rotate(unsigned long stepsLeft, boolean rotateClockwise) {
-  while (stepsLeft > 0) {
+// Voltage, proportional to tip current.
+float signal() {
+  int sensorValue = analogRead(SIGNAL_PIN);
+  float voltage = sensorValue * 5 / 1023;
+  return voltage;
+}
+
+void rotate(unsigned long stepsLeft, boolean rotateClockwise,
+            float maxSignal /* V */) {
+  while (stepsLeft > 0 && signal() < maxSignal) {
     step(rotateClockwise);
     stepsLeft --;
     delay(1);
@@ -48,43 +59,43 @@ void step(boolean rotateClockwise) {
   static byte position;
   sendPosition(position);
   position = nextPosition(position, rotateClockwise);
-} 
+}
 
 void sendPosition(byte position) {
   byte bytes[4];
   switch (position) {
   case 0:
     setPins(LOW, LOW, LOW, HIGH);
-    break; 
+    break;
   case 1:
     setPins(LOW, LOW, HIGH, HIGH);
-    break; 
+    break;
   case 2:
     setPins(LOW, LOW, HIGH, LOW);
-    break; 
+    break;
   case 3:
     setPins(LOW, HIGH, HIGH, LOW);
-    break; 
+    break;
   case 4:
     setPins(LOW, HIGH, LOW, LOW);
-    break; 
+    break;
   case 5:
     setPins(HIGH, HIGH, LOW, LOW);
-    break; 
+    break;
   case 6:
     setPins(HIGH, LOW, LOW, LOW);
-    break; 
+    break;
   case 7:
     setPins(HIGH, LOW, LOW, HIGH);
-    break; 
+    break;
   }
 }
 
 void setPins(byte val0, byte val1, byte val2, byte val3) {
-  digitalWrite(IN0, val0);
-  digitalWrite(IN1, val1);
-  digitalWrite(IN2, val2);
-  digitalWrite(IN3, val3);
+  digitalWrite(MOTOR_PIN0, val0);
+  digitalWrite(MOTOR_PIN1, val1);
+  digitalWrite(MOTOR_PIN2, val2);
+  digitalWrite(MOTOR_PIN3, val3);
 }
 
 byte nextPosition(byte position, boolean rotateClockwise) {
