@@ -3,11 +3,11 @@
   <http://www.instructables.com/id/BYJ48-Stepper-Motor>
 */
 
-#define MOTOR_PIN0 8
-#define MOTOR_PIN1 9
-#define MOTOR_PIN2 10
-#define MOTOR_PIN3 11
-#define SIGNAL_PIN A0
+#define MOTOR_PIN0 2
+#define MOTOR_PIN1 3
+#define MOTOR_PIN2 4
+#define MOTOR_PIN3 5
+#define SIGNAL_PIN A2
 
 void setup() {
   Serial.begin(9600);
@@ -19,40 +19,105 @@ void setup() {
 }
 
 void prompt() {
-  Serial.println("Send number of steps: positive = CW, negative = CCW");
+  Serial.println("Enter command.");
 }
 
 void loop() {
   String s;
-  int steps;
-  float maxSignal = 1 /* V */;
+  int steps_requested, steps_left;
+  float maxSignal = 2 /* V */;
 
   if (Serial.available() > 0) {
-    s = Serial.readString();
-    s.trim();
-    Serial.println(s.toInt());
-    steps = abs(s.toInt()); // overflow possible
-    rotate(abs(steps), s.charAt(0) != '-', maxSignal);
-    Serial.print("Signal (V): ");
-    Serial.println(signal());
+    interpretCommand(Serial.readString());
     prompt();
   }
+}
+
+String shift(String &s) {
+  int i = s.indexOf(' ');
+  String shifted, value;
+  if (i == -1) {
+    value = s;
+    s = "";
+    return value;
+  }
+  value = s.substring(0, i);
+  s = s.substring(i + 1);
+  return value;
+}
+
+void help() {
+  Serial.println("Commands:\n"
+                 "\n"
+                 "  * down <steps> [while below <signal>]\n"
+                 "\n"
+                 "  * up <steps> [while above <signal>]");
+}
+
+void interpretCommand(String s) {
+  String command = shift(s);
+
+  if (command == "down") {
+    down(s);
+  } else {
+    help();
+  }
+}
+
+void down(String &parameters) {
+  String s;
+  int steps, steps_left;
+  float maxSignal = 5; // max. voltage that Arduino can measure
+
+  if ((s = shift(parameters)) == "") {
+    help();
+    return;
+  }
+
+  steps = s.toInt();
+
+  if (shift(parameters) == "while" &&
+      shift(parameters) == "below" &&
+      (s = shift(parameters)) != "") {
+    maxSignal = s.toFloat();
+  }
+
+  steps = abs(s.toInt()); // overflow possible
+  steps_left = rotate(steps, false, maxSignal);
+
+  Serial.print("Signal (V): ");
+  Serial.println(signal());
+  Serial.print("Steps executed: ");
+  Serial.println(steps - steps_left);
 }
 
 // Voltage, proportional to tip current.
 float signal() {
   int sensorValue = analogRead(SIGNAL_PIN);
-  float voltage = sensorValue * 5 / 1023;
+  float voltage = sensorValue / 1023. * 5;
   return voltage;
 }
 
-void rotate(unsigned long stepsLeft, boolean rotateClockwise,
-            float maxSignal /* V */) {
-  while (stepsLeft > 0 && signal() < maxSignal) {
+boolean isApproaching(boolean rotateClockwise) {
+  return !rotateClockwise;
+}
+
+boolean isApproachingTooClose(float maxSignal, boolean rotateClockwise) {
+  if (!isApproaching(rotateClockwise)) {
+    return false;
+  }
+  return signal() >= maxSignal;
+}
+
+unsigned long rotate(unsigned long stepsLeft, boolean rotateClockwise,
+                     float maxSignal /* V */) {
+  while (stepsLeft > 0 &&
+         !isApproachingTooClose(maxSignal, rotateClockwise)) {
     step(rotateClockwise);
     stepsLeft --;
     delay(1);
   }
+  return stepsLeft;
 }
 
 void step(boolean rotateClockwise) {
@@ -65,33 +130,33 @@ void sendPosition(byte position) {
   byte bytes[4];
   switch (position) {
   case 0:
-    setPins(LOW, LOW, LOW, HIGH);
+    setMotorPins(LOW, LOW, LOW, HIGH);
     break;
   case 1:
-    setPins(LOW, LOW, HIGH, HIGH);
+    setMotorPins(LOW, LOW, HIGH, HIGH);
     break;
   case 2:
-    setPins(LOW, LOW, HIGH, LOW);
+    setMotorPins(LOW, LOW, HIGH, LOW);
     break;
   case 3:
-    setPins(LOW, HIGH, HIGH, LOW);
+    setMotorPins(LOW, HIGH, HIGH, LOW);
     break;
   case 4:
-    setPins(LOW, HIGH, LOW, LOW);
+    setMotorPins(LOW, HIGH, LOW, LOW);
     break;
   case 5:
-    setPins(HIGH, HIGH, LOW, LOW);
+    setMotorPins(HIGH, HIGH, LOW, LOW);
     break;
   case 6:
-    setPins(HIGH, LOW, LOW, LOW);
+    setMotorPins(HIGH, LOW, LOW, LOW);
     break;
   case 7:
-    setPins(HIGH, LOW, LOW, HIGH);
+    setMotorPins(HIGH, LOW, LOW, HIGH);
     break;
   }
 }
 
-void setPins(byte val0, byte val1, byte val2, byte val3) {
+void setMotorPins(byte val0, byte val1, byte val2, byte val3) {
   digitalWrite(MOTOR_PIN0, val0);
   digitalWrite(MOTOR_PIN1, val1);
   digitalWrite(MOTOR_PIN2, val2);
