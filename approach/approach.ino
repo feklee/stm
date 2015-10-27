@@ -1,3 +1,5 @@
+#include <SPI.h>
+
 /*
   For explanation of motor control, see:
   <http://www.instructables.com/id/BYJ48-Stepper-Motor>
@@ -9,24 +11,37 @@
 #define MOTOR_PIN3 5
 #define SIGNAL_PIN A2
 
-void setup() {
-  Serial.begin(9600);
+#define CHIP_SELECT_PIN 7 // hard coded in SPI library: 11 = MOSI, 13 = SCK
+
+#define MAX_PIEZO_POSITION 65535
+
+uint16_t piezoPosition = 0;
+
+void setupPiezo() {
+  pinMode(CHIP_SELECT_PIN, OUTPUT);
+  digitalWrite(CHIP_SELECT_PIN, LOW);
+  SPI.begin();
+}
+
+void setupMotor() {
   pinMode(MOTOR_PIN0, OUTPUT);
   pinMode(MOTOR_PIN1, OUTPUT);
   pinMode(MOTOR_PIN2, OUTPUT);
   pinMode(MOTOR_PIN3, OUTPUT);
+}
+
+void setup() {
+  Serial.begin(9600);
+  setupMotor();
+  setupPiezo();
   prompt();
 }
 
 void prompt() {
-  Serial.println("Enter command.");
+  Serial.println("Enter command!");
 }
 
 void loop() {
-  String s;
-  int steps_requested, steps_left;
-  float maxSignal = 2 /* V */;
-
   if (Serial.available() > 0) {
     interpretCommand(Serial.readString());
     prompt();
@@ -49,9 +64,17 @@ String shift(String &s) {
 void help() {
   Serial.println("Commands:\n"
                  "\n"
-                 "  * down <steps> [while below <signal>]\n"
+                 "  * down <steps> [max. signal (V)]\n"
                  "\n"
-                 "  * up <steps> [while above <signal>]");
+                 "    Moves tip down while current signal is below maximum.\n"
+                 "\n"
+                 "  * up <steps> [min. signal (V)]\n"
+                 "\n"
+                 "    Moves tip up while current is above minimum.\n"
+                 "\n"
+                 "  * piezo-down <steps> [max. signal (V)]\n"
+                 "\n"
+                 "  * piezo-up <steps> [min. signal (V)]\n");
 }
 
 void interpretCommand(String s) {
@@ -59,15 +82,30 @@ void interpretCommand(String s) {
 
   if (command == "down") {
     down(s);
+  } else if (command == "up") {
+    up(s);
+  } else if (command == "piezo-down") {
+    piezoDown(s);
+  } else if (command == "piezo-up") {
+    piezoUp(s);
   } else {
     help();
   }
 }
 
+void printSummary(uint16_t stepsExecuted) {
+  Serial.print("Signal (V): ");
+  Serial.print(signal());
+  Serial.print("; Steps executed: ");
+  Serial.print(stepsExecuted);
+  Serial.print("; Piezo position (0-65535): ");
+  Serial.println(piezoPosition);
+}
+
 void down(String &parameters) {
   String s;
-  int steps, steps_left;
-  float maxSignal = 5; // max. voltage that Arduino can measure
+  uint16_t steps, stepsLeft;
+  float maxSignal = 6; // max. voltage that Arduino can measure is 5V
 
   if ((s = shift(parameters)) == "") {
     help();
@@ -76,19 +114,95 @@ void down(String &parameters) {
 
   steps = s.toInt();
 
-  if (shift(parameters) == "while" &&
-      shift(parameters) == "below" &&
-      (s = shift(parameters)) != "") {
+  if ((s = shift(parameters)) != "") {
     maxSignal = s.toFloat();
   }
 
-  steps = abs(s.toInt()); // overflow possible
-  steps_left = rotate(steps, false, maxSignal);
+  stepsLeft = rotate(steps, false, maxSignal);
+  printSummary(steps - stepsLeft);
+}
 
-  Serial.print("Signal (V): ");
-  Serial.println(signal());
-  Serial.print("Steps executed: ");
-  Serial.println(steps - steps_left);
+void up(String &parameters) {
+  String s;
+  uint16_t steps, stepsLeft;
+  float minSignal = -1;
+
+  if ((s = shift(parameters)) == "") {
+    help();
+    return;
+  }
+
+  steps = s.toInt();
+
+  if ((s = shift(parameters)) != "") {
+    minSignal = s.toFloat();
+  }
+
+  stepsLeft = rotate(steps, true, minSignal);
+  printSummary(steps - stepsLeft);
+}
+
+void piezoDown(String &parameters) {
+  String s;
+  uint16_t steps, stepsLeft;
+  float maxSignal = 6; // max. voltage that Arduino can measure is 5V
+
+  if ((s = shift(parameters)) == "") {
+    help();
+    return;
+  }
+
+  steps = s.toInt();
+
+  if ((s = shift(parameters)) != "") {
+    maxSignal = s.toFloat();
+  }
+
+  stepsLeft = movePiezo(steps, true, maxSignal);
+  printSummary(steps - stepsLeft);
+}
+
+void piezoUp(String &parameters) {
+  String s;
+  uint16_t steps, stepsLeft;
+  float minSignal = -1;
+
+  if ((s = shift(parameters)) == "") {
+    help();
+    return;
+  }
+
+  steps = s.toInt();
+
+  if ((s = shift(parameters)) != "") {
+    minSignal = s.toFloat();
+  }
+
+  stepsLeft = movePiezo(steps, false, minSignal);
+  printSummary(steps - stepsLeft);
+}
+
+unsigned long movePiezo(unsigned long stepsLeft, boolean moveDown,
+                        float limitingSignal /* V */) {
+  while (stepsLeft > 0 &&
+         ((moveDown && signal() < limitingSignal) ||
+          (!moveDown && signal() > limitingSignal))) {
+    if (!stepPiezo(moveDown)) {
+      break;
+    }
+    stepsLeft --;
+  }
+  return stepsLeft;
+}
+
+boolean stepPiezo(boolean moveDown) {
+  if ((piezoPosition == 0xffff && moveDown) ||
+      (piezoPosition == 0 && !moveDown)) {
+    return false; // not stepped
+  }
+  piezoPosition += moveDown ? 1 : -1;
+  positionPiezo();
+  return true;
 }
 
 // Voltage, proportional to tip current.
@@ -98,21 +212,19 @@ float signal() {
   return voltage;
 }
 
-boolean isApproaching(boolean rotateClockwise) {
+boolean isMovingDown(boolean rotateClockwise) {
   return !rotateClockwise;
 }
 
-boolean isApproachingTooClose(float maxSignal, boolean rotateClockwise) {
-  if (!isApproaching(rotateClockwise)) {
-    return false;
-  }
-  return signal() >= maxSignal;
+boolean isMovingUp(boolean rotateClockwise) {
+  return !isMovingDown(rotateClockwise);
 }
 
 unsigned long rotate(unsigned long stepsLeft, boolean rotateClockwise,
-                     float maxSignal /* V */) {
+                     float limitingSignal /* V */) {
   while (stepsLeft > 0 &&
-         !isApproachingTooClose(maxSignal, rotateClockwise)) {
+         ((isMovingDown(rotateClockwise) && signal() < limitingSignal) ||
+          (isMovingUp(rotateClockwise) && signal() > limitingSignal))) {
     step(rotateClockwise);
     stepsLeft --;
     delay(1);
@@ -166,4 +278,13 @@ void setMotorPins(byte val0, byte val1, byte val2, byte val3) {
 byte nextPosition(byte position, boolean rotateClockwise) {
   position += (rotateClockwise ? 1 : -1);
   return position & 7;
+}
+
+void positionPiezo() {
+  digitalWrite(CHIP_SELECT_PIN, HIGH);
+  digitalWrite(CHIP_SELECT_PIN, LOW);
+  SPI.beginTransaction(SPISettings(1400000, MSBFIRST, SPI_MODE0));
+  SPI.transfer((piezoPosition >> 8) & 0xff);
+  SPI.transfer(piezoPosition & 0xff);
+  SPI.endTransaction();
 }
