@@ -38,13 +38,12 @@ void setup() {
 }
 
 void prompt() {
-  Serial.println("Enter command!");
+  Serial.println("Enter command or `help`!");
 }
 
 void loop() {
   if (Serial.available() > 0) {
     interpretCommand(Serial.readString());
-    prompt();
   }
 }
 
@@ -78,6 +77,9 @@ void help() {
 }
 
 void interpretCommand(String s) {
+  Serial.print("> ");
+  Serial.println(s);
+
   String command = shift(s);
 
   if (command == "down") {
@@ -94,8 +96,9 @@ void interpretCommand(String s) {
 }
 
 void printSummary(uint16_t stepsExecuted) {
+  flushSignalLog();
   Serial.print("Signal (V): ");
-  Serial.print(signal());
+  Serial.print(readSignal());
   Serial.print("; Steps executed: ");
   Serial.print(stepsExecuted);
   Serial.print("; Piezo position (0-65535): ");
@@ -182,15 +185,31 @@ void piezoUp(String &parameters) {
   printSummary(steps - stepsLeft);
 }
 
+void logSignal(float signal, boolean flush = false) {
+  static boolean hasBeenFlushed = true;
+
+  if (flush) {
+    Serial.println();
+    hasBeenFlushed = true;
+    return;
+  }
+
+  Serial.print(hasBeenFlushed ? "" : ", ");
+  Serial.print(signal);
+  hasBeenFlushed = false;
+}
+
 unsigned long movePiezo(unsigned long stepsLeft, boolean moveDown,
                         float limitingSignal /* V */) {
+  float signal = readAndLogSignal();
   while (stepsLeft > 0 &&
-         ((moveDown && signal() < limitingSignal) ||
-          (!moveDown && signal() > limitingSignal))) {
+         ((moveDown && signal < limitingSignal) ||
+          (!moveDown && signal > limitingSignal))) {
     if (!stepPiezo(moveDown)) {
       break;
     }
     stepsLeft --;
+    signal = readAndLogSignal();
   }
   return stepsLeft;
 }
@@ -205,11 +224,21 @@ boolean stepPiezo(boolean moveDown) {
   return true;
 }
 
+void flushSignalLog() {
+  logSignal(0, true);
+}
+
 // Voltage, proportional to tip current.
-float signal() {
+float readSignal() {
   int sensorValue = analogRead(SIGNAL_PIN);
   float voltage = sensorValue / 1023. * 5;
   return voltage;
+}
+
+float readAndLogSignal() {
+  float signal = readSignal();
+  logSignal(signal);
+  return signal;
 }
 
 boolean isMovingDown(boolean rotateClockwise) {
@@ -222,12 +251,14 @@ boolean isMovingUp(boolean rotateClockwise) {
 
 unsigned long rotate(unsigned long stepsLeft, boolean rotateClockwise,
                      float limitingSignal /* V */) {
+  float signal = readAndLogSignal();
   while (stepsLeft > 0 &&
-         ((isMovingDown(rotateClockwise) && signal() < limitingSignal) ||
-          (isMovingUp(rotateClockwise) && signal() > limitingSignal))) {
+         ((isMovingDown(rotateClockwise) && signal < limitingSignal) ||
+          (isMovingUp(rotateClockwise) && signal > limitingSignal))) {
     step(rotateClockwise);
     stepsLeft --;
     delay(1);
+    signal = readAndLogSignal();
   }
   return stepsLeft;
 }
