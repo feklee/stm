@@ -16,6 +16,7 @@
 #define MAX_PIEZO_POSITION 65535
 
 uint16_t piezoPosition = 0;
+boolean signalLogIsEnabled = false;
 
 void setupPiezo() {
   pinMode(CHIP_SELECT_PIN, OUTPUT);
@@ -63,6 +64,12 @@ String shift(String &s) {
 void help() {
   Serial.println("Commands:\n"
                  "\n"
+                 "  * enable-signal-log\n"
+                 "\n"
+                 "    Enables output of signal during movements.\n"
+                 "\n"
+                 "  * disable-signal-log\n"
+                 "\n"
                  "  * down <steps> [max. signal (V)]\n"
                  "\n"
                  "    Moves tip down while current signal is below maximum.\n"
@@ -82,7 +89,11 @@ void interpretCommand(String s) {
 
   String command = shift(s);
 
-  if (command == "down") {
+  if (command == "enable-signal-log") {
+    signalLogIsEnabled = true;
+  } else if (command == "disable-signal-log") {
+    signalLogIsEnabled = false;
+  } else if (command == "down") {
     down(s);
   } else if (command == "up") {
     up(s);
@@ -237,7 +248,9 @@ float readSignal() {
 
 float readAndLogSignal() {
   float signal = readSignal();
-  logSignal(signal);
+  if (signalLogIsEnabled) {
+    logSignal(signal);
+  }
   return signal;
 }
 
