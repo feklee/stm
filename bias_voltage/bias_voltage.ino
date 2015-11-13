@@ -1,10 +1,9 @@
 #include <SPI.h>
 
-// See also: http://tronixstuff.com/2011/06/15/tutorial-arduino-and-the-spi-bus-part-ii/
+// See also:
+//
+// http://tronixstuff.com/2011/06/15/tutorial-arduino-and-the-spi-bus-part-ii/
 
-#define MOSI 11 // Anschlüsse SPI BUS und Chip Select
-#define CL 13
-#define CLOCK digitalWrite(CL,1); digitalWrite(CL,0);
 #define CHIP_SELECT_PIN 7 // hard coded in SPI library: 11 = MOSI, 13 = SCK
 
 void setupSPI() {
@@ -36,7 +35,7 @@ void setBiasVoltageFactor(float factor /* [0, 1] */) {
 }
 
 void loop() {
-  for (float x = 0; x < 1; x += 0.0001) {
+  for (float x = 0; x < 1; x += 0.00001) {
     setBiasVoltageFactor(x);
   }
 }
