@@ -10,18 +10,25 @@
 #define MOTOR_PIN2 4
 #define MOTOR_PIN3 5
 #define SIGNAL_PIN A2
+#define BIAS_MEASURE_PIN A1
 
-#define CHIP_SELECT_PIN 7 // hard coded in SPI library: 11 = MOSI, 13 = SCK
+// Hard coded in SPI library: 11 = MOSI, 13 = SCK
+#define PIEZO_CHIP_SELECT_PIN 7
+#define BIAS_CHIP_SELECT_PIN 8
 
 #define MAX_PIEZO_POSITION 65535
 
 uint16_t piezoPosition = 0;
 boolean signalLogIsEnabled = false;
 
-void setupPiezo() {
-  pinMode(CHIP_SELECT_PIN, OUTPUT);
-  digitalWrite(CHIP_SELECT_PIN, LOW);
-  SPI.begin();
+void setupPiezoSPI() {
+  pinMode(PIEZO_CHIP_SELECT_PIN, OUTPUT);
+  digitalWrite(PIEZO_CHIP_SELECT_PIN, HIGH);
+}
+
+void setupBiasRegulatorSPI() {
+  pinMode(BIAS_CHIP_SELECT_PIN, OUTPUT);
+  digitalWrite(BIAS_CHIP_SELECT_PIN, HIGH);
 }
 
 void setupMotor() {
@@ -34,7 +41,10 @@ void setupMotor() {
 void setup() {
   Serial.begin(9600);
   setupMotor();
-  setupPiezo();
+  setupPiezoSPI();
+  setupBiasRegulatorSPI();
+  SPI.begin();
+  setBiasVoltageFactor(0.001);
   prompt();
 }
 
@@ -80,7 +90,9 @@ void help() {
                  "\n"
                  "  * piezo-down <steps> [max. signal (V)]\n"
                  "\n"
-                 "  * piezo-up <steps> [min. signal (V)]\n");
+                 "  * piezo-up <steps> [min. signal (V)]\n"
+                 "\n"
+                 "  * set-bias <voltage (mV)>\n");
 }
 
 void interpretCommand(String s) {
@@ -101,19 +113,23 @@ void interpretCommand(String s) {
     piezoDown(s);
   } else if (command == "piezo-up") {
     piezoUp(s);
+  } else if (command == "set-bias") {
+    setBias(s);
   } else {
     help();
   }
 }
 
-void printSummary(uint16_t stepsExecuted) {
+void printSummary(uint16_t stepsExecuted = 0) {
   flushSignalLog();
   Serial.print("Signal (V): ");
   Serial.print(readSignal());
   Serial.print("; Steps executed: ");
   Serial.print(stepsExecuted);
   Serial.print("; Piezo position (0-65535): ");
-  Serial.println(piezoPosition);
+  Serial.print(piezoPosition);
+  Serial.print("; Measures bias (mV): ");
+  Serial.println(1000 * measuredBias());
 }
 
 void down(String &parameters) {
@@ -196,6 +212,18 @@ void piezoUp(String &parameters) {
   printSummary(steps - stepsLeft);
 }
 
+void setBias(String &parameters) {
+  String s;
+
+  if ((s = shift(parameters)) == "") {
+    help();
+    return;
+  }
+
+  setBiasVoltageFactor(s.toFloat() / 5000);
+  printSummary();
+}
+
 void logSignal(float signal, boolean flush = false) {
   static boolean hasBeenFlushed = true;
 
@@ -240,7 +268,7 @@ void flushSignalLog() {
 }
 
 // Voltage, proportional to tip current.
-float readSignal() {
+float readSignal() /* V */ {
   int sensorValue = analogRead(SIGNAL_PIN);
   float voltage = sensorValue / 1023. * 5;
   return voltage;
@@ -283,7 +311,6 @@ void step(boolean rotateClockwise) {
 }
 
 void sendPosition(byte position) {
-  byte bytes[4];
   switch (position) {
   case 0:
     setMotorPins(LOW, LOW, LOW, HIGH);
@@ -325,10 +352,31 @@ byte nextPosition(byte position, boolean rotateClockwise) {
 }
 
 void positionPiezo() {
-  digitalWrite(CHIP_SELECT_PIN, HIGH);
-  digitalWrite(CHIP_SELECT_PIN, LOW);
+  digitalWrite(PIEZO_CHIP_SELECT_PIN, LOW);
   SPI.beginTransaction(SPISettings(1400000, MSBFIRST, SPI_MODE0));
   SPI.transfer((piezoPosition >> 8) & 0xff);
   SPI.transfer(piezoPosition & 0xff);
   SPI.endTransaction();
+  digitalWrite(PIEZO_CHIP_SELECT_PIN, HIGH);
+}
+
+void setBiasVoltageFactor(float factor /* [0, 1] */) {
+  const int iMax =  (1 << 12) - 1;
+  int i = iMax * factor;
+  byte b;
+
+  digitalWrite(BIAS_CHIP_SELECT_PIN, LOW);
+  SPI.beginTransaction(SPISettings(1400000, MSBFIRST, SPI_MODE0));
+  b = highByte(i);
+  b &= 0b00001111;
+  b |= 0b00110000; // activates chip, sets gain to 1×
+  SPI.transfer(b);
+  b = lowByte(i);
+  SPI.transfer(b);
+  SPI.endTransaction();
+  digitalWrite(BIAS_CHIP_SELECT_PIN, HIGH);
+}
+
+float measuredBias() /* V */ {
+  return analogRead(BIAS_MEASURE_PIN) / 1023. * 5;
 }
