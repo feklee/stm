@@ -4,7 +4,7 @@
 //
 // http://tronixstuff.com/2011/06/15/tutorial-arduino-and-the-spi-bus-part-ii/
 
-#define CHIP_SELECT_PIN 7 // hard coded in SPI library: 11 = MOSI, 13 = SCK
+#define CHIP_SELECT_PIN 8 // hard coded in SPI library: 11 = MOSI, 13 = SCK
 
 void setupSPI() {
   SPI.begin();
