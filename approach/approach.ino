@@ -21,6 +21,10 @@
 uint16_t piezoPosition = 0;
 boolean signalLogIsEnabled = false;
 
+float readVoltageWithTeensyLC(int pin) {
+  return analogRead(pin) * 3.3 / 1023;
+}
+
 void setupPiezoSPI() {
   pinMode(PIEZO_CHIP_SELECT_PIN, OUTPUT);
   digitalWrite(PIEZO_CHIP_SELECT_PIN, HIGH);
@@ -269,7 +273,7 @@ void flushSignalLog() {
 
 // Voltage, proportional to tip current.
 float readSignal() /* V */ {
-  int sensorValue = analogRead(SIGNAL_PIN);
+  int sensorValue = readVoltageWithTeensyLC(SIGNAL_PIN);
   float voltage = sensorValue / 1023. * 5;
   return voltage;
 }
@@ -378,5 +382,5 @@ void setBiasVoltageFactor(float factor /* [0, 1] */) {
 }
 
 float measuredBias() /* V */ {
-  return analogRead(BIAS_MEASURE_PIN) / 1023. * 5;
+  return readVoltageWithTeensyLC(BIAS_MEASURE_PIN);
 }
