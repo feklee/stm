@@ -49,6 +49,7 @@ void setup() {
   setupBiasRegulatorSPI();
   SPI.begin();
   setBiasVoltageFactor(0.001);
+  analogReadResolution(16);
   prompt();
 }
 
