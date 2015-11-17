@@ -97,6 +97,10 @@ void help() {
                  "\n"
                  "  * piezo-up <steps> [min. signal (V)]\n"
                  "\n"
+                 "  * piezo-play\n"
+                 "\n"
+                 "    Plays a sound to test the piezo.\n"
+                 "\n"
                  "  * set-bias <voltage (mV)>\n");
 }
 
@@ -118,6 +122,8 @@ void interpretCommand(String s) {
     piezoDown(s);
   } else if (command == "piezo-up") {
     piezoUp(s);
+  } else if (command == "piezo-play") {
+    piezoPlay();
   } else if (command == "set-bias") {
     setBias(s);
   } else {
@@ -215,6 +221,31 @@ void piezoUp(String &parameters) {
 
   stepsLeft = movePiezo(steps, false, minSignal);
   printSummary(steps - stepsLeft);
+}
+
+void positionPiezoForDuration(long desiredPosition, long duration /* ms */) {
+  long startMillis = millis(), endMillis, waitMillis;
+  piezoPosition = desiredPosition;
+  positionPiezo();
+  endMillis = millis();
+  waitMillis = duration - (endMillis - startMillis);
+  if (waitMillis <= 0) {
+    return;
+  }
+  delay(waitMillis);
+}
+
+void piezoPlay() {
+  float frequency = 440 /* Hz */;
+  long duration = 1000 / frequency / 2 /* ms */,
+    totalDuration = 2000 /* ms */;
+
+  for (long i = 0; i < totalDuration / (2 * duration); i++) {
+    positionPiezoForDuration(0xffff, duration);
+    positionPiezoForDuration(0, duration);
+  }
+
+  printSummary();
 }
 
 void setBias(String &parameters) {
