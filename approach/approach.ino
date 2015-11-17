@@ -10,7 +10,7 @@
 #define MOTOR_PIN2 4
 #define MOTOR_PIN3 5
 #define SIGNAL_PIN A2
-#define BIAS_MEASURE_PIN A1
+#define BIAS_MEASURE_PIN A3
 
 // Hard coded in SPI library: 11 = MOSI, 13 = SCK
 #define PIEZO_CHIP_SELECT_PIN 7
@@ -22,7 +22,7 @@ uint16_t piezoPosition = 0;
 boolean signalLogIsEnabled = false;
 
 float readVoltageWithTeensyLC(int pin) {
-  return analogRead(pin) * 3.3 / 1023;
+  return analogRead(pin) * 3.3 / 0xffff;
 }
 
 void setupPiezoSPI() {
@@ -133,7 +133,7 @@ void printSummary(uint16_t stepsExecuted = 0) {
   Serial.print(stepsExecuted);
   Serial.print("; Piezo position (0-65535): ");
   Serial.print(piezoPosition);
-  Serial.print("; Measures bias (mV): ");
+  Serial.print("; Measured bias (mV): ");
   Serial.println(1000 * measuredBias());
 }
 
