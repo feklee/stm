@@ -48,7 +48,7 @@ void setup() {
   setupPiezoSPI();
   setupBiasRegulatorSPI();
   SPI.begin();
-  setBiasVoltageFactor(0.001);
+  setBiasVoltageFactor(0.01);
   analogReadResolution(16);
   prompt();
 }
