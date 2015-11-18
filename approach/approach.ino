@@ -186,7 +186,8 @@ void up(String &parameters) {
 void piezoDown(String &parameters) {
   String s;
   uint16_t steps, stepsLeft;
-  float maxSignal = 6; // max. voltage that Arduino can measure is 5V
+  float maxSignal = 0;
+  boolean limitSignal = false;
 
   if ((s = shift(parameters)) == "") {
     help();
@@ -197,16 +198,18 @@ void piezoDown(String &parameters) {
 
   if ((s = shift(parameters)) != "") {
     maxSignal = s.toFloat();
+    limitSignal = true;
   }
 
-  stepsLeft = movePiezo(steps, true, maxSignal);
+  stepsLeft = movePiezo(steps, true, limitSignal, maxSignal);
   printSummary(steps - stepsLeft);
 }
 
 void piezoUp(String &parameters) {
   String s;
   uint16_t steps, stepsLeft;
-  float minSignal = -1;
+  float minSignal = 0;
+  boolean limitSignal = false;
 
   if ((s = shift(parameters)) == "") {
     help();
@@ -217,9 +220,10 @@ void piezoUp(String &parameters) {
 
   if ((s = shift(parameters)) != "") {
     minSignal = s.toFloat();
+    limitSignal = true;
   }
 
-  stepsLeft = movePiezo(steps, false, minSignal);
+  stepsLeft = movePiezo(steps, false, limitSignal, minSignal);
   printSummary(steps - stepsLeft);
 }
 
@@ -240,7 +244,7 @@ void piezoPlay() {
   long duration = 1000 / frequency / 2 /* ms */,
     totalDuration = 2000 /* ms */;
 
-  for (long i = 0; i < totalDuration / (2 * duration); i++) {
+  for (long i = 0; i < totalDuration / (2 * duration); i ++) {
     positionPiezoForDuration(0xffff, duration);
     positionPiezoForDuration(0, duration);
   }
@@ -274,27 +278,47 @@ void logSignal(float signal, boolean flush = false) {
   hasBeenFlushed = false;
 }
 
+boolean signalIsInLimit(boolean moveDown, boolean limitSignal) {
+  float signal;
+
+  if (!limitSignal) {
+    return true;
+  }
+
+  signal = readAndLogSignal();
+
+  if (moveDown) {
+    return signal < limitSignal;
+  } else {
+    return signal > limitSignal;
+  }
+}
+
 unsigned long movePiezo(unsigned long stepsLeft, boolean moveDown,
+                        boolean limitSignal,
                         float limitingSignal /* V */) {
-  float signal = readAndLogSignal();
-  while (stepsLeft > 0 &&
-         ((moveDown && signal < limitingSignal) ||
-          (!moveDown && signal > limitingSignal))) {
-    if (!stepPiezo(moveDown)) {
+  int direction = moveDown ? 1 : -1;
+
+  if (!limitSignal && !signalLogIsEnabled) {
+    stepPiezo(direction * stepsLeft);
+    return 0;
+  }
+
+  while (stepsLeft > 0 && signalIsInLimit(moveDown, limitSignal)) {
+    if (!stepPiezo(direction)) {
       break;
     }
     stepsLeft --;
-    signal = readAndLogSignal();
   }
   return stepsLeft;
 }
 
-boolean stepPiezo(boolean moveDown) {
-  if ((piezoPosition == 0xffff && moveDown) ||
-      (piezoPosition == 0 && !moveDown)) {
+boolean stepPiezo(int step) {
+  if ((piezoPosition == 0xffff && step > 0) ||
+      (piezoPosition == 0 && step < 0)) {
     return false; // not stepped
   }
-  piezoPosition += moveDown ? 1 : -1;
+  piezoPosition += step;
   positionPiezo();
   return true;
 }
@@ -305,9 +329,7 @@ void flushSignalLog() {
 
 // Voltage, proportional to tip current.
 float readSignal() /* V */ {
-  int sensorValue = readVoltageWithTeensyLC(SIGNAL_MEASURE_PIN);
-  float voltage = sensorValue / 1023. * 5;
-  return voltage;
+  return readVoltageWithTeensyLC(SIGNAL_MEASURE_PIN);
 }
 
 float readAndLogSignal() {
