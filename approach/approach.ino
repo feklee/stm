@@ -9,7 +9,7 @@
 #define MOTOR_PIN1 3
 #define MOTOR_PIN2 4
 #define MOTOR_PIN3 5
-#define SIGNAL_PIN A2
+#define SIGNAL_MEASURE_PIN A2
 #define BIAS_MEASURE_PIN A3
 
 // Hard coded in SPI library: 11 = MOSI, 13 = SCK
@@ -305,7 +305,7 @@ void flushSignalLog() {
 
 // Voltage, proportional to tip current.
 float readSignal() /* V */ {
-  int sensorValue = readVoltageWithTeensyLC(SIGNAL_PIN);
+  int sensorValue = readVoltageWithTeensyLC(SIGNAL_MEASURE_PIN);
   float voltage = sensorValue / 1023. * 5;
   return voltage;
 }
