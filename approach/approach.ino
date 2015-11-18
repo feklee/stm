@@ -297,13 +297,19 @@ boolean signalIsInLimit(boolean moveDown, boolean limitSignal) {
 unsigned long movePiezo(unsigned long stepsLeft, boolean moveDown,
                         boolean limitSignal,
                         float limitingSignal /* V */) {
-  int direction = moveDown ? 1 : -1;
-
   if (!limitSignal && !signalLogIsEnabled) {
+    int direction = moveDown ? 1 : -1;
     stepPiezo(direction * stepsLeft);
     return 0;
   }
 
+  return singleStepPiezo(stepsLeft, moveDown, limitSignal, limitingSignal);
+}
+
+unsigned long singleStepPiezo(unsigned long stepsLeft, boolean moveDown,
+                              boolean limitSignal,
+                              float limitingSignal /* V */) {
+  int direction = moveDown ? 1 : -1;
   while (stepsLeft > 0 && signalIsInLimit(moveDown, limitSignal)) {
     if (!stepPiezo(direction)) {
       break;
