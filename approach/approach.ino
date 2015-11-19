@@ -319,6 +319,8 @@ unsigned long movePiezo(unsigned long stepsLeft, boolean moveDown,
     return 0;
   }
 
+  Serial.println(limitSignal ? "fixmelim" : "fixmenolim");
+
   return singleStepPiezo(stepsLeft, moveDown, limitSignal, limitingSignal);
 }
 
@@ -478,8 +480,8 @@ void woodpeckerDown(String &parameters) {
   while (true) {
     signalLogIsEnabled = false;
     movePiezo(0xffff, false, false, 0);
-    signalLogIsEnabled = signalLogIsEnabledBackup;
     rotate(stepSize, false, maxSignal);
+    signalLogIsEnabled = signalLogIsEnabledBackup;
     stepsLeft = movePiezo(0xffff, true, true, maxSignal);
     if (stepsLeft > 0) {
       return;
