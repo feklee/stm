@@ -109,6 +109,10 @@ void help() {
                  "    motor down by `step-size`, piezo down, if maximum "
                  "signal reached\n"
                  "    then stop or else move piezo up and repeat\n"
+                 "\n"
+                 "  * monitor-signal <duration (s)>\n"
+                 "\n"
+                 "    Repeatedly prints the current signal."
   );
 }
 
@@ -136,6 +140,8 @@ void interpretCommand(String s) {
     piezoPlay();
   } else if (command == "woodpecker-down") {
     woodpeckerDown(s);
+  } else if (command == "monitor-signal") {
+    monitorSignal(s);
   } else {
     help();
   }
@@ -479,4 +485,24 @@ void woodpeckerDown(String &parameters) {
       return;
     }
   }
+}
+
+void monitorSignal(String &parameters) {
+  String s;
+  int duration;
+  unsigned long startMillis = millis(), endMillis;
+
+  if ((s = shift(parameters)) == "") {
+    help();
+    return;
+  }
+
+  duration = s.toInt();
+  endMillis = startMillis + 1000 * duration;
+  while (millis() < endMillis) {
+    Serial.println(readAndLogSignal());
+    delay(100);
+  }
+
+  printSummary();
 }
