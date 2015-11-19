@@ -83,6 +83,8 @@ void help() {
                  "\n"
                  "    Enables output of signal during movements.\n"
                  "\n"
+                 "  * set-bias <voltage (mV)>\n"
+                 "\n"
                  "  * disable-signal-log\n"
                  "\n"
                  "  * down <steps> [max. signal (V)]\n"
@@ -101,7 +103,13 @@ void help() {
                  "\n"
                  "    Plays a sound to test the piezo.\n"
                  "\n"
-                 "  * set-bias <voltage (mV)>\n");
+                 "  * woodpecker-down <max. signal (V)> <step-size>\n"
+                 "\n"
+                 "    Approaches automatically using the woodpecker method:"
+                 "    motor down by `step-size`, piezo down, if maximum "
+                 "signal reached\n"
+                 "    then stop or else move piezo up and repeat\n"
+  );
 }
 
 void interpretCommand(String s) {
@@ -112,6 +120,8 @@ void interpretCommand(String s) {
 
   if (command == "enable-signal-log") {
     signalLogIsEnabled = true;
+  } else if (command == "set-bias") {
+    setBias(s);
   } else if (command == "disable-signal-log") {
     signalLogIsEnabled = false;
   } else if (command == "down") {
@@ -124,8 +134,8 @@ void interpretCommand(String s) {
     piezoUp(s);
   } else if (command == "piezo-play") {
     piezoPlay();
-  } else if (command == "set-bias") {
-    setBias(s);
+  } else if (command == "woodpecker-down") {
+    woodpeckerDown(s);
   } else {
     help();
   }
@@ -443,4 +453,30 @@ void setBiasVoltageFactor(float factor /* [0, 1] */) {
 
 float measuredBias() /* V */ {
   return readVoltageWithTeensyLC(BIAS_MEASURE_PIN);
+}
+
+void woodpeckerDown(String &parameters) {
+  String s1 = shift(parameters), s2 = shift(parameters);
+  uint16_t stepSize, stepsLeft;
+  float maxSignal;
+  boolean signalLogIsEnabledBackup = signalLogIsEnabled;
+
+  if (s2 == "") {
+    help();
+    return;
+  }
+
+  maxSignal = s1.toFloat();
+  stepSize = s2.toInt();
+
+  while (true) {
+    signalLogIsEnabled = false;
+    movePiezo(0xffff, false, false, 0);
+    signalLogIsEnabled = signalLogIsEnabledBackup;
+    rotate(stepSize, false, maxSignal);
+    stepsLeft = movePiezo(0xffff, true, true, maxSignal);
+    if (stepsLeft > 0) {
+      return;
+    }
+  }
 }
