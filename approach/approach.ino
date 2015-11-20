@@ -43,7 +43,7 @@ void setupMotor() {
 }
 
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(115200);
   setupMotor();
   setupPiezoSPI();
   setupBiasRegulatorSPI();
@@ -103,7 +103,8 @@ void help() {
                  "\n"
                  "    Plays a sound to test the piezo.\n"
                  "\n"
-                 "  * woodpecker-down <max. signal (V)> <step-size>\n"
+                 "  * woodpecker-down <max. signal (V)> <step-size> "
+                 "<piezo-step-size>\n"
                  "\n"
                  "    Approaches automatically using the woodpecker method:"
                  "    motor down by `step-size`, piezo down, if maximum "
@@ -295,13 +296,11 @@ void logSignal(float signal, boolean flush = false) {
 }
 
 boolean signalIsInLimit(boolean moveDown, boolean limitSignal) {
-  float signal;
+  float signal = readAndLogSignal(); // always log
 
   if (!limitSignal) {
     return true;
   }
-
-  signal = readAndLogSignal();
 
   if (moveDown) {
     return signal < limitSignal;
@@ -312,27 +311,28 @@ boolean signalIsInLimit(boolean moveDown, boolean limitSignal) {
 
 unsigned long movePiezo(unsigned long stepsLeft, boolean moveDown,
                         boolean limitSignal,
-                        float limitingSignal /* V */) {
+                        float limitingSignal /* V */,
+                        unsigned long stepSize) {
   if (!limitSignal && !signalLogIsEnabled) {
     int direction = moveDown ? 1 : -1;
     stepPiezo(direction * stepsLeft);
     return 0;
   }
 
-  Serial.println(limitSignal ? "fixmelim" : "fixmenolim");
-
-  return singleStepPiezo(stepsLeft, moveDown, limitSignal, limitingSignal);
+  return singleStepPiezo(stepsLeft, moveDown, limitSignal, limitingSignal,
+                         stepSize);
 }
 
 unsigned long singleStepPiezo(unsigned long stepsLeft, boolean moveDown,
                               boolean limitSignal,
-                              float limitingSignal /* V */) {
+                              float limitingSignal /* V */,
+                              unsigned long stepSize) {
   int direction = moveDown ? 1 : -1;
   while (stepsLeft > 0 && signalIsInLimit(moveDown, limitSignal)) {
-    if (!stepPiezo(direction)) {
+    if (!stepPiezo(direction * stepSize)) {
       break;
     }
-    stepsLeft --;
+    stepsLeft -= stepSize;
   }
   return stepsLeft;
 }
@@ -464,18 +464,22 @@ float measuredBias() /* V */ {
 }
 
 void woodpeckerDown(String &parameters) {
-  String s1 = shift(parameters), s2 = shift(parameters);
-  uint16_t stepSize, stepsLeft;
+  String
+    s1 = shift(parameters),
+    s2 = shift(parameters),
+    s3 = shift(parameters);
+  uint16_t stepSize, piezoStepSize, stepsLeft;
   float maxSignal;
   boolean signalLogIsEnabledBackup = signalLogIsEnabled;
 
-  if (s2 == "") {
+  if (s3 == "") {
     help();
     return;
   }
 
   maxSignal = s1.toFloat();
   stepSize = s2.toInt();
+  piezoStepSize = s3.toInt();
 
   while (true) {
     signalLogIsEnabled = false;
@@ -484,6 +488,7 @@ void woodpeckerDown(String &parameters) {
     signalLogIsEnabled = signalLogIsEnabledBackup;
     stepsLeft = movePiezo(0xffff, true, true, maxSignal);
     if (stepsLeft > 0) {
+      Serial.println("fixme: >0");
       return;
     }
   }
