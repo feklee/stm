@@ -218,7 +218,7 @@ void piezoDown(String &parameters) {
     limitSignal = true;
   }
 
-  stepsLeft = movePiezo(steps, true, limitSignal, maxSignal);
+  stepsLeft = movePiezo(steps, true, limitSignal, maxSignal, 1);
   printSummary(steps - stepsLeft);
 }
 
@@ -240,7 +240,7 @@ void piezoUp(String &parameters) {
     limitSignal = true;
   }
 
-  stepsLeft = movePiezo(steps, false, limitSignal, minSignal);
+  stepsLeft = movePiezo(steps, false, limitSignal, minSignal, 1);
   printSummary(steps - stepsLeft);
 }
 
@@ -483,10 +483,10 @@ void woodpeckerDown(String &parameters) {
 
   while (true) {
     signalLogIsEnabled = false;
-    movePiezo(0xffff, false, false, 0);
+    movePiezo(0xffff, false, false, 0, 1);
     rotate(stepSize, false, maxSignal);
     signalLogIsEnabled = signalLogIsEnabledBackup;
-    stepsLeft = movePiezo(0xffff, true, true, maxSignal);
+    stepsLeft = movePiezo(0xffff, true, true, maxSignal, piezoStepSize);
     if (stepsLeft > 0) {
       Serial.println("fixme: >0");
       return;
