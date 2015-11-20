@@ -502,7 +502,7 @@ void monitorSignal(String &parameters) {
   duration = s.toInt();
   endMillis = startMillis + 1000 * duration;
   while (millis() < endMillis) {
-    Serial.println(readSignal()());
+    Serial.println(readSignal());
     delay(100);
   }
 
