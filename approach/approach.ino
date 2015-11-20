@@ -112,7 +112,7 @@ void help() {
                  "\n"
                  "  * monitor-signal <duration (s)>\n"
                  "\n"
-                 "    Repeatedly prints the current signal."
+                 "    Repeatedly prints the current signal (V)."
   );
 }
 
@@ -502,7 +502,7 @@ void monitorSignal(String &parameters) {
   duration = s.toInt();
   endMillis = startMillis + 1000 * duration;
   while (millis() < endMillis) {
-    Serial.println(readAndLogSignal());
+    Serial.println(readSignal()());
     delay(100);
   }
 
