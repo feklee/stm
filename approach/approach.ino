@@ -19,7 +19,6 @@
 #define MAX_PIEZO_POSITION 65535
 
 uint16_t piezoPosition = 0;
-boolean contSignalLogIsEnabled = false;
 const int signalLogMaxSize = 1024;
 float signalLog[signalLogMaxSize];
 int signalLogHead = 0;
@@ -83,13 +82,7 @@ String shift(String &s) {
 void help() {
   Serial.println("Commands:\n"
                  "\n"
-                 "  * enable-continuous-signal-log\n"
-                 "\n"
-                 "    Enables output of signal during movements.\n"
-                 "\n"
                  "  * set-bias <voltage (mV)>\n"
-                 "\n"
-                 "  * disable-continuous-signal-log\n"
                  "\n"
                  "  * down <steps> [max. signal (V)]\n"
                  "\n"
@@ -129,12 +122,8 @@ void interpretCommand(String s) {
 
   clearSignalLog();
 
-  if (command == "enable-continuous-signal-log") {
-    contSignalLogIsEnabled = true;
-  } else if (command == "set-bias") {
+  if (command == "set-bias") {
     setBias(s);
-  } else if (command == "disable-continous-signal-log") {
-    contSignalLogIsEnabled = false;
   } else if (command == "down") {
     down(s);
   } else if (command == "up") {
@@ -177,7 +166,6 @@ void printLastSignals() {
 }
 
 void printSummary(uint16_t stepsExecuted = 0) {
-  flushContSignalLog();
   printLastSignals();
   Serial.print("Current signal (V): ");
   Serial.print(readSignal());
@@ -338,7 +326,7 @@ long movePiezo(long stepsLeft, boolean moveDown,
                boolean limitSignal,
                float limitingSignal /* V */,
                long stepSize) {
-  if (!limitSignal && !contSignalLogIsEnabled) {
+  if (!limitSignal) {
     int direction = moveDown ? 1 : -1;
     stepPiezo(direction * stepsLeft);
     return 0;
@@ -374,10 +362,6 @@ boolean stepPiezo(int step) {
   return true;
 }
 
-void flushContSignalLog() {
-  printSignal(0, true);
-}
-
 // Voltage, proportional to tip current.
 float readSignal() /* V */ {
   return readVoltageWithTeensyLC(SIGNAL_MEASURE_PIN);
@@ -395,10 +379,6 @@ void logSignal(float signal) {
     (signalLogSize < signalLogMaxSize) ?
     signalLogSize + 1 :
     signalLogMaxSize;
-
-  if (contSignalLogIsEnabled) {
-    printSignal(signal);
-  }
 }
 
 float readAndLogSignal() {
@@ -499,6 +479,10 @@ float measuredBias() /* V */ {
   return readVoltageWithTeensyLC(BIAS_MEASURE_PIN);
 }
 
+void movePiezoAllTheWayUp() {
+  movePiezo(0xffff, false, false, 0, 1);
+}
+
 void woodpeckerDown(String &parameters) {
   String
     s1 = shift(parameters),
@@ -506,7 +490,6 @@ void woodpeckerDown(String &parameters) {
     s3 = shift(parameters);
   uint16_t stepSize, piezoStepSize;
   float maxSignal;
-  boolean contSignalLogIsEnabledBackup = contSignalLogIsEnabled;
   long stepsLeft;
 
   if (s3 == "") {
@@ -518,14 +501,15 @@ void woodpeckerDown(String &parameters) {
   stepSize = s2.toInt();
   piezoStepSize = s3.toInt();
 
+  Serial.println("After each motor step, the log of signals is cleared.");
   while (true) {
-    Serial.print("Current signal (V): ");
+    Serial.print("Signal before next motor step (V): ");
     Serial.print(readSignal());
     Serial.println();
-    contSignalLogIsEnabled = false;
-    movePiezo(0xffff, false, false, 0, 1);
+
+    movePiezoAllTheWayUp();
     rotate(stepSize, false, maxSignal);
-    contSignalLogIsEnabled = contSignalLogIsEnabledBackup;
+    clearSignalLog();
     stepsLeft = movePiezo(0xffff, true, true, maxSignal, piezoStepSize);
     if (stepsLeft >= piezoStepSize) {
       break; // stopped because signal is too large
