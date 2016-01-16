@@ -18,11 +18,11 @@
 
 #define MAX_PIEZO_POSITION 65535
 
-uint16_t piezoPosition = 0;
-const int signalLogMaxSize = 1024;
+long piezoPosition = 0;
+const long signalLogMaxSize = 1024;
 float signalLog[signalLogMaxSize];
-int signalLogHead = 0;
-int signalLogSize = 0;
+long signalLogHead = 0;
+long signalLogSize = 0;
 
 float readVoltageWithTeensyLC(int pin) {
   return analogRead(pin) * 3.3 / 0xffff;
@@ -92,26 +92,36 @@ void help() {
                  "\n"
                  "    Moves tip up while current is above minimum.\n"
                  "\n"
-                 "  * piezo-down <steps> [max. signal (V)]\n"
+                 "  * piezo-down <steps> [max. signal (V)] [step-increment]\n"
                  "\n"
-                 "  * piezo-up <steps> [min. signal (V)]\n"
+                 "  * piezo-up <steps> [min. signal (V)] [step-increment]\n"
                  "\n"
                  "  * piezo-play\n"
                  "\n"
                  "    Plays a sound to test the piezo.\n"
                  "\n"
-                 "  * woodpecker-down <max. signal (V)> <step-size> "
-                 "<piezo-step-size>\n"
+                 "  * woodpecker-down <max. signal (V)> <step-increment> "
+                 "<piezo-step-increment>\n"
                  "\n"
                  "    Approaches automatically using the woodpecker method:"
-                 "    motor down by `step-size`, piezo down, if maximum "
+                 "    motor down by `step-increment`, piezo down, if maximum "
                  "signal reached\n"
                  "    then stop or else move piezo up and repeat\n"
                  "\n"
-                 "  * monitor-signal <duration (s)>\n"
+                 "  * monitor-signal <duration (ms)> [delay (ms)]\n"
                  "\n"
-                 "    Repeatedly prints the current signal (V)."
+                 "    Repeatedly prints the current signal (V).\n"
+                 "\n"
+                 "  * silently-monitor-signal <duration (ms)> [delay (ms)]\n"
+                 "\n"
+                 "    Repeatedly measures the current signal."
   );
+}
+
+void printElapsedTime(unsigned long startMillis) {
+  Serial.print("(");
+  Serial.print((millis() - startMillis) / 1000.);
+  Serial.println(" s)");
 }
 
 void interpretCommand(String s) {
@@ -120,27 +130,33 @@ void interpretCommand(String s) {
 
   String command = shift(s);
 
+  unsigned long startMillis = millis();
+
   clearSignalLog();
 
   if (command == "set-bias") {
-    setBias(s);
+    interpretSetBias(s);
   } else if (command == "down") {
-    down(s);
+    interpretDown(s);
   } else if (command == "up") {
-    up(s);
+    interpretUp(s);
   } else if (command == "piezo-down") {
-    piezoDown(s);
+    interpretPiezoDown(s);
   } else if (command == "piezo-up") {
-    piezoUp(s);
+    interpretPiezoUp(s);
   } else if (command == "piezo-play") {
-    piezoPlay();
+    interpretPiezoPlay();
   } else if (command == "woodpecker-down") {
-    woodpeckerDown(s);
+    interpretWoodpeckerDown(s);
   } else if (command == "monitor-signal") {
-    monitorSignal(s);
+    interpretMonitorSignal(s);
+  } else if (command == "silently-monitor-signal") {
+    interpretSilentlyMonitorSignal(s);
   } else {
     help();
   }
+
+  printElapsedTime(startMillis);
 }
 
 void clearSignalLog() {
@@ -156,6 +172,10 @@ void printLastSignals() {
   int i, j;
   String separator = "";
   Serial.print("Last signals in reverse (V): ");
+  if (signalLogSize == 0) {
+    Serial.println("nothing recorded");
+    return;
+  }
   for (i = signalLogSize - 1; i >= 0; i --) {
     j = (signalLogHead + i) % signalLogSize;
     Serial.print(separator);
@@ -165,21 +185,21 @@ void printLastSignals() {
   Serial.println("");
 }
 
-void printSummary(uint16_t stepsExecuted = 0) {
+void printSummary(long stepsMoved = 0) {
   printLastSignals();
   Serial.print("Current signal (V): ");
   Serial.print(readSignal());
-  Serial.print("; Steps executed: ");
-  Serial.print(stepsExecuted);
+  Serial.print("; Steps moved: ");
+  Serial.print(stepsMoved);
   Serial.print("; Piezo position (0-65535): ");
   Serial.print(piezoPosition);
   Serial.print("; Measured bias (mV): ");
   Serial.println(1000 * measuredBias());
 }
 
-void down(String &parameters) {
+void interpretDown(String &parameters) {
   String s;
-  uint16_t steps, stepsLeft;
+  long steps, stepsLeft;
   float maxSignal = 6; // max. voltage that Arduino can measure is 5V
 
   if ((s = shift(parameters)) == "") {
@@ -197,9 +217,9 @@ void down(String &parameters) {
   printSummary(steps - stepsLeft);
 }
 
-void up(String &parameters) {
+void interpretUp(String &parameters) {
   String s;
-  uint16_t steps, stepsLeft;
+  long steps, stepsLeft;
   float minSignal = -1;
 
   if ((s = shift(parameters)) == "") {
@@ -217,9 +237,9 @@ void up(String &parameters) {
   printSummary(steps - stepsLeft);
 }
 
-void piezoDown(String &parameters) {
+void interpretPiezoDown(String &parameters) {
   String s;
-  uint16_t steps, stepsLeft;
+  long steps, stepsLeft, stepIncrement = 1;
   float maxSignal = 0;
   boolean limitSignal = false;
 
@@ -235,13 +255,17 @@ void piezoDown(String &parameters) {
     limitSignal = true;
   }
 
-  stepsLeft = movePiezo(steps, true, limitSignal, maxSignal, 1);
+  if ((s = shift(parameters)) != "") {
+    stepIncrement = s.toInt();
+  }
+
+  stepsLeft = movePiezo(steps, true, limitSignal, maxSignal, stepIncrement);
   printSummary(steps - stepsLeft);
 }
 
-void piezoUp(String &parameters) {
+void interpretPiezoUp(String &parameters) {
   String s;
-  uint16_t steps, stepsLeft;
+  long steps, stepsLeft, stepIncrement = 1;
   float minSignal = 0;
   boolean limitSignal = false;
 
@@ -257,7 +281,11 @@ void piezoUp(String &parameters) {
     limitSignal = true;
   }
 
-  stepsLeft = movePiezo(steps, false, limitSignal, minSignal, 1);
+  if ((s = shift(parameters)) != "") {
+    stepIncrement = s.toInt();
+  }
+
+  stepsLeft = movePiezo(steps, false, limitSignal, minSignal, stepIncrement);
   printSummary(steps - stepsLeft);
 }
 
@@ -273,7 +301,7 @@ void positionPiezoForDuration(long desiredPosition, long duration /* ms */) {
   delay(waitMillis);
 }
 
-void piezoPlay() {
+void interpretPiezoPlay() {
   float frequency = 440 /* Hz */;
   long duration = 1000 / frequency / 2 /* ms */,
     totalDuration = 2000 /* ms */;
@@ -286,7 +314,7 @@ void piezoPlay() {
   printSummary();
 }
 
-void setBias(String &parameters) {
+void interpretSetBias(String &parameters) {
   String s;
 
   if ((s = shift(parameters)) == "") {
@@ -325,7 +353,7 @@ boolean signalIsInLimit(boolean isMovingDown, float limitingSignal) {
 long movePiezo(long stepsLeft, boolean moveDown,
                boolean limitSignal,
                float limitingSignal /* V */,
-               long stepSize) {
+               long stepIncrement) {
   if (!limitSignal) {
     int direction = moveDown ? 1 : -1;
     stepPiezo(direction * stepsLeft);
@@ -333,21 +361,21 @@ long movePiezo(long stepsLeft, boolean moveDown,
   }
 
   return singleStepPiezo(stepsLeft, moveDown, limitSignal, limitingSignal,
-                         stepSize);
+                         stepIncrement);
 }
 
 long singleStepPiezo(long stepsLeft, boolean moveDown,
                      boolean limitSignal,
                      float limitingSignal /* V */,
-                     long stepSize) {
+                     long stepIncrement) {
   int direction = moveDown ? 1 : -1;
 
   while (stepsLeft > 0 &&
          (!limitSignal || signalIsInLimit(moveDown, limitingSignal))) {
-    if (!stepPiezo(direction * stepSize)) {
+    if (!stepPiezo(direction * stepIncrement)) {
       break;
     }
-    stepsLeft -= stepSize;
+    stepsLeft -= stepIncrement;
   }
   return stepsLeft;
 }
@@ -358,6 +386,14 @@ boolean stepPiezo(int step) {
     return false; // not stepped
   }
   piezoPosition += step;
+  if (piezoPosition < 0) {
+    piezoPosition = 0;
+  } else if (piezoPosition > 0xffff) {
+    piezoPosition = 0xffff;
+  }
+
+  piezoPosition = 0; // fixme: to keep piezo in position, for debugging
+
   positionPiezo();
   return true;
 }
@@ -483,12 +519,12 @@ void movePiezoAllTheWayUp() {
   movePiezo(0xffff, false, false, 0, 1);
 }
 
-void woodpeckerDown(String &parameters) {
+void interpretWoodpeckerDown(String &parameters) {
   String
     s1 = shift(parameters),
     s2 = shift(parameters),
     s3 = shift(parameters);
-  uint16_t stepSize, piezoStepSize;
+  long stepIncrement, piezoStepIncrement;
   float maxSignal;
   long stepsLeft;
 
@@ -498,8 +534,8 @@ void woodpeckerDown(String &parameters) {
   }
 
   maxSignal = s1.toFloat();
-  stepSize = s2.toInt();
-  piezoStepSize = s3.toInt();
+  stepIncrement = s2.toInt();
+  piezoStepIncrement = s3.toInt();
 
   Serial.println("After each motor step, the log of signals is cleared.");
   while (true) {
@@ -508,10 +544,10 @@ void woodpeckerDown(String &parameters) {
     Serial.println();
 
     movePiezoAllTheWayUp();
-    rotate(stepSize, false, maxSignal);
+    rotate(stepIncrement, false, maxSignal);
     clearSignalLog();
-    stepsLeft = movePiezo(0xffff, true, true, maxSignal, piezoStepSize);
-    if (stepsLeft >= piezoStepSize) {
+    stepsLeft = movePiezo(0xffff, true, true, maxSignal, piezoStepIncrement);
+    if (stepsLeft >= piezoStepIncrement) {
       break; // stopped because signal is too large
     }
   }
@@ -519,21 +555,52 @@ void woodpeckerDown(String &parameters) {
   printSummary();
 }
 
-void monitorSignal(String &parameters) {
+void interpretMonitorSignal(String &parameters) {
   String s;
-  int duration;
-  unsigned long startMillis = millis(), endMillis;
+  unsigned long duration, measurementDelay = 100;
 
   if ((s = shift(parameters)) == "") {
     help();
     return;
   }
-
   duration = s.toInt();
-  endMillis = startMillis + 1000 * duration;
+
+  if ((s = shift(parameters)) != "") {
+    measurementDelay = s.toInt();
+  }
+
+  monitorSignal(duration, measurementDelay, true);
+}
+
+void interpretSilentlyMonitorSignal(String &parameters) {
+  String s;
+  unsigned long duration, measurementDelay = 100;
+
+  if ((s = shift(parameters)) == "") {
+    help();
+    return;
+  }
+  duration = s.toInt();
+
+  if ((s = shift(parameters)) != "") {
+    measurementDelay = s.toInt();
+  }
+
+  monitorSignal(duration, measurementDelay, false);
+}
+
+void monitorSignal(unsigned long duration, unsigned long measurementDelay,
+                   boolean signalShouldBePrinted) {
+  unsigned long startMillis = millis(), endMillis;
+
+  endMillis = startMillis + duration;
   while (millis() < endMillis) {
-    Serial.println(readSignal());
-    delay(100);
+    if (signalShouldBePrinted) {
+      Serial.println(readSignal());
+    } else {
+      readAndLogSignal();
+    }
+    delay(measurementDelay);
   }
 
   printSummary();
