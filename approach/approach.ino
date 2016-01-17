@@ -108,11 +108,11 @@ void help() {
                  "signal reached\n"
                  "    then stop or else move piezo up and repeat\n"
                  "\n"
-                 "  * monitor-signal <duration (ms)> [delay (ms)]\n"
+                 "  * monitor-signal <duration (ms)> [delay (µs)]\n"
                  "\n"
                  "    Repeatedly prints the current signal (V).\n"
                  "\n"
-                 "  * silently-monitor-signal <duration (ms)> [delay (ms)]\n"
+                 "  * silently-monitor-signal <duration (ms)> [delay (µs)]\n"
                  "\n"
                  "    Repeatedly measures the current signal."
   );
@@ -392,8 +392,6 @@ boolean stepPiezo(int step) {
     piezoPosition = 0xffff;
   }
 
-  piezoPosition = 0; // fixme: to keep piezo in position, for debugging
-
   positionPiezo();
   return true;
 }
@@ -492,6 +490,9 @@ void positionPiezo() {
   SPI.transfer(piezoPosition & 0xff);
   SPI.endTransaction();
   digitalWrite(PIEZO_CHIP_SELECT_PIN, HIGH);
+  delayMicroseconds(100); // time to dampen noise from SPI communication, which
+                          // can get picked up as signal, see
+                          // <https://github.com/feklee/stm/issues/3>
 }
 
 void setBiasVoltageFactor(float factor /* [0, 1] */) {
@@ -557,7 +558,7 @@ void interpretWoodpeckerDown(String &parameters) {
 
 void interpretMonitorSignal(String &parameters) {
   String s;
-  unsigned long duration, measurementDelay = 100;
+  unsigned long duration, measurementDelay = 100000;
 
   if ((s = shift(parameters)) == "") {
     help();
@@ -574,7 +575,7 @@ void interpretMonitorSignal(String &parameters) {
 
 void interpretSilentlyMonitorSignal(String &parameters) {
   String s;
-  unsigned long duration, measurementDelay = 100;
+  unsigned long duration, measurementDelay = 100000;
 
   if ((s = shift(parameters)) == "") {
     help();
@@ -589,7 +590,8 @@ void interpretSilentlyMonitorSignal(String &parameters) {
   monitorSignal(duration, measurementDelay, false);
 }
 
-void monitorSignal(unsigned long duration, unsigned long measurementDelay,
+void monitorSignal(unsigned long duration /* ms */,
+                   unsigned long measurementDelay /* µs */,
                    boolean signalShouldBePrinted) {
   unsigned long startMillis = millis(), endMillis;
 
@@ -600,7 +602,7 @@ void monitorSignal(unsigned long duration, unsigned long measurementDelay,
     } else {
       readAndLogSignal();
     }
-    delay(measurementDelay);
+    delayMicroseconds(measurementDelay);
   }
 
   printSummary();
