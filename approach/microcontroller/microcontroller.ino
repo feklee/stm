@@ -24,6 +24,40 @@ float signalLog[signalLogMaxSize];
 long signalLogHead = 0;
 long signalLogSize = 0;
 
+void step(boolean rotateClockwise) {
+  static byte position;
+  sendPosition(position);
+  position = nextPosition(position, rotateClockwise);
+}
+
+long rotate(long stepsLeft, boolean rotateClockwise,
+            float limitingSignal /* V */) {
+  while (stepsLeft > 0 && signalIsInLimit(isMovingDown(rotateClockwise),
+                                          limitingSignal)) {
+    step(rotateClockwise);
+    stepsLeft --;
+    delay(1);
+  }
+  return stepsLeft;
+}
+
+void setBiasVoltageFactor(float factor /* [0, 1] */) {
+  const int iMax =  (1 << 12) - 1;
+  int i = iMax * factor;
+  byte b;
+
+  digitalWrite(BIAS_CHIP_SELECT_PIN, LOW);
+  SPI.beginTransaction(SPISettings(1400000, MSBFIRST, SPI_MODE0));
+  b = highByte(i);
+  b &= 0b00001111;
+  b |= 0b00110000; // activates chip, sets gain to 1×
+  SPI.transfer(b);
+  b = lowByte(i);
+  SPI.transfer(b);
+  SPI.endTransaction();
+  digitalWrite(BIAS_CHIP_SELECT_PIN, HIGH);
+}
+
 String taggedSignal(float signal) {
   char s[81];
   sprintf(s, "%.2f", signal);
@@ -203,6 +237,22 @@ void printSummary(long stepsMoved = 0) {
   Serial.println(1000 * measuredBias());
 }
 
+long singleStepPiezo(long stepsLeft, boolean moveDown,
+                     boolean limitSignal,
+                     float limitingSignal /* V */,
+                     long stepIncrement) {
+  int direction = moveDown ? 1 : -1;
+
+  while (stepsLeft > 0 &&
+         (!limitSignal || signalIsInLimit(moveDown, limitingSignal))) {
+    if (!stepPiezo(direction * stepIncrement)) {
+      break;
+    }
+    stepsLeft -= stepIncrement;
+  }
+  return stepsLeft;
+}
+
 void interpretDown(String &parameters) {
   String s;
   long steps, stepsLeft;
@@ -241,6 +291,20 @@ void interpretUp(String &parameters) {
 
   stepsLeft = rotate(steps, true, minSignal);
   printSummary(steps - stepsLeft);
+}
+
+long movePiezo(long stepsLeft, boolean moveDown,
+               boolean limitSignal,
+               float limitingSignal /* V */,
+               long stepIncrement) {
+  if (!limitSignal) {
+    int direction = moveDown ? 1 : -1;
+    stepPiezo(direction * stepsLeft);
+    return 0;
+  }
+
+  return singleStepPiezo(stepsLeft, moveDown, limitSignal, limitingSignal,
+                         stepIncrement);
 }
 
 void interpretPiezoDown(String &parameters) {
@@ -357,36 +421,6 @@ boolean signalIsInLimit(boolean isMovingDown, float limitingSignal) {
   }
 }
 
-long movePiezo(long stepsLeft, boolean moveDown,
-               boolean limitSignal,
-               float limitingSignal /* V */,
-               long stepIncrement) {
-  if (!limitSignal) {
-    int direction = moveDown ? 1 : -1;
-    stepPiezo(direction * stepsLeft);
-    return 0;
-  }
-
-  return singleStepPiezo(stepsLeft, moveDown, limitSignal, limitingSignal,
-                         stepIncrement);
-}
-
-long singleStepPiezo(long stepsLeft, boolean moveDown,
-                     boolean limitSignal,
-                     float limitingSignal /* V */,
-                     long stepIncrement) {
-  int direction = moveDown ? 1 : -1;
-
-  while (stepsLeft > 0 &&
-         (!limitSignal || signalIsInLimit(moveDown, limitingSignal))) {
-    if (!stepPiezo(direction * stepIncrement)) {
-      break;
-    }
-    stepsLeft -= stepIncrement;
-  }
-  return stepsLeft;
-}
-
 boolean stepPiezo(int step) {
   if ((piezoPosition == 0xffff && step > 0) ||
       (piezoPosition == 0 && step < 0)) {
@@ -430,23 +464,6 @@ float readAndLogSignal() {
 
 boolean isMovingDown(boolean rotateClockwise) {
   return !rotateClockwise;
-}
-
-long rotate(long stepsLeft, boolean rotateClockwise,
-            float limitingSignal /* V */) {
-  while (stepsLeft > 0 && signalIsInLimit(isMovingDown(rotateClockwise),
-                                          limitingSignal)) {
-    step(rotateClockwise);
-    stepsLeft --;
-    delay(1);
-  }
-  return stepsLeft;
-}
-
-void step(boolean rotateClockwise) {
-  static byte position;
-  sendPosition(position);
-  position = nextPosition(position, rotateClockwise);
 }
 
 void sendPosition(byte position) {
@@ -502,23 +519,6 @@ void positionPiezo() {
                           // <https://github.com/feklee/stm/issues/3>
 }
 
-void setBiasVoltageFactor(float factor /* [0, 1] */) {
-  const int iMax =  (1 << 12) - 1;
-  int i = iMax * factor;
-  byte b;
-
-  digitalWrite(BIAS_CHIP_SELECT_PIN, LOW);
-  SPI.beginTransaction(SPISettings(1400000, MSBFIRST, SPI_MODE0));
-  b = highByte(i);
-  b &= 0b00001111;
-  b |= 0b00110000; // activates chip, sets gain to 1×
-  SPI.transfer(b);
-  b = lowByte(i);
-  SPI.transfer(b);
-  SPI.endTransaction();
-  digitalWrite(BIAS_CHIP_SELECT_PIN, HIGH);
-}
-
 float measuredBias() /* V */ {
   return readVoltageWithTeensyLC(BIAS_MEASURE_PIN);
 }
@@ -563,6 +563,24 @@ void interpretWoodpeckerDown(String &parameters) {
   printSummary();
 }
 
+void monitorSignal(unsigned long duration /* ms */,
+                   unsigned long measurementDelay /* µs */,
+                   boolean signalShouldBePrinted) {
+  unsigned long startMillis = millis(), endMillis;
+
+  endMillis = startMillis + duration;
+  while (millis() < endMillis) {
+    if (signalShouldBePrinted) {
+      Serial.println(readSignal());
+    } else {
+      readAndLogSignal();
+    }
+    delayMicroseconds(measurementDelay);
+  }
+
+  printSummary();
+}
+
 void interpretMonitorSignal(String &parameters) {
   String s;
   unsigned long duration, measurementDelay = 100000;
@@ -597,20 +615,3 @@ void interpretSilentlyMonitorSignal(String &parameters) {
   monitorSignal(duration, measurementDelay, false);
 }
 
-void monitorSignal(unsigned long duration /* ms */,
-                   unsigned long measurementDelay /* µs */,
-                   boolean signalShouldBePrinted) {
-  unsigned long startMillis = millis(), endMillis;
-
-  endMillis = startMillis + duration;
-  while (millis() < endMillis) {
-    if (signalShouldBePrinted) {
-      Serial.println(readSignal());
-    } else {
-      readAndLogSignal();
-    }
-    delayMicroseconds(measurementDelay);
-  }
-
-  printSummary();
-}
