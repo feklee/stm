@@ -1,9 +1,9 @@
-#include <SPI.h>
+// Arduino / Teensy sketch
+//
+// For explanation of motor control, see:
+// <http://www.instructables.com/id/BYJ48-Stepper-Motor>
 
-/*
-  For explanation of motor control, see:
-  <http://www.instructables.com/id/BYJ48-Stepper-Motor>
-*/
+#include <SPI.h>
 
 #define MOTOR_PIN0 2
 #define MOTOR_PIN1 3
@@ -23,6 +23,12 @@ const long signalLogMaxSize = 1024;
 float signalLog[signalLogMaxSize];
 long signalLogHead = 0;
 long signalLogSize = 0;
+
+String taggedSignal(float signal) {
+  char s[11];
+  dtostrf(signal, 10, 2, s);
+  return "#" + String(s).trim(); // for easy parsing, e.g. for plotting
+}
 
 float readVoltageWithTeensyLC(int pin) {
   return analogRead(pin) * 3.3 / 0xffff;
@@ -46,7 +52,7 @@ void setupMotor() {
 }
 
 void setup() {
-  Serial.begin(115200);
+  Serial.begin(9600);
   setupMotor();
   setupPiezoSPI();
   setupBiasRegulatorSPI();
@@ -103,7 +109,7 @@ void help() {
                  "  * woodpecker-down <max. signal (V)> <step-increment> "
                  "<piezo-step-increment>\n"
                  "\n"
-                 "    Approaches automatically using the woodpecker method:"
+                 "    Approaches automatically using the woodpecker method:\n"
                  "    motor down by `step-increment`, piezo down, if maximum "
                  "signal reached\n"
                  "    then stop or else move piezo up and repeat\n"
@@ -179,7 +185,7 @@ void printLastSignals() {
   for (i = signalLogSize - 1; i >= 0; i --) {
     j = (signalLogHead + i) % signalLogSize;
     Serial.print(separator);
-    Serial.print(signalLog[j]);
+    Serial.print(taggedSignal(signalLog[j]));
     separator = ", ";
   }
   Serial.println("");
@@ -260,6 +266,7 @@ void interpretPiezoDown(String &parameters) {
   }
 
   stepsLeft = movePiezo(steps, true, limitSignal, maxSignal, stepIncrement);
+
   printSummary(steps - stepsLeft);
 }
 
@@ -598,7 +605,12 @@ void monitorSignal(unsigned long duration /* ms */,
   endMillis = startMillis + duration;
   while (millis() < endMillis) {
     if (signalShouldBePrinted) {
-      Serial.println(readSignal());
+      Serial.print(readSignal()); // fixme
+      Serial.print(", ");
+      float x = readSignal();
+      Serial.print(taggedSignal(x));
+      Serial.print(", ");
+      Serial.println(taggedSignal(0.0)); // fixme
     } else {
       readAndLogSignal();
     }
