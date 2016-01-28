@@ -25,8 +25,8 @@ long signalLogHead = 0;
 long signalLogSize = 0;
 
 String taggedSignal(float signal) {
-  char s[11];
-  dtostrf(signal, 10, 2, s);
+  char s[81];
+  sprintf(s, "%.2f", signal);
   return "#" + String(s).trim(); // for easy parsing, e.g. for plotting
 }
 
@@ -605,12 +605,7 @@ void monitorSignal(unsigned long duration /* ms */,
   endMillis = startMillis + duration;
   while (millis() < endMillis) {
     if (signalShouldBePrinted) {
-      Serial.print(readSignal()); // fixme
-      Serial.print(", ");
-      float x = readSignal();
-      Serial.print(taggedSignal(x));
-      Serial.print(", ");
-      Serial.println(taggedSignal(0.0)); // fixme
+      Serial.println(readSignal());
     } else {
       readAndLogSignal();
     }
