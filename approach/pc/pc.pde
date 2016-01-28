@@ -17,7 +17,7 @@ void setupSerial(int x, int y) {
     .setPosition(x, y)
     .setLabel("port")
     .setBarHeight(16)
-    .setWidth(100)
+    .setWidth(200)
     .setOpen(false);
 
   ports = serial.list();
@@ -28,7 +28,7 @@ void setupSerial(int x, int y) {
   portDropdownList.setValue(0);
 
   disConnectButton = cp5.addButton("disConnectButton")
-    .setPosition(x + 116, y)
+    .setPosition(x + 216, y)
     .setLabel("connect")
     .setValue(0)
     .setHeight(16);
