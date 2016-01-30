@@ -60,7 +60,7 @@ void setup() {
   plot = cp5.addChart("plotChart")
     .setPosition(582, 16)
     .setSize(682, 200)
-    .setRange(-0.5, 2.5)
+    .setRange(-0.5, 3.5)
     .setView(Chart.LINE)
     .setStrokeWeight(1.5)
     .setCaptionLabel("signal");
