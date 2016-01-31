@@ -59,9 +59,7 @@ void setBiasVoltageFactor(float factor /* [0, 1] */) {
 }
 
 String taggedSignal(float signal) {
-  char s[81];
-  sprintf(s, "%.2f", signal);
-  return "#" + String(s).trim(); // for easy parsing, e.g. for plotting
+  return "#" + String(signal, 2).trim(); // for easy parsing, e.g. for plotting
 }
 
 float readVoltageWithTeensyLC(int pin) {
@@ -211,14 +209,13 @@ void clearSignalLog() {
 void printLastSignals() {
   int i, j;
   String separator = "";
-  Serial.print("Last signals in reverse (V): ");
+  Serial.print("Last signals (V): ");
   if (signalLogSize == 0) {
     Serial.println("nothing recorded");
     return;
   }
-  for (i = signalLogSize - 1; i >= 0; i --) {
-    j = (signalLogHead + i) % signalLogSize;
-    Serial.print(separator);
+  for (i = -signalLogSize; i < 0; i++) {
+    j = (signalLogSize + signalLogHead + i) % signalLogSize;
     Serial.print(taggedSignal(signalLog[j]));
     separator = ", ";
   }
@@ -614,4 +611,3 @@ void interpretSilentlyMonitorSignal(String &parameters) {
 
   monitorSignal(duration, measurementDelay, false);
 }
-
