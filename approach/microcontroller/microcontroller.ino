@@ -216,6 +216,7 @@ void printLastSignals() {
   }
   for (i = -signalLogSize; i < 0; i++) {
     j = (signalLogSize + signalLogHead + i) % signalLogSize;
+    Serial.print(separator);
     Serial.print(taggedSignal(signalLog[j]));
     separator = ", ";
   }
