@@ -522,23 +522,9 @@ void movePiezoAllTheWayUp() {
   movePiezo(0xffff, false, false, 0, 1);
 }
 
-void interpretWoodpeckerDown(String &parameters) {
-  String
-    s1 = shift(parameters),
-    s2 = shift(parameters),
-    s3 = shift(parameters);
-  long stepIncrement, piezoStepIncrement;
-  float maxSignal;
+void woodpeckerDown(float maxSignal, long stepIncrement,
+                    long piezoStepIncrement) {
   long stepsLeft;
-
-  if (s3 == "") {
-    help();
-    return;
-  }
-
-  maxSignal = s1.toFloat();
-  stepIncrement = s2.toInt();
-  piezoStepIncrement = s3.toInt();
 
   Serial.println("After each motor step, the log of signals is cleared.");
   while (true) {
@@ -554,6 +540,29 @@ void interpretWoodpeckerDown(String &parameters) {
       break; // stopped because signal is too large
     }
   }
+  Serial.print("Closest piezo position (0-65535): ");
+  Serial.println(piezoPosition);
+  movePiezoAllTheWayUp();
+}
+
+void interpretWoodpeckerDown(String &parameters) {
+  String
+    s1 = shift(parameters),
+    s2 = shift(parameters),
+    s3 = shift(parameters);
+  long stepIncrement, piezoStepIncrement;
+  float maxSignal;
+
+  if (s3 == "") {
+    help();
+    return;
+  }
+
+  maxSignal = s1.toFloat();
+  stepIncrement = s2.toInt();
+  piezoStepIncrement = s3.toInt();
+
+  woodpeckerDown(maxSignal, stepIncrement, piezoStepIncrement);
 
   printSummary();
 }
