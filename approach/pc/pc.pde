@@ -35,23 +35,19 @@ void setupSerial(int x, int y) {
 }
 
 void setup() {
-  size(1280, 720, P3D);
-
-  PFont font = createFont("Consolas", 12);
+  size(1280, 720);
 
   cp5 = new ControlP5(this);
 
   cp5.addTextfield("commandTextfield")
     .setPosition(16, 16)
     .setSize(550, 16)
-    .setFont(font)
     .setCaptionLabel("")
     .setFocus(true);
 
   outputTextarea = cp5.addTextarea("outputTextarea")
     .setPosition(16, 48)
     .setSize(550, 656)
-    .setFont(font)
     .setLineHeight(18)
     .setColor(color(255))
     .setColorBackground(color(255, 100))
@@ -69,8 +65,6 @@ void setup() {
 
   outputTextarea.setText(
     "To get started select port and connect, then run: help\n");
-
-  textFont(font);
 
   setupSerial(582, 248);
 }
