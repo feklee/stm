@@ -35,7 +35,7 @@ void setupSerial(int x, int y) {
 }
 
 void setup() {
-  size(1280, 720);
+  size(1280, 720, P3D);
 
   PFont font = createFont("Consolas", 12);
 
