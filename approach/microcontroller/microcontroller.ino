@@ -512,9 +512,6 @@ void positionPiezo() {
   SPI.transfer(piezoPosition & 0xff);
   SPI.endTransaction();
   digitalWrite(PIEZO_CHIP_SELECT_PIN, HIGH);
-  delayMicroseconds(100); // time to dampen noise from SPI communication, which
-                          // can get picked up as signal, see
-                          // <https://github.com/feklee/stm/issues/3>
 }
 
 float measuredBias() /* V */ {
