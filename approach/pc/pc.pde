@@ -8,7 +8,7 @@ ControlP5 cp5;
 Textarea outputTextarea;
 Chart plot;
 DropdownList portDropdownList;
-Button disConnectButton;
+Button disConnectButton, clearButton;
 String ports[];
 
 void setupSerial(int x, int y) {
@@ -34,24 +34,35 @@ void setupSerial(int x, int y) {
     .setHeight(16);
 }
 
-void setup() {
-  size(1280, 720);
-
-  cp5 = new ControlP5(this);
-
+void setupCommandLine(int x, int y) {
   cp5.addTextfield("commandTextfield")
-    .setPosition(16, 16)
-    .setSize(550, 16)
+    .setPosition(x, y)
+    .setSize(484, 16)
     .setCaptionLabel("")
     .setFocus(true);
 
+  clearButton = cp5.addButton("clearButton")
+    .setPosition(x + 500, y)
+    .setLabel("clear")
+    .setValue(0)
+    .setSize(50, 16);
+
   outputTextarea = cp5.addTextarea("outputTextarea")
-    .setPosition(16, 48)
+    .setPosition(x, y + 32)
     .setSize(550, 656)
     .setLineHeight(18)
     .setColor(color(255))
     .setColorBackground(color(255, 100))
     .setColorForeground(color(255, 100));
+
+  outputTextarea.setText(
+    "To get started select port and connect, then run: help\n");
+}
+
+void setup() {
+  size(1280, 720);
+
+  cp5 = new ControlP5(this);
 
   plot = cp5.addChart("plotChart")
     .setPosition(582, 16)
@@ -63,9 +74,7 @@ void setup() {
   plot.addDataSet("signal");
   plot.setData("signal", new float[200]);
 
-  outputTextarea.setText(
-    "To get started select port and connect, then run: help\n");
-
+  setupCommandLine(16, 16);
   setupSerial(582, 248);
 }
 
@@ -127,4 +136,12 @@ public void disConnectButton() {
     serial.stop();
     disConnectButton.setLabel("connect");
   }
+}
+
+public void clearButton () {
+  if (clearButton == null) {
+    return;
+  }
+
+  outputTextarea.setText("");
 }
