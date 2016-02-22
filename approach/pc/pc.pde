@@ -139,9 +139,5 @@ public void disConnectButton() {
 }
 
 public void clearButton () {
-  if (clearButton == null) {
-    return;
-  }
-
   outputTextarea.setText("");
 }
