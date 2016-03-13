@@ -41,12 +41,6 @@ void setupCommandLine(int x, int y) {
     .setCaptionLabel("")
     .setFocus(true);
 
-  clearButton = cp5.addButton("clearButton")
-    .setPosition(x + 500, y)
-    .setLabel("clear")
-    .setValue(0)
-    .setSize(50, 16);
-
   outputTextarea = cp5.addTextarea("outputTextarea")
     .setPosition(x, y + 32)
     .setSize(550, 656)
@@ -54,6 +48,12 @@ void setupCommandLine(int x, int y) {
     .setColor(color(255))
     .setColorBackground(color(255, 100))
     .setColorForeground(color(255, 100));
+
+  clearButton = cp5.addButton("clearButton")
+    .setPosition(x + 500, y)
+    .setLabel("clear")
+    .setValue(0)
+    .setSize(50, 16);
 
   outputTextarea.setText(
     "To get started select port and connect, then run: help\n");
