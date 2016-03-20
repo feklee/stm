@@ -13,17 +13,34 @@ Button disConnectButton, clearButton;
 String ports[];
 GPlot signalPlot;
 
-void setupSignalPlot(int x, int y) {
-  int nPoints = 100;
+void setupApproachPlot(int x, int y) {
+  int nPoints = 100,
+    blue = color(0, 0x2d, 0x5a),
+    lightBlue = color(0, 0x75, 0xd9),
+    black = color(0, 0, 0),
+    white = color(0xff, 0xff, 0xff);
   GPointsArray points = new GPointsArray(nPoints);
   for (int i = 0; i < nPoints; i++) {
     points.add(i, 10 * noise(0.1 * i));
   }
-  signalPlot = new GPlot(this, x, y, 550, 380);
-  signalPlot.setTitleText("Signal");
+  signalPlot = new GPlot(this, x, y, 682, 380);
+  signalPlot.setTitleText("Approach");
+  signalPlot.getTitle().setFontColor(white);
   signalPlot.getXAxis().setAxisLabelText("Piezo position / nm");
+  signalPlot.getXAxis().setLineColor(lightBlue);
+  signalPlot.getXAxis().setFontColor(white);
+  signalPlot.getXAxis().getAxisLabel().setFontColor(white);
   signalPlot.getYAxis().setAxisLabelText("Signal / V");
+  signalPlot.getYAxis().setLineColor(lightBlue);
+  signalPlot.getYAxis().setFontColor(white);
+  signalPlot.getYAxis().getAxisLabel().setFontColor(white);
   signalPlot.setPoints(points);
+  signalPlot.setBgColor(blue);
+  signalPlot.setBoxBgColor(blue);
+  signalPlot.setBoxLineColor(lightBlue);
+  signalPlot.setFontColor(white);
+  signalPlot.setGridLineColor(white);
+  signalPlot.setLineColor(white);
 
   cp5.addNumberbox("supplyVoltageNumberbox")
     .setPosition(x, y + 396)
@@ -107,12 +124,12 @@ void setup() {
   cp5 = new ControlP5(this);
 
   setupCommandLine(16, 16);
-  setupSerial(582, 16);
   setupSignalLog(582, 48);
-  setupSignalPlot(582, 280);
+  setupApproachPlot(582, 280);
+  setupSerial(582, 16);
 }
 
-void pushSignalsToPlot(String output) {
+void pushSignalsToLogChart(String output) {
   String[][] matches = matchAll(output, "#([0-9]+\\.[0-9]+)");
 
   if (matches == null) {
@@ -134,11 +151,20 @@ void processOutput(Serial serial) {
   }
 }
 
+/*void approachSignalsFromLine() {
+  String[][] matches = matchAll(output, "#([0-9]+\\.[0-9]+)");
+}*/
+
 void processOutputLine(String outputLine) {
+/*  if (approachSignalsFromLine(outputLine)) {
+    updateApproachPlot();
+    return;
+  }*/
+
   outputTextarea.append(outputLine);
   outputTextarea.scroll(1);
 
-  pushSignalsToPlot(outputLine);
+  pushSignalsToLogChart(outputLine);
 }
 
 void draw() {
