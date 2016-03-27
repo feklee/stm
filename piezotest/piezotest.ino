@@ -91,7 +91,6 @@ void setup() {
   SPI.begin();
   setBiasVoltageFactor(0.01);
   analogReadResolution(16);
-  prompt();
 }
 
 void prompt() {
@@ -99,9 +98,7 @@ void prompt() {
 }
 
 void loop() {
-  if (Serial.available() > 0) {
-    interpretCommand(Serial.readString());
-  }
+  sawTooth();
 }
 
 String shift(String &s) {
@@ -383,6 +380,15 @@ void interpretPiezoPlay() {
   printSummary();
 }
 
+void sawTooth() {
+  while (true) {
+    for (piezoPosition = 0; piezoPosition < 0xffff; piezoPosition ++) {
+      positionPiezo();
+      delayMicroseconds(10);
+    }
+  }
+}
+
 void interpretSetBias(String &parameters) {
   String s;
 
@@ -508,8 +514,8 @@ byte nextPosition(byte position, boolean rotateClockwise) {
 void positionPiezo() {
   digitalWrite(PIEZO_CHIP_SELECT_PIN, LOW);
   SPI.beginTransaction(SPISettings(1400000, MSBFIRST, SPI_MODE0));
-  SPI.transfer((piezoPosition >> 8) & 0xff);
-  SPI.transfer(piezoPosition & 0xff);
+  SPI.transfer(0b00000000);
+  SPI.transfer16(piezoPosition);
   SPI.endTransaction();
   digitalWrite(PIEZO_CHIP_SELECT_PIN, HIGH);
 }
