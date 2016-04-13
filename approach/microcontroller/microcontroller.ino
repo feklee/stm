@@ -508,8 +508,8 @@ byte nextPosition(byte position, boolean rotateClockwise) {
 void positionPiezo() {
   digitalWrite(PIEZO_CHIP_SELECT_PIN, LOW);
   SPI.beginTransaction(SPISettings(1400000, MSBFIRST, SPI_MODE0));
-  SPI.transfer((piezoPosition >> 8) & 0xff);
-  SPI.transfer(piezoPosition & 0xff);
+  SPI.transfer(0b00000000);
+  SPI.transfer16(piezoPosition);
   SPI.endTransaction();
   digitalWrite(PIEZO_CHIP_SELECT_PIN, HIGH);
 }
