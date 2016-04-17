@@ -9,6 +9,7 @@
 #define MOTOR_PIN1 3
 #define MOTOR_PIN2 4
 #define MOTOR_PIN3 5
+#define MOTOR_ACTIVATION_PIN 10
 #define SIGNAL_MEASURE_PIN A2
 #define BIAS_MEASURE_PIN A3
 
@@ -35,14 +36,25 @@ void step(boolean rotateClockwise) {
   position = nextPosition(position, rotateClockwise);
 }
 
+void activateMotor() {
+  digitalWrite(MOTOR_ACTIVATION_PIN, HIGH);
+}
+
+void deactivateMotor() {
+  digitalWrite(MOTOR_ACTIVATION_PIN, LOW);
+}
+
 long rotate(long stepsLeft, boolean rotateClockwise,
             float limitingSignal /* V */) {
+  activateMotor();
   while (stepsLeft > 0 && signalIsInLimit(isMovingDown(rotateClockwise),
                                           limitingSignal)) {
     step(rotateClockwise);
     stepsLeft --;
     delay(1);
   }
+  deactivateMotor();
+
   return stepsLeft;
 }
 
@@ -84,6 +96,7 @@ void setupBiasRegulatorSPI() {
 }
 
 void setupMotor() {
+  pinMode(MOTOR_ACTIVATION_PIN, OUTPUT);
   pinMode(MOTOR_PIN0, OUTPUT);
   pinMode(MOTOR_PIN1, OUTPUT);
   pinMode(MOTOR_PIN2, OUTPUT);
@@ -594,13 +607,15 @@ void hover(float targetSignal, unsigned long duration) {
   endMillis = startMillis + duration;
   while (millis() < endMillis) {
     // fixme: piezo needs to be adjusted continuously, for target signal
-    Serial.println(readSignal());
+    Serial.println(readAndLogSignal());
+    delayMicroseconds(50000);
   }
 }
 
 void approachAndHover(float targetSignal, unsigned long hoverDuration) {
   woodpeckerDown(targetSignal, 1, 100);
   Serial.println("Approached. Hovering.");
+  hover(targetSignal, hoverDuration);
 }
 
 void interpretApproachAndHover(String &parameters) {
