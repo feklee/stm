@@ -7,11 +7,11 @@ import grafica.*;
 Serial serial;
 ControlP5 cp5;
 Textarea outputTextarea;
-Chart signalLogChart;
+Chart signalLogChart, piezoLogChart;
 DropdownList portDropdownList;
 Button disConnectButton, clearButton;
 String ports[];
-GPlot signalPlot;
+GPlot signalPlot, piezoPlot;
 
 void setupApproachPlot(int x, int y) {
   int nPoints = 100,
@@ -118,6 +118,19 @@ void setupSignalLog(int x, int y) {
   signalLogChart.setData("signal", new float[200]);
 }
 
+// plots piezo positions as they come in, one after the other
+void setupPiezoLog(int x, int y) {
+  piezoLogChart = cp5.addChart("piezoLogChart")
+    .setPosition(x, y)
+    .setSize(682, 200)
+    .setRange(0, 0xffff)
+    .setView(Chart.LINE)
+    .setStrokeWeight(1.5)
+    .setCaptionLabel("piezo log");
+  piezoLogChart.addDataSet("piezo");
+  piezoLogChart.setData("piezo", new float[200]);
+}
+
 void setup() {
   size(1280, 720);
 
@@ -125,19 +138,23 @@ void setup() {
 
   setupCommandLine(16, 16);
   setupSignalLog(582, 48);
-  setupApproachPlot(582, 280);
+  setupPiezoLog(582, 280);
+//  setupApproachPlot(582, 280);
   setupSerial(582, 16);
 }
 
 void pushSignalsToLogChart(String output) {
-  String[][] matches = matchAll(output, "#([0-9]+\\.[0-9]+)");
+  String[][] matches = matchAll(output,
+                                "#([0-9]+\\.[0-9]+)\\|([0-9]+)");
 
   if (matches == null) {
     return;
   }
 
   for (int i = 0; i < matches.length; i++) {
-    signalLogChart.push("signal", float(matches[i][1]));
+    String match[] = matches[i];
+    signalLogChart.push("signal", float(match[1]));
+    piezoLogChart.push("piezo", float(match[2]));
   }
 }
 
@@ -169,7 +186,7 @@ void processOutputLine(String outputLine) {
 
 void draw() {
   background(0);
-  signalPlot.defaultDraw();
+// fixme:  signalPlot.defaultDraw();
 
   // serial output is processed here because `serialEvent` sometimes doesn't
   // see all data right away (January 2016)

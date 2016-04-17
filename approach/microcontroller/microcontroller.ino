@@ -18,9 +18,14 @@
 
 #define MAX_PIEZO_POSITION 65535
 
+struct SignalLogEntry {
+  float signal;
+  long piezoPosition;
+};
+
 long piezoPosition = 0;
 const long signalLogMaxSize = 1024;
-float signalLog[signalLogMaxSize];
+SignalLogEntry signalLog[signalLogMaxSize];
 long signalLogHead = 0;
 long signalLogSize = 0;
 
@@ -58,8 +63,10 @@ void setBiasVoltageFactor(float factor /* [0, 1] */) {
   digitalWrite(BIAS_CHIP_SELECT_PIN, HIGH);
 }
 
-String taggedSignal(float signal) {
-  return "#" + String(signal, 2).trim(); // for easy parsing, e.g. for plotting
+// for easy parsing
+String taggedSignalLogEntry(SignalLogEntry e) {
+  return "#" + String(e.signal, 2).trim() + "|" +
+    String(e.piezoPosition).trim();
 }
 
 float readVoltageWithTeensyLC(int pin) {
@@ -146,6 +153,14 @@ void help() {
                  "signal reached\n"
                  "    then stop or else move piezo up and repeat\n"
                  "\n"
+                 "  * approach-and-hover <target signal (V)> <hover duration "
+                 "(ms)>\n"
+                 "\n"
+                 "    Approaches using the woodpecker method. Then hovers for "
+                 "the specified duration,\n"
+                 "    trying to maintain the signal by adjusting piezo "
+                 "position.\n"
+                 "\n"
                  "  * monitor-signal <duration (ms)> [delay (µs)]\n"
                  "\n"
                  "    Repeatedly prints the current signal (V).\n"
@@ -186,6 +201,8 @@ void interpretCommand(String s) {
     interpretPiezoPlay();
   } else if (command == "woodpecker-down") {
     interpretWoodpeckerDown(s);
+  } else if (command == "approach-and-hover") {
+    interpretApproachAndHover(s);
   } else if (command == "monitor-signal") {
     interpretMonitorSignal(s);
   } else if (command == "silently-monitor-signal") {
@@ -200,7 +217,7 @@ void interpretCommand(String s) {
 void clearSignalLog() {
   int i;
   for (i = 0; i < signalLogSize; i ++) {
-    signalLog[i] = 0;
+    signalLog[i] = {0, 0};
   }
   signalLogHead = 0;
   signalLogSize = 0;
@@ -217,7 +234,7 @@ void printLastSignals() {
   for (i = -signalLogSize; i < 0; i++) {
     j = (signalLogSize + signalLogHead + i) % signalLogSize;
     Serial.print(separator);
-    Serial.print(taggedSignal(signalLog[j]));
+    Serial.print(taggedSignalLogEntry(signalLog[j]));
     separator = ", ";
   }
   Serial.println("");
@@ -441,7 +458,7 @@ float readSignal() /* V */ {
 }
 
 void logSignal(float signal) {
-  signalLog[signalLogHead] = signal;
+  signalLog[signalLogHead] = {signal, piezoPosition};
 
   signalLogHead ++;
   if (signalLogHead >= signalLogMaxSize) {
@@ -525,6 +542,7 @@ void movePiezoAllTheWayUp() {
 void woodpeckerDown(float maxSignal, long stepIncrement,
                     long piezoStepIncrement) {
   long stepsLeft;
+  boolean piezoWasStoppedBeforeReachingEnd;
 
   Serial.println("After each motor step, the log of signals is cleared.");
   while (true) {
@@ -536,13 +554,15 @@ void woodpeckerDown(float maxSignal, long stepIncrement,
     rotate(stepIncrement, false, maxSignal);
     clearSignalLog();
     stepsLeft = movePiezo(0xffff, true, true, maxSignal, piezoStepIncrement);
-    if (stepsLeft >= piezoStepIncrement) {
-      break; // stopped because signal is too large
+    piezoWasStoppedBeforeReachingEnd = stepsLeft >= piezoStepIncrement;
+
+    // Breaks loop if signal is strong enough and the motor has positioned the
+    // piezo in a position where there is good room to move the tip up and down
+    // with the piezo.
+    if (piezoWasStoppedBeforeReachingEnd && piezoPosition > 0x7fff) {
+      break;
     }
   }
-  Serial.print("Closest piezo position (0-65535): ");
-  Serial.println(piezoPosition);
-  movePiezoAllTheWayUp();
 }
 
 void interpretWoodpeckerDown(String &parameters) {
@@ -563,6 +583,42 @@ void interpretWoodpeckerDown(String &parameters) {
   piezoStepIncrement = s3.toInt();
 
   woodpeckerDown(maxSignal, stepIncrement, piezoStepIncrement);
+
+  printSummary();
+}
+
+void hover(float targetSignal, unsigned long duration) {
+  unsigned long startMillis = millis(), endMillis;
+
+  // first, just print signal
+  endMillis = startMillis + duration;
+  while (millis() < endMillis) {
+    // fixme: piezo needs to be adjusted continuously, for target signal
+    Serial.println(readSignal());
+  }
+}
+
+void approachAndHover(float targetSignal, unsigned long hoverDuration) {
+  woodpeckerDown(targetSignal, 1, 100);
+  Serial.println("Approached. Hovering.");
+}
+
+void interpretApproachAndHover(String &parameters) {
+  String
+    s1 = shift(parameters),
+    s2 = shift(parameters);
+  unsigned long hoverDuration;
+  float targetSignal;
+
+  if (s2 == "") {
+    help();
+    return;
+  }
+
+  targetSignal = s1.toFloat();
+  hoverDuration = s2.toInt();
+
+  approachAndHover(targetSignal, hoverDuration);
 
   printSummary();
 }
