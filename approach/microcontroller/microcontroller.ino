@@ -164,6 +164,13 @@ void help() {
                  "signal reached\n"
                  "    then stop or else move piezo up and repeat\n"
                  "\n"
+                 "  * approach-and-keep <target signal (V)> <hover duration "
+                 "(ms)>\n"
+                 "\n"
+                 "    Approaches using the woodpecker method. Then keeps the "
+                 "position for the\n"
+                 "    specified duration.\n"
+                 "\n"
                  "  * approach-and-hover <target signal (V)> <hover duration "
                  "(ms)>\n"
                  "\n"
@@ -212,6 +219,8 @@ void interpretCommand(String s) {
     interpretPiezoPlay();
   } else if (command == "woodpecker-down") {
     interpretWoodpeckerDown(s);
+  } else if (command == "approach-and-keep") {
+    interpretApproachAndKeep(s);
   } else if (command == "approach-and-hover") {
     interpretApproachAndHover(s);
   } else if (command == "monitor-signal") {
@@ -606,15 +615,57 @@ void interpretWoodpeckerDown(String &parameters) {
   printSummary();
 }
 
-void hover(float targetSignal, unsigned long duration) {
+void keep(unsigned long duration) {
   unsigned long startMillis = millis(), endMillis;
 
-  // first, just print signal
   endMillis = startMillis + duration;
   while (millis() < endMillis) {
-    // fixme: piezo needs to be adjusted continuously, for target signal
     Serial.println(readAndLogSignal());
     delayMicroseconds(50000);
+  }
+}
+
+void approachAndKeep(float targetSignal, unsigned long keepDuration) {
+  woodpeckerDown(targetSignal, 1, 100);
+  Serial.println("Approached. Keeping position.");
+  keep(keepDuration);
+}
+
+void interpretApproachAndKeep(String &parameters) {
+  String
+    s1 = shift(parameters),
+    s2 = shift(parameters);
+  unsigned long keepDuration;
+  float targetSignal;
+
+  if (s2 == "") {
+    help();
+    return;
+  }
+
+  targetSignal = s1.toFloat();
+  keepDuration = s2.toInt();
+
+  approachAndKeep(targetSignal, keepDuration);
+
+  printSummary();
+}
+
+void hover(float targetSignal, unsigned long duration) {
+  unsigned long startMillis = millis(), endMillis,
+    lastPrintMillis = millis(), m;
+
+  endMillis = startMillis + duration;
+  while ((m = millis()) < endMillis) {
+    if (m - lastPrintMillis > 50000) { // only print in intervals
+      Serial.println(readAndLogSignal());
+      lastPrintMillis = m;
+    }
+    if (readSignal() > targetSignal) {
+      stepPiezo(-1);
+    } else if (readSignal() < targetSignal) {
+      stepPiezo(1);
+    }
   }
 }
 
