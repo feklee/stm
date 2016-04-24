@@ -1,0 +1,14 @@
+{
+  "name": "frontend",
+  "version": "0.0.0",
+  "description": "Frontend for controlling the STM",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "WTFPL",
+  "dependencies": {
+    "serialport": "^2.1.0"
+  }
+}
