@@ -46,14 +46,12 @@ void deactivateMotor() {
 
 long rotate(long stepsLeft, boolean rotateClockwise,
             float limitingSignal /* V */) {
-  activateMotor();
   while (stepsLeft > 0 && signalIsInLimit(isMovingDown(rotateClockwise),
                                           limitingSignal)) {
     step(rotateClockwise);
     stepsLeft --;
     delay(1);
   }
-  deactivateMotor();
 
   return stepsLeft;
 }
@@ -297,7 +295,9 @@ void interpretDown(String &parameters) {
     maxSignal = s.toFloat();
   }
 
+  activateMotor();
   stepsLeft = rotate(steps, false, maxSignal);
+  deactivateMotor();
   printSummary(steps - stepsLeft);
 }
 
@@ -317,7 +317,9 @@ void interpretUp(String &parameters) {
     minSignal = s.toFloat();
   }
 
+  activateMotor();
   stepsLeft = rotate(steps, true, minSignal);
+  deactivateMotor();
   printSummary(steps - stepsLeft);
 }
 
@@ -557,6 +559,8 @@ void woodpeckerDown(float maxSignal, long stepIncrement,
   long stepsLeft;
   boolean piezoWasStoppedBeforeReachingEnd;
 
+  activateMotor();
+
   Serial.println("After each motor step, the log of signals is cleared.");
   while (true) {
     Serial.print("Signal before next motor step (V): ");
@@ -572,10 +576,12 @@ void woodpeckerDown(float maxSignal, long stepIncrement,
     // Breaks loop if signal is strong enough and the motor has positioned the
     // piezo in a position where there is good room to move the tip up and down
     // with the piezo.
-    if (piezoWasStoppedBeforeReachingEnd && piezoPosition > 0x7fff) {
+    if (piezoWasStoppedBeforeReachingEnd /* fixme (restore?): && piezoPosition > 0x7fff */) {
       break;
     }
   }
+
+  deactivateMotor();
 }
 
 void interpretWoodpeckerDown(String &parameters) {
