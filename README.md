@@ -14,6 +14,8 @@ Coding conventions
 
 * Comments in Markdown
 
+* JavaScript passes JSLint.
+
 
 Legal
 =====
