@@ -657,7 +657,7 @@ void hover(float targetSignal, unsigned long duration) {
 
   endMillis = startMillis + duration;
   while ((m = millis()) < endMillis) {
-    if (m - lastPrintMillis > 50000) { // only print in intervals
+    if (m - lastPrintMillis > 50) { // only print in intervals
       Serial.println(readAndLogSignal());
       lastPrintMillis = m;
     }
