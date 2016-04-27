@@ -9,6 +9,7 @@
   "author": "",
   "license": "WTFPL",
   "dependencies": {
+    "express": "^4.13.4",
     "serialport": "^2.1.0"
   }
 }

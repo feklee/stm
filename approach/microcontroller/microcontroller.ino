@@ -414,7 +414,7 @@ void positionPiezoForDuration(long desiredPosition, long duration /* ms */) {
 void interpretPiezoPlay() {
   float frequency = 440 /* Hz */;
   long duration = 1000 / frequency / 2 /* ms */,
-    totalDuration = 20000 /* ms */;
+    totalDuration = 2000 /* ms */;
 
   for (long i = 0; i < totalDuration / (2 * duration); i ++) {
     positionPiezoForDuration(0xffff, duration);
@@ -547,9 +547,10 @@ byte nextPosition(byte position, boolean rotateClockwise) {
 }
 
 void positionPiezo() {
+  byte dacChannel = 2;
   digitalWrite(PIEZO_CHIP_SELECT_PIN, LOW);
   SPI.beginTransaction(SPISettings(1400000, MSBFIRST, SPI_MODE0));
-  SPI.transfer(0b00000000);
+  SPI.transfer(dacChannel);
   SPI.transfer16(piezoPosition);
   SPI.endTransaction();
   digitalWrite(PIEZO_CHIP_SELECT_PIN, HIGH);
