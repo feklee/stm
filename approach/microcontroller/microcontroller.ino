@@ -547,7 +547,7 @@ byte nextPosition(byte position, boolean rotateClockwise) {
 }
 
 void positionPiezo() {
-  byte dacChannel = 2;
+  byte dacChannel = 0;
   digitalWrite(PIEZO_CHIP_SELECT_PIN, LOW);
   SPI.beginTransaction(SPISettings(1400000, MSBFIRST, SPI_MODE0));
   SPI.transfer(dacChannel);
