@@ -18,6 +18,11 @@
 
 #define MAX_PIEZO_POSITION 65535
 
+#define PORT_A 0b00000000
+#define PORT_B 0b00000001
+#define PORT_C 0b00000010
+#define PORT_D 0b00000011
+
 long piezoPosition = 0;
 const long signalLogMaxSize = 1024;
 float signalLog[signalLogMaxSize];
@@ -52,7 +57,7 @@ void sawTooth() {
 void positionPiezo() {
   digitalWrite(PIEZO_CHIP_SELECT_PIN, LOW);
   SPI.beginTransaction(SPISettings(1400000, MSBFIRST, SPI_MODE0));
-  SPI.transfer(0b00000000);
+  SPI.transfer(PORT_A);
   SPI.transfer16(piezoPosition);
   SPI.endTransaction();
   digitalWrite(PIEZO_CHIP_SELECT_PIN, HIGH);
