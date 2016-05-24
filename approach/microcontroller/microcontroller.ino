@@ -672,7 +672,10 @@ void hover(float targetSignal, unsigned long duration) {
 
 void approachAndHover(float targetSignal, unsigned long hoverDuration) {
   woodpeckerDown(targetSignal, 1, 100);
-  Serial.println("Approached. Hovering.");
+  Serial.println("Approached. Approaching again, with higher resolution.");
+  movePiezoAllTheWayUp();
+  movePiezo(0xffff, true, true, targetSignal, 10);
+  Serial.println("Hovering.");
   hover(targetSignal, hoverDuration);
 }
 
