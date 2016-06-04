@@ -2,46 +2,44 @@
 
 /*global define, window */
 
-define(function () {
+define(['scan-image'], function (scanImage) {
     'use strict';
 
-    var i = 0;
-    var lastTimestamp = 0;
+    var client = new window.WebSocket('ws://localhost:8080/', 'echo-protocol');
 
-    function addPixel(x, y, intensity) {
-        var rect = document.createElementNS(
-            "http://www.w3.org/2000/svg",
-            'rect'
-        );
-        rect.setAttribute('x', x);
-        rect.setAttribute('y', y);
-        rect.setAttribute('height', 1);
-        rect.setAttribute('width', 1);
-        var animate = document.createElementNS(
-            "http://www.w3.org/2000/svg",
-            'animate'
-        );
-        animate.setAttribute('attributeName', 'fill');
-        animate.setAttribute('from', 'white');
-        var color = 'rgb(0,' + Math.floor(255 * intensity) + ',0)';
-        animate.setAttribute('to', color);
-        animate.setAttribute('dur', '1s');
-        animate.setAttribute('fill', 'freeze');
-        animate.setAttribute('begin', 'DOMNodeInserted');
-        rect.appendChild(animate);
-        document.querySelector('svg').appendChild(rect);
-    }
+    client.onerror = function () {
+        window.console.log('Connection error');
+    };
 
-    function step(timestamp) {
-        if (timestamp - lastTimestamp > 10) {
-            do {
-                addPixel(i % 128, Math.floor(i / 128), 0.5);
-                i += 1;
-            } while (i % 10 !== 0);
-            lastTimestamp = timestamp;
+    client.onopen = function () {
+        window.console.log('Client connected');
+    };
+
+    client.onclose = function () {
+        window.console.log('Client closed');
+    };
+
+    client.onmessage = function (e) {
+        var data;
+        if (typeof e.data === 'string') {
+            data = JSON.parse(e.data);
+        } else {
+            return;
         }
-        window.requestAnimationFrame(step);
-    }
 
-    window.requestAnimationFrame(step);
+        switch (data.type) {
+        case 'sideLen':
+            scanImage.sideLen = data.sideLen;
+            break;
+        case 'pixel':
+            scanImage.setPixel(data.x, data.y, data.intensity);
+            break;
+        case 'finished':
+            scanImage.finish();
+            break;
+        case 'started':
+            scanImage.clear();
+            break;
+        }
+    };
 });

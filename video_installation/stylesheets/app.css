@@ -1,7 +1,17 @@
-svg {
+html {
+    background: black;
+}
+
+canvas {
     height: 100vh;
     background: black;
     margin-left: auto;
     margin-right: auto;
     display: block;
+    transition: opacity 0s;
+}
+
+canvas.finished {
+    opacity: 0;
+    transition: opacity 4s;
 }
