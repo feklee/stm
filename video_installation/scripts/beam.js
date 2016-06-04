@@ -5,31 +5,33 @@
 define(function () {
     'use strict';
 
-    var canvas = document.querySelector('canvas.scan-image');
+    var canvas = document.querySelector('canvas.beam');
     var ctx = canvas.getContext('2d');
     var offset = 2; // px
 
-    function intensityString(intensity) {
-        return 'rgb(0,' + Math.floor(255 * intensity) + ',0)';
-    }
-
-    function finish() {
-        canvas.className = 'finished';
-    }
-
-    function setPixel(x, y, intensity) {
-        ctx.fillStyle = intensityString(intensity);
+    function draw(x, y) {
+        ctx.globalCompositeOperation = 'source-over';
+        ctx.fillStyle = 'white';
         ctx.fillRect(offset + x, offset + y, 1, 1);
-        canvas.className = 'scanning';
     }
 
     function clear() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
     }
 
+    function fade() { // fixme: use time
+        ctx.globalCompositeOperation = 'destination-out';
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        window.requestAnimationFrame(fade);
+    }
+
+    draw(10, 10);
+
+    fade();
+
     return {
-        setPixel: setPixel,
-        finish: finish,
+        draw: draw,
         set sideLen(newSideLen) {
             canvas.setAttribute('width', newSideLen + 2 * offset);
             canvas.setAttribute('height', newSideLen + 2 * offset);

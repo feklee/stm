@@ -5,7 +5,7 @@
 'use strict';
 
 var i = 0;
-var sideLen = 32;
+var sideLen = 128;
 var disturbanceInterval = [0, 0];
 var connection = null;
 var startScan;
@@ -76,15 +76,17 @@ function sendPixel(x, y) {
 }
 
 function scanStep() {
-    var x = i % sideLen;
-    var y = Math.floor(i / sideLen);
-    sendPixel(x, y);
-    if (isLastPixel(x, y)) {
-        finishScan();
-    } else {
+    for (var j = 0; j < 1000; j += 1) {
+        var x = i % sideLen;
+        var y = Math.floor(i / sideLen);
+        sendPixel(x, y);
+        if (isLastPixel(x, y)) {
+            finishScan();
+            return;
+        }
         i += 1;
-        setTimeout(scanStep, 1);
     }
+    setTimeout(scanStep, 1);
 }
 
 startScan = function () {
@@ -92,6 +94,7 @@ startScan = function () {
         type: 'started'
     });
     i = 0;
+    disturbanceInterval = [0, 0];
     scanStep();
 };
 

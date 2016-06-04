@@ -2,7 +2,7 @@
 
 /*global define, window */
 
-define(['scan-image'], function (scanImage) {
+define(['scan-image', 'beam'], function (scanImage, beam) {
     'use strict';
 
     var client = new window.WebSocket('ws://localhost:8080/', 'echo-protocol');
@@ -30,15 +30,18 @@ define(['scan-image'], function (scanImage) {
         switch (data.type) {
         case 'sideLen':
             scanImage.sideLen = data.sideLen;
+            beam.sideLen = data.sideLen;
             break;
         case 'pixel':
             scanImage.setPixel(data.x, data.y, data.intensity);
+            beam.draw(data.x, data.y);
             break;
         case 'finished':
             scanImage.finish();
             break;
         case 'started':
             scanImage.clear();
+            beam.clear();
             break;
         }
     };
