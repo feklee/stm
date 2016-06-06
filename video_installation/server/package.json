@@ -9,6 +9,7 @@
   "author": "",
   "license": "WTFPL",
   "dependencies": {
-    "websocket": "^1.0.23"
+    "websocket": "^1.0.23",
+    "png-js": "0.1.x"
   }
 }

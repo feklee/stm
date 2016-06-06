@@ -9,6 +9,7 @@ var sideLen = 128;
 var disturbanceInterval = [0, 0];
 var connection = null;
 var startScan;
+var image = require('./image');
 
 function sendIfConnected(data) {
     if (connection === null) {
@@ -46,7 +47,7 @@ function disturbance() {
 }
 
 function undisturbedIntensity(x, y) {
-    return (x * x + y * y) / 100 % 1;
+    return image.intensity(x, y);
 }
 
 function intensity(x, y) {
