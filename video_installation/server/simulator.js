@@ -7,7 +7,7 @@
 var i = 0;
 var sideLen = 128;
 var startScan;
-var onScanPixel;
+var onScanPixels;
 var intensity = 0.5;
 
 function updateIntensity() {
@@ -15,8 +15,8 @@ function updateIntensity() {
             (Math.random() - 0.5)));
 }
 
-function isLastPixel(x, y) {
-    return x === sideLen - 1 && y === sideLen - 1;
+function isLastPixel(pixel) {
+    return pixel.x === sideLen - 1 && pixel.y === sideLen - 1;
 }
 
 function finishScan() {
@@ -24,25 +24,33 @@ function finishScan() {
 }
 
 function scanStep() {
-    var x = i % sideLen;
-    var y = Math.floor(i / sideLen);
-    onScanPixel({
-        x: x,
-        y: y,
-        intensity: intensity
-    });
-    if (isLastPixel(x, y)) {
-        finishScan();
-        return;
-    }
-    updateIntensity();
-    i += 1;
+    const chunkSize = 10;
+    var x;
+    var y;
+    var scanPixels = [];
+    do {
+        x = i % sideLen;
+        y = Math.floor(i / sideLen);
+        scanPixels.push({
+            x: x,
+            y: y,
+            intensity: intensity
+        });
+        if (isLastPixel({x: x, y: y})) {
+            onScanPixels(scanPixels);
+            finishScan();
+            return;
+        }
+        updateIntensity();
+        i += 1;
+    } while (i % chunkSize !== 0);
+    onScanPixels(scanPixels);
     setTimeout(scanStep, 1);
 }
 
-startScan = function (newOnScanPixel) {
-    if (newOnScanPixel) {
-        onScanPixel = newOnScanPixel;
+startScan = function (newOnScanPixels) {
+    if (newOnScanPixels) {
+        onScanPixels = newOnScanPixels;
     }
     i = 0;
     intensity = 0.5;

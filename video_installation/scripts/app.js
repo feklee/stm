@@ -6,6 +6,7 @@ define(['scan-image'], function (scanImage) {
     'use strict';
 
     var client = new window.WebSocket('ws://localhost:8080/');
+    var fixme = false;
 
     client.onerror = function () {
         window.console.log('Connection error');
@@ -33,12 +34,6 @@ define(['scan-image'], function (scanImage) {
             break;
         case 'pixels':
             scanImage.drawPixels(data.pixels);
-            break;
-        case 'finished':
-            scanImage.finish();
-            break;
-        case 'started':
-            scanImage.clear();
             break;
         }
     };

@@ -17,14 +17,6 @@ function sendIfConnected(data) {
     connection.sendUTF(JSON.stringify(data));
 }
 
-function isFirstPixel(x, y) {
-    return x === 0 && y === 0;
-}
-
-function isLastPixel(x, y) {
-    return x === sideLen - 1 && y === sideLen - 1;
-}
-
 function sendSideLen() {
     sendIfConnected({
         type: 'sideLen',
@@ -44,38 +36,22 @@ function sendMixedPixels() {
     });
 }
 
-function appendMixedPixel(mixedPixel) {
-    const chunkSize = 10;
-    mixedPixels.push(mixedPixel);
-    if (mixedPixels.length >= chunkSize) {
-        sendMixedPixels();
-        mixedPixels = [];
-    }
-}
-
 function onScanPixel(scanPixel) {
     var x = scanPixel.x;
     var y = scanPixel.y;
     var v = visibilityOfScan(scanPixel);
 
-    appendMixedPixel({
+    mixedPixels.push({
         x: x,
         y: y,
         intensity: scanPixel.intensity * v + image.intensity(x, y) * (1 - v)
     });
+}
 
-    if (isFirstPixel(x, y)) {
-        sendIfConnected({
-            type: 'started'
-        });
-    }
-
-    if (isLastPixel(x, y)) {
-        sendMixedPixels();
-        sendIfConnected({
-            type: 'finished'
-        });
-    }
+function onScanPixels(scanPixels) {
+    mixedPixels = [];
+    scanPixels.forEach(onScanPixel);
+    sendMixedPixels();
 }
 
 module.exports = {
@@ -83,5 +59,5 @@ module.exports = {
         connection = newConnection;
         sendSideLen();
     },
-    onScanPixel: onScanPixel
+    onScanPixels: onScanPixels
 };

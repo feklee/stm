@@ -24,7 +24,7 @@ var wsServer = new WebSocketServer({
     autoAcceptConnections: false
 });
 
-simulator.startScan(mixer.onScanPixel);
+simulator.startScan(mixer.onScanPixels);
 
 wsServer.on('request', function (request) {
     var connection = request.accept(null, request.origin);
