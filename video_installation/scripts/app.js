@@ -5,7 +5,7 @@
 define(['scan-image'], function (scanImage) {
     'use strict';
 
-    var client = new window.WebSocket('ws://localhost:8080/', 'echo-protocol');
+    var client = new window.WebSocket('ws://localhost:8080/');
 
     client.onerror = function () {
         window.console.log('Connection error');

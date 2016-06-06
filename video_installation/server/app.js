@@ -24,7 +24,7 @@ var wsServer = new WebSocketServer({
 });
 
 wsServer.on('request', function (request) {
-    var connection = request.accept('echo-protocol', request.origin);
+    var connection = request.accept(null, request.origin);
     console.log((new Date()) + ' Connection accepted.');
 
     simulator.connection = connection;
