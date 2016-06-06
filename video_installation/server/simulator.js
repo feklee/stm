@@ -6,119 +6,49 @@
 
 var i = 0;
 var sideLen = 128;
-var disturbanceInterval = [0, 0];
-var connection = null;
 var startScan;
-var image = require('./image');
+var onScanPixel;
+var intensity = 0.5;
 
-function sendIfConnected(data) {
-    if (connection === null) {
-        return;
-    }
-    connection.sendUTF(JSON.stringify(data));
-}
-
-function isInDisturbanceInterval() {
-    return (i >= disturbanceInterval[0] && i < disturbanceInterval[1]);
-}
-
-function isPastDisturbanceInterval() {
-    return i >= disturbanceInterval[1];
-}
-
-function createNextDisturbanceInterval() {
-    disturbanceInterval[0] = i + Math.random() * 200;
-    disturbanceInterval[1] = disturbanceInterval[0] + Math.random() * 50;
-}
-
-function isDisturbed() {
-    if (isInDisturbanceInterval()) {
-        return true;
-    } else {
-        if (isPastDisturbanceInterval()) {
-            createNextDisturbanceInterval();
-        }
-        return false;
-    }
-}
-
-function disturbance() {
-    return 0.25 * Math.random();
-}
-
-function undisturbedIntensity(x, y) {
-    return image.intensity(x, y);
-}
-
-function intensity(x, y) {
-    return isDisturbed()
-        ? disturbance()
-        : undisturbedIntensity(x, y);
-}
-
-function finishScan() {
-    sendIfConnected({
-        type: 'finished'
-    });
-    setTimeout(startScan, 5000);
+function updateIntensity() {
+    intensity = Math.max(0, Math.min(1, intensity + 0.1 *
+            (Math.random() - 0.5)));
 }
 
 function isLastPixel(x, y) {
     return x === sideLen - 1 && y === sideLen - 1;
 }
 
-function sendPixels(pixels) {
-    sendIfConnected({
-        type: 'pixels',
-        pixels: pixels
-    });
-}
-
-function appendPixel(pixels, x, y) {
-    pixels.push({
-        x: x,
-        y: y,
-        intensity: intensity(x, y)
-    });
+function finishScan() {
+    setTimeout(startScan, 5000);
 }
 
 function scanStep() {
-    var pixels = [];
-    for (var j = 0; j < 10; j += 1) {
-        var x = i % sideLen;
-        var y = Math.floor(i / sideLen);
-        appendPixel(pixels, x, y);
-        if (isLastPixel(x, y)) {
-            finishScan();
-            return;
-        }
-        i += 1;
+    var x = i % sideLen;
+    var y = Math.floor(i / sideLen);
+    onScanPixel({
+        x: x,
+        y: y,
+        intensity: intensity
+    });
+    if (isLastPixel(x, y)) {
+        finishScan();
+        return;
     }
-    sendPixels(pixels);
+    updateIntensity();
+    i += 1;
     setTimeout(scanStep, 1);
 }
 
-startScan = function () {
-    sendIfConnected({
-        type: 'started'
-    });
+startScan = function (newOnScanPixel) {
+    if (newOnScanPixel) {
+        onScanPixel = newOnScanPixel;
+    }
     i = 0;
-    disturbanceInterval = [0, 0];
+    intensity = 0.5;
     scanStep();
 };
 
-function sendSideLen() {
-    sendIfConnected({
-        type: 'sideLen',
-        sideLen: sideLen
-    });
-}
-
-startScan();
-
 module.exports = {
-    set connection(newConnection) {
-        connection = newConnection;
-        sendSideLen();
-    }
+    startScan: startScan
 };
