@@ -35,7 +35,6 @@ define(function () {
         set sideLen(newSideLen) {
             canvas.setAttribute('width', newSideLen + 2 * offset);
             canvas.setAttribute('height', newSideLen + 2 * offset);
-            document.body.appendChild(canvas);
         },
         clear: clear
     };

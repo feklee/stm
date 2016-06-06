@@ -66,9 +66,15 @@ function isLastPixel(x, y) {
     return x === sideLen - 1 && y === sideLen - 1;
 }
 
-function sendPixel(x, y) {
+function sendPixels(pixels) {
     sendIfConnected({
-        type: 'pixel',
+        type: 'pixels',
+        pixels: pixels
+    });
+}
+
+function appendPixel(pixels, x, y) {
+    pixels.push({
         x: x,
         y: y,
         intensity: intensity(x, y)
@@ -76,16 +82,18 @@ function sendPixel(x, y) {
 }
 
 function scanStep() {
-    for (var j = 0; j < 1000; j += 1) {
+    var pixels = [];
+    for (var j = 0; j < 10; j += 1) {
         var x = i % sideLen;
         var y = Math.floor(i / sideLen);
-        sendPixel(x, y);
+        appendPixel(pixels, x, y);
         if (isLastPixel(x, y)) {
             finishScan();
             return;
         }
         i += 1;
     }
+    sendPixels(pixels);
     setTimeout(scanStep, 1);
 }
 
