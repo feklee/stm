@@ -1,4 +1,4 @@
-// Simulates scanning.
+// Mixes the image and the data from the microscope.
 
 /*jslint node: true, es6: true, maxlen: 80 */
 

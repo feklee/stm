@@ -10,6 +10,7 @@
   "license": "WTFPL",
   "dependencies": {
     "websocket": "^1.0.23",
-    "png-js": "0.1.x"
+    "png-js": "0.1.x",
+    "serialport": "^2.1.0"
   }
 }
