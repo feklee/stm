@@ -54,7 +54,7 @@ function onData(data) {
 if (args.length === 0) {
     stm.listSerialPorts(
         function (ports) {
-            console.log('Specify serial port as first argument.');
+            console.log('Specify com port name as first argument.');
             console.log('');
             console.log('Available ports:');
             ports.forEach(function (port) {

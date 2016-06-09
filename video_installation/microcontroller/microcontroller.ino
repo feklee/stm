@@ -35,5 +35,4 @@ void scanStep() {
 void loop() {
   scanStep();
   fader.read();
-//  delay(100);
 }

@@ -7,8 +7,8 @@
 var sideLen = 128;
 var connection = null;
 var image = require('./image');
-var attenuationOfScan = 2;
-var faderPosition;
+var attenuationOfScan = 0;
+var faderPosition = 0;
 var mixedPixels = [];
 
 function sendIfConnected(data) {
@@ -31,7 +31,7 @@ function visibilityOfScan(scanPixel) {
         return 0;
     } else {
         return Math.pow(2 * Math.abs(scanPixel.intensity - 0.5),
-                        attenuationOfScan);
+                attenuationOfScan);
     }
 }
 
