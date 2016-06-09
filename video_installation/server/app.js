@@ -31,6 +31,8 @@ function onConnectedToStm() {
         console.log((new Date()) + ' Connection accepted.');
         mixer.connection = connection;
     });
+
+    stm.startScan();
 }
 
 function interpretScanData(data) {

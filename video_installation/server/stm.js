@@ -16,7 +16,7 @@ function listSerialPorts(callback) {
 
 function connect(settings) {
     port = new SerialPort(settings.comName, {
-        baudRate: 9600,
+        baudRate: 115200,
         parser: serialport.parsers.readline('\n')
     });
     port.on('open', function () {
@@ -44,7 +44,12 @@ function connect(settings) {
     });
 }
 
+function startScan() {
+// fixme    port.
+}
+
 module.exports = {
     listSerialPorts: listSerialPorts,
-    connect: connect
+    connect: connect,
+    startScan: startScan
 };

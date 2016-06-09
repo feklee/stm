@@ -9,6 +9,7 @@ static const int sideLen = 128;
 static uint16_t z = 0xffff / 2;
 
 void setup() {
+  Serial.begin(115200);
   analogReadResolution(16);
 //  pinMode(A1, INPUT);
 }
