@@ -11,19 +11,7 @@ var mixer = require('./mixer');
 var stm = require('./stm');
 var args = process.argv.slice(2);
 
-if (args.length === 0) {
-    stm.listSerialPorts(
-        function (ports) {
-            console.log('Specify serial port as first argument.');
-            console.log('');
-            console.log('Available ports:');
-            ports.forEach(function (port) {
-                console.log('');
-                console.log('  * ' + port.comName);
-            });
-        }
-    );
-} else {
+function onConnectedToStm() {
     var server = http.createServer(function (request, response) {
         console.log((new Date()) + ' Received request for ' + request.url);
         response.writeHead(404);
@@ -44,6 +32,31 @@ if (args.length === 0) {
         console.log((new Date()) + ' Connection accepted.');
         mixer.connection = connection;
     });
+}
 
-    simulator.startScan();
+function onData(data) {
+    var scanPixels = data.data.map(function (datum) {
+        return {x: datum[0], y: datum[1], intensity: datum[2] / 0xffff};
+    });
+    mixer.onScanPixels(scanPixels);
+}
+
+if (args.length === 0) {
+    stm.listSerialPorts(
+        function (ports) {
+            console.log('Specify serial port as first argument.');
+            console.log('');
+            console.log('Available ports:');
+            ports.forEach(function (port) {
+                console.log('');
+                console.log('  * ' + port.comName);
+            });
+        }
+    );
+} else {
+    stm.connect({
+        comName: args[0],
+        onConnected: onConnectedToStm,
+        onData: onData
+    });
 }

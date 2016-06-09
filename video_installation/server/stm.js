@@ -4,18 +4,47 @@
 
 'use strict';
 
-var serialPort = require('serialport');
-var onOutput;
+var serialport = require('serialport');
+var SerialPort = serialport.SerialPort;
+var port;
 
 function listSerialPorts(callback) {
-    serialPort.list(function (ignore, ports) {
+    serialport.list(function (ignore, ports) {
         callback(ports);
+    });
+}
+
+function connect(settings) {
+    port = new SerialPort(settings.comName, {
+        baudRate: 9600,
+        parser: serialport.parsers.readline('\n')
+    });
+    port.on('open', function () {
+        console.log('Serial port opened');
+        settings.onConnected();
+    });
+    port.on('close', function () {
+        console.log('Serial port closed');
+    });
+    port.on('error', function () {
+        console.log('Serial port error');
+    });
+    port.on('disconnected', function () {
+        console.log('Serial port disconnected');
+    });
+    port.on('data', function (json) {
+        try {
+            var data = JSON.parse(json);
+            settings.onData(data);
+        } catch (e) {
+            if (e.name === 'SyntaxError') {
+                console.log('Data is not valid JSON');
+            }
+        }
     });
 }
 
 module.exports = {
     listSerialPorts: listSerialPorts,
-    set onOutput(newOnOutput) {
-        onOutput = newOnOutput;
-    }
+    connect: connect
 };
