@@ -7,7 +7,7 @@
 var sideLen = 128;
 var connection = null;
 var image = require('./image');
-var attenuationOfScan = 0;
+var attenuationOfScan = 2;
 var mixedPixels = [];
 
 function sendIfConnected(data) {
