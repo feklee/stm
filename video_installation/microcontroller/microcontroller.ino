@@ -34,5 +34,5 @@ void scanStep() {
 
 void loop() {
   scanStep();
-  delay(10);
+//  delay(10);
 }

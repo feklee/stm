@@ -6,7 +6,6 @@
 
 var WebSocketServer = require('websocket').server;
 var http = require('http');
-var simulator = require('./simulator');
 var mixer = require('./mixer');
 var stm = require('./stm');
 var args = process.argv.slice(2);
