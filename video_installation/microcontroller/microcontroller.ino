@@ -1,17 +1,16 @@
 // Arduino / Teensy sketch
 
 #include "ScanData.hpp"
+#include "Fader.hpp"
 
 static ScanData scanData;
+static Fader fader(A1);
 static const int sideLen = 128;
 static uint16_t z = 0xffff / 2;
 
 void setup() {
+  analogReadResolution(16);
 //  pinMode(A1, INPUT);
-}
-
-float readVoltageWithTeensyLC(int pin) {
-  return analogRead(pin) * 3.3 / 0xffff;
 }
 
 void updateZ() {
@@ -35,5 +34,6 @@ void scanStep() {
 
 void loop() {
   scanStep();
-//  delay(10);
+  fader.read();
+//  delay(100);
 }

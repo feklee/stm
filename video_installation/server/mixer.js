@@ -8,6 +8,7 @@ var sideLen = 128;
 var connection = null;
 var image = require('./image');
 var attenuationOfScan = 2;
+var faderPosition;
 var mixedPixels = [];
 
 function sendIfConnected(data) {
@@ -25,8 +26,13 @@ function sendSideLen() {
 }
 
 function visibilityOfScan(scanPixel) {
-    return Math.pow(2 * Math.abs(scanPixel.intensity - 0.5),
-            attenuationOfScan);
+    if (faderPosition === 1.0) {
+        // because attenuationOfScan does not really go to infinity
+        return 0;
+    } else {
+        return Math.pow(2 * Math.abs(scanPixel.intensity - 0.5),
+                        attenuationOfScan);
+    }
 }
 
 function sendMixedPixels() {
@@ -55,9 +61,13 @@ function onScanPixels(scanPixels) {
 }
 
 module.exports = {
-    set connection(newConnection) {
-        connection = newConnection;
+    set connection(x) {
+        connection = x;
         sendSideLen();
+    },
+    set faderPosition(x) {
+        faderPosition = x;
+        attenuationOfScan = Math.tan(x * Math.PI / 2);
     },
     onScanPixels: onScanPixels
 };

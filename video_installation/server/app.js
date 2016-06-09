@@ -33,11 +33,22 @@ function onConnectedToStm() {
     });
 }
 
-function onData(data) {
-    var scanPixels = data.data.map(function (datum) {
+function interpretScanData(data) {
+    var scanPixels = data.map(function (datum) {
         return {x: datum[0], y: datum[1], intensity: datum[2] / 0xffff};
     });
     mixer.onScanPixels(scanPixels);
+}
+
+function onData(data) {
+    switch (data.type) {
+    case 'scan data':
+        interpretScanData(data.data);
+        break;
+    case 'fader update':
+        mixer.faderPosition = data.position;
+        break;
+    }
 }
 
 if (args.length === 0) {

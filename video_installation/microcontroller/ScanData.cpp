@@ -4,7 +4,7 @@
 
 void ScanData::printJson() {
   const int bufferSize = JSON_OBJECT_SIZE(2) +
-    JSON_ARRAY_SIZE(chunkSize) + chunkSize * JSON_ARRAY_SIZE(5);
+    JSON_ARRAY_SIZE(chunkSize_) + chunkSize_ * JSON_ARRAY_SIZE(5);
   StaticJsonBuffer<bufferSize> jsonBuffer;
 
   JsonObject &root = jsonBuffer.createObject();
@@ -12,8 +12,8 @@ void ScanData::printJson() {
 
   JsonArray &d = root.createNestedArray("data");
 
-  for (int i = 0; i < head; i ++) {
-    ScanDatum &scanDatum = data[i];
+  for (int i = 0; i < head_; i ++) {
+    ScanDatum &scanDatum = data_[i];
     JsonArray &datum = d.createNestedArray();
     datum.add(scanDatum.x);
     datum.add(scanDatum.y);
@@ -23,18 +23,18 @@ void ScanData::printJson() {
   }
 
   root.printTo(Serial);
+  Serial.println();
 }
 
 void ScanData::flushScanData() {
   printJson();
-  Serial.println();
-  head = 0;
+  head_ = 0;
 }
 
 void ScanData::append(ScanDatum d) {
-  data[head] = d;
-  head ++;
-  if (head >= chunkSize) {
+  data_[head_] = d;
+  head_ ++;
+  if (head_ >= chunkSize_) {
     flushScanData();
   }
 }

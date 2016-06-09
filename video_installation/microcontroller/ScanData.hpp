@@ -9,9 +9,9 @@ struct ScanDatum {
 };
 
 class ScanData {
-  static const int chunkSize = 32;
-  ScanDatum data[chunkSize];
-  int head = 0;
+  static const int chunkSize_ = 32;
+  ScanDatum data_[chunkSize_];
+  int head_ = 0;
   void printJson();
   void flushScanData();
 
