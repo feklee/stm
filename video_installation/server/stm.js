@@ -45,7 +45,7 @@ function connect(settings) {
 }
 
 function startScan() {
-    port.write(JSON.stringify({mode: 'scanning'}));
+    port.write(JSON.stringify({mode: 'scan'}));
 }
 
 module.exports = {
