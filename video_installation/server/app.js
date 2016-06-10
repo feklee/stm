@@ -27,12 +27,12 @@ function onConnectedToStm() {
     });
 
     wsServer.on('request', function (request) {
-        var connection = request.accept(null, request.origin);
-        console.log((new Date()) + ' Connection accepted.');
-        mixer.connection = connection;
+        var browserConnection = request.accept(null, request.origin);
+        console.log((new Date()) + ' Connection from browser accepted.');
+        mixer.browserConnection = browserConnection;
     });
 
-    stm.startScan();
+    setInterval(stm.startScan, 10000);
 }
 
 function interpretScanData(data) {
@@ -44,10 +44,10 @@ function interpretScanData(data) {
 
 function onData(data) {
     switch (data.type) {
-    case 'scan data':
+    case 'scanData':
         interpretScanData(data.data);
         break;
-    case 'fader update':
+    case 'faderUpdate':
         mixer.faderPosition = data.position;
         break;
     }

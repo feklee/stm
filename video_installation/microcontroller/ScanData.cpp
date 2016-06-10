@@ -8,7 +8,7 @@ void ScanData::printJson() {
   StaticJsonBuffer<bufferSize> jsonBuffer;
 
   JsonObject &root = jsonBuffer.createObject();
-  root["type"] = "scan data";
+  root["type"] = "scanData";
 
   JsonArray &d = root.createNestedArray("data");
 

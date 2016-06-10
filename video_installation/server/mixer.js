@@ -5,17 +5,17 @@
 'use strict';
 
 var sideLen = 128;
-var connection = null;
+var browserConnection = null;
 var image = require('./image');
 var attenuationOfScan = 0;
 var faderPosition = 0;
 var mixedPixels = [];
 
 function sendIfConnected(data) {
-    if (connection === null) {
+    if (browserConnection === null) {
         return;
     }
-    connection.sendUTF(JSON.stringify(data));
+    browserConnection.sendUTF(JSON.stringify(data));
 }
 
 function sendSideLen() {
@@ -61,8 +61,8 @@ function onScanPixels(scanPixels) {
 }
 
 module.exports = {
-    set connection(x) {
-        connection = x;
+    set browserConnection(x) {
+        browserConnection = x;
         sendSideLen();
     },
     set faderPosition(x) {
