@@ -1,4 +1,4 @@
-/*jslint browser: true, maxerr: 50, maxlen: 80 */
+/*jslint browser: true, maxlen: 80 */
 
 /*global define, window */
 

@@ -2,7 +2,7 @@
 
 /*global define, window */
 
-define(['beam'], function (beam) {
+define(function () {
     'use strict';
 
     var canvas = document.querySelector('canvas.scan-image');
