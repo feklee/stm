@@ -4,7 +4,7 @@
 
 static Fader fader(A1);
 static IdleMode idleMode;
-static ScanMode scanMode;
+static ScanMode scanMode(&idleMode);
 static Mode *mode = &idleMode;
 
 void setup() {
@@ -28,9 +28,14 @@ void interpretSerialInput(const String &s) {
 }
 
 void loop() {
+  Mode *successor;
+
   if (Serial.available() > 0) {
     interpretSerialInput(Serial.readString());
   }
-  mode->step();
+  successor = mode->step();
+  if (successor != 0) {
+    mode = successor;
+  }
   fader.read();
 }
