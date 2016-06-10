@@ -1,4 +1,4 @@
-// Mixes the image and the data from the microscope.
+// Mixes the image ("ideal") and the data from the microscope ("real").
 
 /*jslint node: true, es6: true, maxlen: 80 */
 
