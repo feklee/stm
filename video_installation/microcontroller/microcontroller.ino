@@ -1,6 +1,7 @@
 #include <ArduinoJson.h>
 #include "Fader.hpp"
 #include "Mode.hpp"
+#include "util.hpp"
 
 static Fader fader(A1);
 static IdleMode idleMode;
@@ -20,12 +21,17 @@ void interpretSerialInput(const String &s) {
   StaticJsonBuffer<bufferSize> jsonBuffer;
 
   if (s.length() > maxStringLength) {
-    return; // silent failure
+    printError("Input too long");
+    return;
   }
 
   strncpy(t, s.c_str(), s.length());
 
-  JsonObject &root = jsonBuffer.parseObject(t); // fixme: check for error
+  JsonObject &root = jsonBuffer.parseObject(t);
+  if (!root.success()) {
+    printError("Parsing JSON failed");
+    return;
+  }
 
   String requestedMode = root["mode"];
   if (requestedMode == "scan") {

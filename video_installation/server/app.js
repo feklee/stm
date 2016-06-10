@@ -50,6 +50,9 @@ function onData(data) {
     case 'faderUpdate':
         mixer.faderPosition = data.position;
         break;
+    case 'error':
+        console.log("STM error: " + data.message);
+        break;
     }
 }
 
