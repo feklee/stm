@@ -44,8 +44,8 @@ function interpretScanData(data) {
 
 function onData(data) {
     switch (data.type) {
-    case 'scanData':
-        interpretScanData(data.data);
+    case 'positionLog':
+        interpretScanData(data.positions);
         break;
     case 'faderUpdate':
         mixer.faderPosition = data.position;

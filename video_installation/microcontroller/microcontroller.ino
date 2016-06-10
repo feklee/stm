@@ -4,8 +4,9 @@
 #include "util.hpp"
 
 static Fader fader(A1);
-static IdleMode idleMode;
-static ScanMode scanMode(&idleMode);
+static Position position;
+static IdleMode idleMode(position);
+static ScanMode scanMode(position, idleMode);
 static Mode *mode = &idleMode;
 
 void setup() {
@@ -27,15 +28,15 @@ void interpretSerialInput(const String &s) {
 
   strncpy(t, s.c_str(), s.length());
 
-  JsonObject &root = jsonBuffer.parseObject(t);
-  if (!root.success()) {
+  JsonObject &jsonRoot = jsonBuffer.parseObject(t);
+  if (!jsonRoot.success()) {
     printError("Parsing JSON failed");
     return;
   }
 
-  String requestedMode = root["mode"];
+  String requestedMode = jsonRoot["mode"];
   if (requestedMode == "scan") {
-    scanMode.setSideLen(root["sideLen"]);
+    scanMode.setSideLen(jsonRoot["sideLen"]);
     // fixme: flush!
     mode = &scanMode;
   } else {
@@ -53,5 +54,6 @@ void loop() {
   if (successor != 0) {
     mode = successor;
   }
+  position.logCurrent();
   fader.read();
 }
