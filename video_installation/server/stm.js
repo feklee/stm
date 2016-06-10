@@ -38,7 +38,7 @@ function connect(settings) {
             settings.onData(data);
         } catch (e) {
             if (e.name === 'SyntaxError') {
-                console.log('Data is not valid JSON');
+                console.log('Data is not valid JSON', json);
             }
         }
     });
