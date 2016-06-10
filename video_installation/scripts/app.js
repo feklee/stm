@@ -2,7 +2,7 @@
 
 /*global define, window */
 
-define(['scan-image', 'graph'], function (scanImage, graph) {
+define(['scan-image', 'vertical-graph'], function (scanImage, verticalGraph) {
     'use strict';
 
     var client = new window.WebSocket('ws://localhost:8080/');
@@ -35,7 +35,7 @@ define(['scan-image', 'graph'], function (scanImage, graph) {
             scanImage.drawPixels(data.pixels);
             break;
         case 'realPositions':
-            graph.appendPositions(data.positions);
+            verticalGraph.appendPositions(data.positions);
             break;
         }
     };
