@@ -28,11 +28,11 @@ void ScanMode::advanceZ() {
 }
 
 unsigned long ScanMode::duration() {
-  unsigned long d = micros() - startTime;
-  if (d < 0) {
-    d += ULONG_MAX;
-  }
-  return d;
+  unsigned long endTime = micros();
+  bool overflowHappened = endTime < startTime;
+  return (overflowHappened ?
+          ULONG_MAX - startTime + endTime :
+          endTime - startTime);
 }
 
 void ScanMode::printDuration() {
