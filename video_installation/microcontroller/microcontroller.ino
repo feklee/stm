@@ -14,6 +14,11 @@ void setup() {
   analogReadResolution(16);
 }
 
+void switchMode(Mode &newMode) {
+  mode = &newMode;
+  mode->reset();
+}
+
 void interpretSerialInput(const String &s) {
   const int maxStringLength = 512;
   char t[maxStringLength + 1];
@@ -37,10 +42,9 @@ void interpretSerialInput(const String &s) {
   String requestedMode = jsonRoot["mode"];
   if (requestedMode == "scan") {
     scanMode.setSideLen(jsonRoot["sideLen"]);
-    // fixme: flush!
-    mode = &scanMode;
+    switchMode(scanMode);
   } else {
-    mode = &idleMode;
+    switchMode(idleMode);
   }
 }
 
@@ -52,7 +56,7 @@ void loop() {
   }
   successor = mode->step();
   if (successor != 0) {
-    mode = successor;
+    switchMode(*successor);
   }
   position.logCurrent();
   fader.read();

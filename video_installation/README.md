@@ -28,14 +28,17 @@ Ideas
 
   * Idle mode: Don’t record positions, or only optionally.
 
-  * Add microsecond timestamps and use them for profiling: Calculate entire
-    scan time, and output it to Node.js console.
-
   * Allow submission of programs as a succession of modes. Programs / Modes can
     be interrupted by sending another one.
 
   * Speed up, to get faster feedback loop and avoid crashes: Do approach, scan,
     retract in one go, and only in the end send data.
+
+  * To speed up, things to try:
+
+      + Don’t check fader in every loop.
+
+      + Disable serialization.
 
 
 Legal

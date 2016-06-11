@@ -1,8 +1,12 @@
 // Modes that the microscope can be in.
 
+#include <limits.h>
+#include <ArduinoJson.h>
 #include "Mode.hpp"
 
 IdleMode::IdleMode(Position &position) : position_(position) {}
+
+void IdleMode::reset() {}
 
 Mode *IdleMode::step() {
   position_.measureVoltage();
@@ -10,15 +14,42 @@ Mode *IdleMode::step() {
 }
 
 ScanMode::ScanMode(Position &position, IdleMode &successor) :
-  position_(position), successor_(successor) {}
+  position_(position), successor_(successor) {
+  reset();
+}
+
+void ScanMode::reset() {
+  i = 0;
+  startTime = micros();
+}
 
 void ScanMode::advanceZ() {
   const uint16_t amplitude = 0xfff;
   z_ = max(0, min(0xffff, z_ + random(-amplitude, amplitude + 1)));
 }
 
+unsigned long ScanMode::duration() {
+  unsigned long d = micros() - startTime;
+  if (d < 0) {
+    d += ULONG_MAX;
+  }
+  return d;
+}
+
+void ScanMode::printDuration() {
+  unsigned long d = duration();
+  const int bufferSize = JSON_OBJECT_SIZE(2);
+  StaticJsonBuffer<bufferSize> jsonBuffer;
+
+  JsonObject &root = jsonBuffer.createObject();
+  root["type"] = "scanDuration";
+  root["duration"] = d;
+
+  root.printTo(Serial);
+  Serial.println();
+}
+
 Mode *ScanMode::step() {
-  static long i = 0;
   const int limit = sideLen_ * sideLen_;
 
   position_.setX(i % sideLen_);
@@ -29,6 +60,7 @@ Mode *ScanMode::step() {
   i ++;
   if (i == limit) {
     i = 0;
+    printDuration();
     return &successor_;
   }
   advanceZ();

@@ -47,6 +47,9 @@ function onData(data) {
     case 'positionLog':
         interpretPositionLog(data.positions);
         break;
+    case 'scanDuration':
+        console.log('Scan duration: ' + data.duration);
+        break;
     case 'faderUpdate':
         mixer.faderPosition = data.position;
         break;
