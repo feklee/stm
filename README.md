@@ -10,11 +10,11 @@ For documentation, see: <https://wiki.fablab.berlin/STM>
 Coding conventions
 ==================
 
-* Maximum line length: 80 characters
+  * Maximum line length: 80 characters
 
-* Comments in Markdown
+  * Comments in Markdown
 
-* JavaScript passes JSLint.
+  * JavaScript passes JSLint.
 
 
 Legal
