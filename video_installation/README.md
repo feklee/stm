@@ -26,7 +26,7 @@ Ideas
 
   * Fader: Also compare ticked values, to avoid unnecessary updates.
 
-  * Idle mode: Don’t record, or only optionally.
+  * Idle mode: Don’t record positions, or only optionally.
 
   * Add microsecond timestamps and use them for profiling: Calculate entire
     scan time, and output it to Node.js console.
