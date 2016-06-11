@@ -5,26 +5,25 @@
 #include "Position.hpp"
 
 void Position::printJson() {
-  const int logSize = JSON_OBJECT_SIZE(2) +
-    JSON_ARRAY_SIZE(logSize_) + logSize_ * JSON_ARRAY_SIZE(5);
-  StaticJsonBuffer<logSize> jsonBuffer;
-
-  JsonObject &jsonRoot = jsonBuffer.createObject();
-  jsonRoot["type"] = "positionLog";
-
-  JsonArray &jsonPositions = jsonRoot.createNestedArray("positions");
-
+  char buffer[8];
+  Serial.print("{\"type\":\"positionLog\",\"positions\":[");
   for (int i = 0; i < logHead_; i ++) {
     Datum &datum = log_[i];
-    JsonArray &jsonDatum = jsonPositions.createNestedArray();
-    jsonDatum.add(datum.x);
-    jsonDatum.add(datum.y);
-    jsonDatum.add(datum.z);
-    jsonDatum.add(datum.voltage);
+    if (i > 0) {
+      Serial.print(",");
+    }
+    Serial.print("[");
+    Serial.print(datum.x);
+    Serial.print(",");
+    Serial.print(datum.y);
+    Serial.print(",");
+    Serial.print(datum.z);
+    Serial.print(",");
+    dtostrf(datum.voltage, 0, 2, buffer);
+    Serial.print(buffer);
+    Serial.print("]");
   }
-
-  jsonRoot.printTo(Serial);
-  Serial.println();
+  Serial.println("]}");
 }
 
 void Position::flushLog() {

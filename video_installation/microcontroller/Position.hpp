@@ -8,7 +8,7 @@ class Position {
     float voltage; // V
   };
 
-  static const int logSize_ = 50;
+  static const int logSize_ = 100;
   Datum log_[logSize_];
   Datum current_;
   int logHead_ = 0;
