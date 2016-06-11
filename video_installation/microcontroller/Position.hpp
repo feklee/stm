@@ -6,7 +6,6 @@ class Position {
     uint8_t y;
     uint16_t z; // piezo position
     float voltage; // V
-    unsigned long timestamp; // µs
   };
 
   static const int logSize_ = 100;
@@ -22,5 +21,4 @@ public:
   void setY(uint8_t);
   void setZ(uint16_t);
   void measureVoltage();
-  void updateTimestamp();
 };

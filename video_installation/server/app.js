@@ -35,7 +35,7 @@ function onConnectedToStm() {
     setInterval(stm.startScan, 10000);
 }
 
-function interpretScanData(data) {
+function interpretPositionLog(data) {
     var scanPixels = data.map(function (datum) {
         return {x: datum[0], y: datum[1], intensity: datum[2] / 0xffff};
     });
@@ -45,7 +45,7 @@ function interpretScanData(data) {
 function onData(data) {
     switch (data.type) {
     case 'positionLog':
-        interpretScanData(data.positions);
+        interpretPositionLog(data.positions);
         break;
     case 'faderUpdate':
         mixer.faderPosition = data.position;

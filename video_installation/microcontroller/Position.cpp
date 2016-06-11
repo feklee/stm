@@ -1,4 +1,4 @@
-// Position of the microscope in space-time.
+// Position of the microscope.
 
 #include <Arduino.h>
 #include <ArduinoJson.h>
@@ -21,7 +21,6 @@ void Position::printJson() {
     jsonDatum.add(datum.y);
     jsonDatum.add(datum.z);
     jsonDatum.add(datum.voltage);
-    jsonDatum.add(datum.timestamp);
   }
 
   jsonRoot.printTo(Serial);
@@ -39,10 +38,6 @@ void Position::logCurrent() {
   if (logHead_ >= logSize_) {
     flushLog();
   }
-}
-
-void Position::updateTimestamp() {
-  current_.timestamp = micros();
 }
 
 void Position::setX(uint8_t x) {
