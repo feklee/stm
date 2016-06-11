@@ -28,8 +28,10 @@ void Position::printJson() {
 }
 
 void Position::flushLog() {
-  printJson();
-  logHead_ = 0;
+  if (logHead_ > 0) {
+    printJson();
+    logHead_ = 0;
+  }
 }
 
 void Position::logCurrent() {

@@ -13,10 +13,10 @@ class Position {
   Datum current_;
   int logHead_ = 0;
   void printJson();
-  void flushLog();
 
 public:
   void logCurrent();
+  void flushLog();
   void setX(uint8_t);
   void setY(uint8_t);
   void setZ(uint16_t);

@@ -4,12 +4,11 @@
 #include <ArduinoJson.h>
 #include "Mode.hpp"
 
-IdleMode::IdleMode(Position &position) : position_(position) {}
+IdleMode::IdleMode() {}
 
 void IdleMode::reset() {}
 
 Mode *IdleMode::step() {
-  position_.measureVoltage();
   return 0;
 }
 
@@ -49,6 +48,11 @@ void ScanMode::printDuration() {
   Serial.println();
 }
 
+void ScanMode::finish() {
+  position_.flushLog();
+  printDuration();
+}
+
 Mode *ScanMode::step() {
   const int limit = sideLen_ * sideLen_;
 
@@ -56,11 +60,11 @@ Mode *ScanMode::step() {
   position_.setY(i / sideLen_);
   position_.setZ(z_);
   position_.measureVoltage();
+  position_.logCurrent();
 
   i ++;
   if (i == limit) {
-    i = 0;
-    printDuration();
+    finish();
     return &successor_;
   }
   advanceZ();

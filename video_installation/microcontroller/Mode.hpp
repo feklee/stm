@@ -10,10 +10,8 @@ public:
 };
 
 class IdleMode : public Mode {
-  Position &position_;
-
 public:
-  IdleMode(Position &);
+  IdleMode();
   void reset();
   Mode *step();
 };
@@ -28,6 +26,7 @@ class ScanMode : public Mode {
   unsigned long duration();
   void printDuration();
   void advanceZ();
+  void finish();
 
 public:
   ScanMode(Position &, IdleMode &);

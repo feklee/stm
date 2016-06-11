@@ -5,7 +5,7 @@
 
 static Fader fader(A1);
 static Position position;
-static IdleMode idleMode(position);
+static IdleMode idleMode;
 static ScanMode scanMode(position, idleMode);
 static Mode *mode = &idleMode;
 
@@ -58,6 +58,5 @@ void loop() {
   if (successor != 0) {
     switchMode(*successor);
   }
-  position.logCurrent();
   fader.read();
 }
