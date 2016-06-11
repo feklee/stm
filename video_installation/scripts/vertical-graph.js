@@ -10,12 +10,15 @@ define(function () {
     var offset = 2; // px
 
     function draw() {
-        ctx.fillStyle = 'rgba(0, 255, 0)';
+        ctx.fillStyle = 'rgb(0, ' + Math.round(255 * Math.random()) + ', 0)';
         ctx.fillRect(offset, offset,
                 canvas.width - 2 * offset,
                 canvas.height - 2 * offset);
-        window.requestAnimationFrame(fade);
+        window.requestAnimationFrame(draw);
     }
+
+    canvas.setAttribute('width', 100);
+    canvas.setAttribute('height', 900);
 
     draw();
 

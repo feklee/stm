@@ -14,7 +14,7 @@ canvas.finished {
     transition: opacity 4s;
 }
 
-canvas.z {
+canvas.vertical-graph {
     height: 100vh;
     position: absolute;
     right: 0;

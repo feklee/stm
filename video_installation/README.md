@@ -21,6 +21,25 @@ Coding conventions
 * JavaScript passes JSLint.
 
 
+Ideas
+=====
+
+* Fader: Also compare ticked values, to avoid unnecessary updates.
+
+* Idle mode: Don’t record, or only optionally.
+
+* Add microsecond timestamps and use them for profiling: Calculate entire scan
+  time, and output it to Node.js console.
+
+* `_chunkSize` → `_bufferSize`, `_log` → `_buffer`
+
+* Allow submission of programs as a succession of modes. Programs / Modes can
+  be interrupted by sending another one.
+
+* Speed up, to get faster feedback loop and avoid crashes: Do approach, scan,
+  retract in one go, and only in the end send data.
+
+
 Legal
 =====
 
