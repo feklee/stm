@@ -1,4 +1,4 @@
-/*jslint browser: true, maxlen: 80 */
+/*jslint browser: true, es6: true, maxlen: 80 */
 
 /*global define, window */
 
@@ -9,6 +9,8 @@ define(['beam'], function (beam) {
     var ctx = canvas.getContext('2d');
     var offset = 2; // px
     var sideLen = 0;
+    var timestampAtPreviousFrame = window.performance.now();
+    var pixels = [];
 
     function intensityString(intensity) {
         return 'rgb(0,' + Math.floor(255 * intensity) + ',0)';
@@ -44,14 +46,26 @@ define(['beam'], function (beam) {
         beam.draw(pixel.x, pixel.y);
     }
 
-    function drawPixels(pixels) {
-        pixels.forEach(function (pixel) {
-            drawPixel(pixel);
-        });
+    function addPixels(newPixels) {
+        pixels.push(...newPixels);
     }
 
+    function drawPixels(timestamp) {
+        var pixelRate = 100 / 20; // pixels / ms
+        var maxRemainingPixelsToDraw =
+                (timestamp - timestampAtPreviousFrame) * pixelRate;
+        while (pixels.length > 0 && maxRemainingPixelsToDraw > 0) {
+            drawPixel(pixels.shift());
+            maxRemainingPixelsToDraw -= 1;
+        }
+        timestampAtPreviousFrame = timestamp;
+        window.requestAnimationFrame(drawPixels);
+    }
+
+    window.requestAnimationFrame(drawPixels);
+
     return {
-        drawPixels: drawPixels,
+        addPixels: addPixels,
         set sideLen(newSideLen) {
             sideLen = newSideLen;
             canvas.setAttribute('width', sideLen + 2 * offset);

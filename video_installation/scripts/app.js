@@ -1,8 +1,8 @@
-/*jslint browser: true, maxlen: 80 */
+/*jslint browser: true, es6: true, maxlen: 80 */
 
 /*global define, window */
 
-define(['scan-image', 'vertical-graph'], function (scanImage, verticalGraph) {
+define(['scan-image', 'scan-graph'], function (scanImage, scanGraph) {
     'use strict';
 
     var client = new window.WebSocket('ws://localhost:8080/');
@@ -31,11 +31,11 @@ define(['scan-image', 'vertical-graph'], function (scanImage, verticalGraph) {
         case 'sideLen':
             scanImage.sideLen = data.sideLen;
             break;
-        case 'pixels':
-            scanImage.drawPixels(data.pixels);
+        case 'mixedPixels':
+            scanImage.addPixels(data.pixels);
             break;
-        case 'realPositions':
-            verticalGraph.appendPositions(data.positions);
+        case 'graphPoints':
+            scanGraph.appendPoints(data.points);
             break;
         }
     };

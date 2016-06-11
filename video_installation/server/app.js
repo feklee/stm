@@ -9,6 +9,7 @@ var http = require('http');
 var mixer = require('./mixer');
 var stm = require('./stm');
 var args = process.argv.slice(2);
+var browserConnection = null;
 
 function onConnectedToStm() {
     var server = http.createServer(function (request, response) {
@@ -27,7 +28,7 @@ function onConnectedToStm() {
     });
 
     wsServer.on('request', function (request) {
-        var browserConnection = request.accept(null, request.origin);
+        browserConnection = request.accept(null, request.origin);
         console.log((new Date()) + ' Connection from browser accepted.');
         mixer.browserConnection = browserConnection;
     });
@@ -35,11 +36,33 @@ function onConnectedToStm() {
     setInterval(stm.startScan, 10000);
 }
 
-function interpretPositionLog(data) {
-    var scanPixels = data.map(function (datum) {
-        return {x: datum[0], y: datum[1], intensity: datum[2] / 0xffff};
+function sendIfConnected(data) {
+    if (browserConnection === null) {
+        return;
+    }
+    browserConnection.sendUTF(JSON.stringify(data));
+}
+
+function sendAsGraphPoints(positions) {
+    var points = positions.map(function (position) {
+        return {z: position[2] / 0xffff, voltage: position[3]};
+    });
+    sendIfConnected({
+        type: 'graphPoints',
+        points: points
+    });
+}
+
+function interpretPositionLog(positions) {
+    var scanPixels = positions.map(function (position) {
+        return {
+            x: position[0],
+            y: position[1],
+            intensity: position[2] / 0xffff
+        };
     });
     mixer.onScanPixels(scanPixels);
+    sendAsGraphPoints(positions);
 }
 
 function onData(data) {

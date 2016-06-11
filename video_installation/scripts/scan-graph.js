@@ -1,11 +1,11 @@
-/*jslint browser: true, maxlen: 80 */
+/*jslint browser: true, es6: true, maxlen: 80 */
 
 /*global define, window */
 
 define(function () {
     'use strict';
 
-    var canvas = document.querySelector('canvas.vertical-graph');
+    var canvas = document.querySelector('canvas.scan-graph');
     var ctx = canvas.getContext('2d');
     var offset = 2; // px
 
@@ -23,6 +23,7 @@ define(function () {
     draw();
 
     return {
-        appendPositions: function () {}
+        appendPoints: function (points) {
+        }
     };
 });

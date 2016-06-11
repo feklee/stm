@@ -37,7 +37,7 @@ function visibilityOfScan(scanPixel) {
 
 function sendMixedPixels() {
     sendIfConnected({
-        type: 'pixels',
+        type: 'mixedPixels',
         pixels: mixedPixels
     });
 }
