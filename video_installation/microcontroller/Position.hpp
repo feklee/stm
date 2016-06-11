@@ -15,7 +15,7 @@ class Position {
   void printJson();
 
 public:
-  void logCurrent();
+  void logCurrentValues();
   void flushLog();
   void setX(uint8_t);
   void setY(uint8_t);

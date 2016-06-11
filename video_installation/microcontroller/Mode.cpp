@@ -64,7 +64,8 @@ void ScanMode::scanChunk() {
     position_.setY(head_ / sideLen_);
     position_.setZ(z_);
     position_.measureVoltage();
-    position_.logCurrent();
+    position_.logCurrentValues();
+    advanceZ();
     head_ ++;
   }
 }
@@ -75,7 +76,6 @@ Mode *ScanMode::step() {
     finish();
     return &successor_;
   }
-  advanceZ();
   return 0;
 }
 

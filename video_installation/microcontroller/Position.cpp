@@ -33,7 +33,7 @@ void Position::flushLog() {
   }
 }
 
-void Position::logCurrent() {
+void Position::logCurrentValues() {
   log_[logHead_] = current_;
   logHead_ ++;
   if (logHead_ >= logSize_) {
