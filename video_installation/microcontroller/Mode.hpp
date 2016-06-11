@@ -21,12 +21,15 @@ class ScanMode : public Mode {
   int sideLen_;
   uint16_t z_ = 0xffff / 2;
   IdleMode &successor_;
-  long i;
-  unsigned long startTime; // µs
+  long head_;
+  unsigned long startTime_; // µs
+  int chunkSize_ = 250;
   unsigned long duration();
   void printDuration();
   void advanceZ();
   void finish();
+  void scanChunk();
+  boolean headIsAtLimit();
 
 public:
   ScanMode(Position &, IdleMode &);

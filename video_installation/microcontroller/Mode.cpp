@@ -18,8 +18,8 @@ ScanMode::ScanMode(Position &position, IdleMode &successor) :
 }
 
 void ScanMode::reset() {
-  i = 0;
-  startTime = micros();
+  head_ = 0;
+  startTime_ = micros();
 }
 
 void ScanMode::advanceZ() {
@@ -29,10 +29,10 @@ void ScanMode::advanceZ() {
 
 unsigned long ScanMode::duration() {
   unsigned long endTime = micros();
-  bool overflowHappened = endTime < startTime;
+  bool overflowHappened = endTime < startTime_;
   return (overflowHappened ?
-          ULONG_MAX - startTime + endTime :
-          endTime - startTime);
+          ULONG_MAX - startTime_ + endTime :
+          endTime - startTime_);
 }
 
 void ScanMode::printDuration() {
@@ -53,17 +53,25 @@ void ScanMode::finish() {
   printDuration();
 }
 
-Mode *ScanMode::step() {
+boolean ScanMode::headIsAtLimit() {
   const int limit = sideLen_ * sideLen_;
+  return head_ == limit;
+}
 
-  position_.setX(i % sideLen_);
-  position_.setY(i / sideLen_);
-  position_.setZ(z_);
-  position_.measureVoltage();
-  position_.logCurrent();
+void ScanMode::scanChunk() {
+  for (int j = 0; j < chunkSize_ && !headIsAtLimit(); j ++) {
+    position_.setX(head_ % sideLen_);
+    position_.setY(head_ / sideLen_);
+    position_.setZ(z_);
+    position_.measureVoltage();
+    position_.logCurrent();
+    head_ ++;
+  }
+}
 
-  i ++;
-  if (i == limit) {
+Mode *ScanMode::step() {
+  scanChunk();
+  if (headIsAtLimit()) {
     finish();
     return &successor_;
   }
