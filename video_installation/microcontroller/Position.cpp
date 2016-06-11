@@ -5,9 +5,9 @@
 #include "Position.hpp"
 
 void Position::printJson() {
-  const int bufferSize = JSON_OBJECT_SIZE(2) +
-    JSON_ARRAY_SIZE(chunkSize_) + chunkSize_ * JSON_ARRAY_SIZE(4);
-  StaticJsonBuffer<bufferSize> jsonBuffer;
+  const int logSize = JSON_OBJECT_SIZE(2) +
+    JSON_ARRAY_SIZE(logSize_) + logSize_ * JSON_ARRAY_SIZE(5);
+  StaticJsonBuffer<logSize> jsonBuffer;
 
   JsonObject &jsonRoot = jsonBuffer.createObject();
   jsonRoot["type"] = "positionLog";
@@ -21,6 +21,7 @@ void Position::printJson() {
     jsonDatum.add(datum.y);
     jsonDatum.add(datum.z);
     jsonDatum.add(datum.voltage);
+    jsonDatum.add(datum.timestamp);
   }
 
   jsonRoot.printTo(Serial);
@@ -35,9 +36,13 @@ void Position::flushLog() {
 void Position::logCurrent() {
   log_[logHead_] = current_;
   logHead_ ++;
-  if (logHead_ >= chunkSize_) {
+  if (logHead_ >= logSize_) {
     flushLog();
   }
+}
+
+void Position::updateTimestamp() {
+  current_.timestamp = micros();
 }
 
 void Position::setX(uint8_t x) {

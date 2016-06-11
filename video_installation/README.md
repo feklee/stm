@@ -31,8 +31,6 @@ Ideas
   * Add microsecond timestamps and use them for profiling: Calculate entire
     scan time, and output it to Node.js console.
 
-  * `_chunkSize` → `_bufferSize`, `_log` → `_buffer`
-
   * Allow submission of programs as a succession of modes. Programs / Modes can
     be interrupted by sending another one.
 
