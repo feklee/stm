@@ -2,8 +2,7 @@
 #include "util.hpp"
 #include "ScanMode.hpp"
 
-ScanMode::ScanMode(Position &position, IdleMode &successor) :
-  position_(position), successor_(successor) {
+ScanMode::ScanMode(Position &position) : position_(position) {
   reset();
 }
 
@@ -51,13 +50,13 @@ void ScanMode::scanChunk() {
   }
 }
 
-Mode *ScanMode::step() {
+boolean ScanMode::step() {
   scanChunk();
   if (headIsAtLimit()) {
     finish();
-    return &successor_;
+    return false;
   }
-  return 0;
+  return true;
 }
 
 void ScanMode::setSideLen(int x) {

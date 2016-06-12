@@ -1,14 +1,13 @@
 #pragma once
 
 #include <Arduino.h>
+#include "Mode.hpp"
 #include "Position.hpp"
-#include "IdleMode.hpp"
 
 class ScanMode : public Mode {
   Position &position_;
   int sideLen_;
   uint16_t z_ = 0xffff / 2;
-  IdleMode &successor_;
   long head_;
   unsigned long startTime_; // µs
   int chunkSize_ = 250;
@@ -20,8 +19,8 @@ class ScanMode : public Mode {
   boolean headIsAtLimit();
 
 public:
-  ScanMode(Position &, IdleMode &);
+  ScanMode(Position &);
   void reset();
-  Mode *step();
+  boolean step();
   void setSideLen(int);
 };

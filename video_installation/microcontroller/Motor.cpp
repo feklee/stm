@@ -8,24 +8,24 @@
 
 Motor::Motor(Position &position) : position_(position) {}
 
-boolean Motor::down(long steps, float maxSignal /* V */) {
-  boolean maxSignalReached;
+boolean Motor::down(long steps, float limitingSignal /* V */) {
+  boolean limitingSignalReached;
   long stepsLeft;
   activate();
-  stepsLeft = rotate(steps, false, maxSignal);
+  stepsLeft = rotate(steps, false, limitingSignal);
   deactivate();
-  maxSignalReached = stepsLeft > 0;
-  return maxSignalReached;
+  limitingSignalReached = stepsLeft > 0;
+  return limitingSignalReached;
 }
 
-boolean Motor::up(long steps, float minSignal /* V */) {
-  boolean minSignalReached;
+boolean Motor::up(long steps, float limitingSignal /* V */) {
+  boolean limitingSignalReached;
   long stepsLeft;
   activate();
-  stepsLeft = rotate(steps, true, minSignal);
+  stepsLeft = rotate(steps, true, limitingSignal);
   deactivate();
-  minSignalReached = stepsLeft > 0;
-  return minSignalReached;
+  limitingSignalReached = stepsLeft > 0;
+  return limitingSignalReached;
 }
 
 void Motor::setPins(byte val0, byte val1, byte val2, byte val3) {

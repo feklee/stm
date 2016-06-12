@@ -12,5 +12,5 @@ class ApproachMode : public Mode {
 public:
   ApproachMode(Motor &, BiasVoltage &);
   void reset();
-  Mode *step();
+  boolean step();
 };

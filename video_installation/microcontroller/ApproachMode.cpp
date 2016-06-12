@@ -8,8 +8,10 @@ void ApproachMode::reset() {
   biasVoltage_.set(50);
 }
 
-Mode *ApproachMode::step() {
-  motor_.down(500, 1);
-  // fixme: if steps left, then finish (go to idle)
-  return 0;
+boolean ApproachMode::step() {
+  boolean limitingSignalReached = motor_.down(500, 1);
+  if (limitingSignalReached) {
+    return false;
+  }
+  return true;
 }

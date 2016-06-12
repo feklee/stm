@@ -12,7 +12,7 @@ static Position position;
 static BiasVoltage biasVoltage;
 static Motor motor(position);
 static IdleMode idleMode;
-static ScanMode scanMode(position, idleMode);
+static ScanMode scanMode(position);
 static ApproachMode approachMode(motor, biasVoltage);
 static RetractMode retractMode(motor, biasVoltage);
 static Mode *mode = &idleMode;
@@ -64,14 +64,14 @@ void interpretSerialInput(const String &s) {
 }
 
 void loop() {
-  Mode *successor;
+  boolean continueStepping;
 
   if (Serial.available() > 0) {
     interpretSerialInput(Serial.readString());
   }
-  successor = mode->step();
-  if (successor != 0) {
-    switchMode(*successor);
+  continueStepping = mode->step();
+  if (!continueStepping) {
+    switchMode(idleMode);
   }
   fader.print();
   biasVoltage.print();

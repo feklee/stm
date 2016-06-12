@@ -5,7 +5,7 @@ IdleMode::IdleMode() {}
 
 void IdleMode::reset() {}
 
-Mode *IdleMode::step() {
+boolean IdleMode::step() {
   delay(250);
-  return 0;
+  return true;
 }

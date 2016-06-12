@@ -6,8 +6,11 @@ RetractMode::RetractMode(Motor &motor, BiasVoltage &biasVoltage) :
 
 void RetractMode::reset() {}
 
-Mode *RetractMode::step() {
-  motor_.up(500, 0.1);
-  motor_.up(500);
-  return 0; // fixme: finish
+boolean RetractMode::step() {
+  boolean limitingSignalReached = motor_.up(500, 0.1);
+  if (limitingSignalReached) {
+    motor_.up(1000);
+    return false;
+  }
+  return true;
 }
