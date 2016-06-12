@@ -9,7 +9,7 @@ Motor::Motor(Position &position) : position_(position) {}
 void Motor::down(long steps) {
   long stepsLeft;
   activate();
-  stepsLeft = rotate(steps, false, 5); // fixme: configurable
+  stepsLeft = rotate(steps, false, 1); // fixme: configurable
   deactivate();
   Serial.println(steps - stepsLeft); // fixme
   position_.logCurrentValues(); // fixme

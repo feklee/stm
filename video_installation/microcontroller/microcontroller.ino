@@ -7,15 +7,17 @@
 
 static Fader fader;
 static Position position;
+static BiasVoltage biasVoltage;
 static Motor motor(position);
 static IdleMode idleMode;
 static ScanMode scanMode(position, idleMode);
-static ApproachMode approachMode(motor);
+static ApproachMode approachMode(motor, biasVoltage);
 static Mode *mode = &idleMode;
 
 void setup() {
   Serial.begin(115200);
   analogReadResolution(16);
+  biasVoltage.setup();
   motor.setup();
 }
 
@@ -65,5 +67,6 @@ void loop() {
   if (successor != 0) {
     switchMode(*successor);
   }
-  fader.read();
+  fader.print();
+  biasVoltage.print();
 }

@@ -1,10 +1,13 @@
 #include <Arduino.h>
+#include <ArduinoJson.h>
 #include "ApproachMode.hpp"
 
-ApproachMode::ApproachMode(Motor &motor) : motor_(motor) {}
+ApproachMode::ApproachMode(Motor &motor, BiasVoltage &biasVoltage) :
+  motor_(motor), biasVoltage_(biasVoltage) {}
 
 void ApproachMode::reset() {
-  motor_.down(4000);
+  biasVoltage_.set(50);
+  motor_.down(500);
 }
 
 Mode *ApproachMode::step() {

@@ -1,5 +1,7 @@
 #pragma once
 
+#include "BiasVoltage.hpp"
+
 class Position {
   struct Datum {
     uint8_t x;
@@ -22,5 +24,6 @@ public:
   void setY(uint8_t);
   void setZ(uint16_t);
   void measureSignal();
+  void setBiasVoltageFactor(float);
   boolean signalIsInLimit(boolean, float);
 };

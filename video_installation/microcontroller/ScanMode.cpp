@@ -1,5 +1,5 @@
 #include <limits.h>
-#include <ArduinoJson.h>
+#include "util.hpp"
 #include "ScanMode.hpp"
 
 ScanMode::ScanMode(Position &position, IdleMode &successor) :
@@ -26,16 +26,7 @@ unsigned long ScanMode::duration() {
 }
 
 void ScanMode::printDuration() {
-  unsigned long d = duration();
-  const int bufferSize = JSON_OBJECT_SIZE(2);
-  StaticJsonBuffer<bufferSize> jsonBuffer;
-
-  JsonObject &root = jsonBuffer.createObject();
-  root["type"] = "scanDuration";
-  root["duration"] = d;
-
-  root.printTo(Serial);
-  Serial.println();
+  printValue("scanDuration", duration());
 }
 
 void ScanMode::finish() {

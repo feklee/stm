@@ -2,16 +2,23 @@
 #include "util.hpp"
 
 void printError(const char *message) {
+  printValue("error", message);
+}
+
+template <typename T> void printValue(const char *type, T value) {
   const int bufferSize = JSON_OBJECT_SIZE(2);
   StaticJsonBuffer<bufferSize> jsonBuffer;
 
-  JsonObject &root = jsonBuffer.createObject();
-  root["type"] = "error";
-  root["message"] = message;
+  JsonObject &jsonRoot = jsonBuffer.createObject();
+  jsonRoot["type"] = type;
+  jsonRoot["value"] = value;
 
-  root.printTo(Serial);
+  jsonRoot.printTo(Serial);
   Serial.println();
 }
+
+template void printValue<unsigned long>(const char *, unsigned long);
+template void printValue<float>(const char *, float);
 
 float readVoltage(uint8_t pin) {
   return float(analogRead(pin)) / 0xffff;
