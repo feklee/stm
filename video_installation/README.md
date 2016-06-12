@@ -24,8 +24,6 @@ Coding conventions
 Ideas
 =====
 
-  * Serve static files.
-
   * Slowly scroll up graphs on fade-out, e.g. by sending small data packages,
     or by running an animation, putting it in “fade out mode”, or even using a
     CSS animation.

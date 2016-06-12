@@ -10,16 +10,19 @@ var mixer = require('./mixer');
 var stm = require('./stm');
 var args = process.argv.slice(2);
 var browserConnection = null;
+var nodeStatic = require('node-static');
+var fileServer = new nodeStatic.Server('./public', {cache: 0});
 
 function onConnectedToStm() {
+    var port = 8080;
     var server = http.createServer(function (request, response) {
-        console.log((new Date()) + ' Received request for ' + request.url);
-        response.writeHead(404);
-        response.end();
-    });
+        request.addListener('end', function () {
+            fileServer.serve(request, response);
+        }).resume();
+    }).listen(port);
 
-    server.listen(8080, function () {
-        console.log((new Date()) + ' Server is listening on port 8080');
+    server.listen(port, function () {
+        console.log('Server is listening on port ' + port);
     });
 
     var wsServer = new WebSocketServer({
