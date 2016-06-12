@@ -5,7 +5,7 @@
 define(function () {
     'use strict';
 
-    var canvas = document.querySelector('canvas.beam');
+    var canvas = document.querySelector('canvas.scan.beam');
     var ctx = canvas.getContext('2d');
     var offset = 2; // px
     var timestampAtPreviousFrame = window.performance.now();

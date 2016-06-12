@@ -4,13 +4,12 @@
 #include <ArduinoJson.h>
 #include "Mode.hpp"
 
-IdleMode::IdleMode() {
-  delay(250);
-}
+IdleMode::IdleMode() {}
 
 void IdleMode::reset() {}
 
 Mode *IdleMode::step() {
+  delay(250);
   return 0;
 }
 

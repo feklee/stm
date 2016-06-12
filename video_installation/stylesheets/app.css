@@ -1,12 +1,21 @@
 html {
     background: black;
+    width: 101vw;
+    overflow: hidden;
 }
 
-canvas {
+canvas.scan {
     height: 100vh;
-    display: block;
-    position: absolute;
+}
+
+canvas.image {
+    float: left;
     transition: opacity 0s;
+}
+
+canvas.beam {
+    position: absolute;
+    left: 0;
 }
 
 canvas.finished {
@@ -15,16 +24,6 @@ canvas.finished {
 }
 
 canvas.graph {
+    float: left;
     height: 100vh;
-    position: absolute;
-}
-
-canvas.graph.index-0 {
-    left: 2160px;
-    background: lightblue;
-}
-
-canvas.graph.index-1 {
-    left: 2580px;
-    background: lightred;
 }

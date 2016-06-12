@@ -3,14 +3,14 @@
 /*global define, window */
 
 define([
-    'scan-image',
+    'image',
     'graph-constructor'
-], function (scanImage, graphConstructor) {
+], function (image, graphConstructor) {
     'use strict';
 
     var client = new window.WebSocket('ws://localhost:8080/');
     var drawRate = 20; // items / ms
-    var graphIndexes = [0, 1];
+    var graphIndexes = [0, 1, 2, 3];
 
     var graphs = graphIndexes.map(function (index) {
         return graphConstructor({
@@ -20,7 +20,7 @@ define([
         });
     });
 
-    scanImage.pixelDrawRate = drawRate;
+    image.pixelDrawRate = drawRate;
 
     client.onerror = function () {
         window.console.log('Connection error');
@@ -44,10 +44,10 @@ define([
 
         switch (data.type) {
         case 'sideLen':
-            scanImage.sideLen = data.sideLen;
+            image.sideLen = data.sideLen;
             break;
         case 'mixedPixels':
-            scanImage.appendPixels(data.pixels);
+            image.appendPixels(data.pixels);
             break;
         case 'graphPoints':
             graphs[data.index].appendPoints(data.points);

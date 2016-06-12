@@ -5,7 +5,7 @@
 define(['beam'], function (beam) {
     'use strict';
 
-    var canvas = document.querySelector('canvas.scan-image');
+    var canvas = document.querySelector('canvas.scan.image');
     var ctx = canvas.getContext('2d');
     var offset = 2; // px
     var sideLen = 0;

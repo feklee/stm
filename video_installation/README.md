@@ -29,6 +29,10 @@ Ideas
 
   * Server static files.
 
+  * Slowly scroll up graphs on fade-out, e.g. by sending small data packages,
+    or by running an animation, putting it in “fade out mode”, or even using a
+    CSS animation.
+
   * Idle mode: Don’t record positions, or only optionally.
 
   * Allow submission of programs as a succession of modes. Programs / Modes can

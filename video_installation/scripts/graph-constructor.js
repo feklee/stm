@@ -40,7 +40,7 @@ define(function () {
 
         function canvasPoint(x, y) {
             return [
-                100 * (x - 0.5) + canvas.width / 2,
+                0.8 * canvas.width * (x - 0.5) + canvas.width / 2,
                 spec.verticalStretchFactor * y
             ];
         }
