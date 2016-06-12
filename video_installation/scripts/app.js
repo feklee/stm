@@ -2,15 +2,25 @@
 
 /*global define, window */
 
-define(['scan-image', 'scan-graph'], function (scanImage, scanGraph) {
+define([
+    'scan-image',
+    'graph-constructor'
+], function (scanImage, graphConstructor) {
     'use strict';
 
     var client = new window.WebSocket('ws://localhost:8080/');
     var drawRate = 20; // items / ms
+    var graphIndexes = [0, 1];
+
+    var graphs = graphIndexes.map(function (index) {
+        return graphConstructor({
+            index: index,
+            pointDrawRate: drawRate, // points / ms
+            verticalStretchFactor: 3
+        });
+    });
 
     scanImage.pixelDrawRate = drawRate;
-    scanGraph.pointDrawRate = drawRate;
-    scanGraph.verticalStretchFactor = 3;
 
     client.onerror = function () {
         window.console.log('Connection error');
@@ -40,7 +50,7 @@ define(['scan-image', 'scan-graph'], function (scanImage, scanGraph) {
             scanImage.appendPixels(data.pixels);
             break;
         case 'graphPoints':
-            scanGraph.appendPoints(data.points);
+            graphs[data.index].appendPoints(data.points);
             break;
         }
     };

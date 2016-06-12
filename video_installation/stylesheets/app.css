@@ -19,7 +19,12 @@ canvas.graph {
     position: absolute;
 }
 
-canvas.scan.graph {
-    right: 0;
+canvas.graph.index-0 {
+    left: 2160px;
     background: lightblue;
+}
+
+canvas.graph.index-1 {
+    left: 2580px;
+    background: lightred;
 }

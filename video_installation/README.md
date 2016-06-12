@@ -24,7 +24,8 @@ Coding conventions
 Ideas
 =====
 
-  * Fader: Also compare ticked values, to avoid unnecessary updates.
+  * Fader: Regularly output its value, and possibly also compare tick values,
+    or get rid of comparison altogether.
 
   * Idle mode: Don’t record positions, or only optionally.
 

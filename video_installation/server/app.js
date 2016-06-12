@@ -1,6 +1,6 @@
 // Serves the game and assets.
 
-/*jslint node: true, maxlen: 80 */
+/*jslint node: true, es6: true, maxlen: 80 */
 
 'use strict';
 
@@ -43,15 +43,13 @@ function sendIfConnected(data) {
     browserConnection.sendUTF(JSON.stringify(data));
 }
 
-function sendAsGraphPoints(positions) {
+function sendAsGraphPoints(positions, graphIndex, index, scale = 1) {
     var points = positions.map(function (position) {
-        return [
-            position[2] / 0xffff, // z
-            position[3] // voltage
-        ];
+        return scale * position[index];
     });
     sendIfConnected({
         type: 'graphPoints',
+        index: graphIndex,
         points: points
     });
 }
@@ -65,7 +63,8 @@ function interpretPositionLog(positions) {
         ];
     });
     mixer.onScanPixels(scanPixels);
-    sendAsGraphPoints(positions);
+    sendAsGraphPoints(positions, 0, 2, 1 / 0xffff); // z
+    sendAsGraphPoints(positions, 1, 3); // voltage
 }
 
 function onData(data) {
