@@ -1,6 +1,6 @@
 html {
     background: black;
-    width: 101vw;
+    width: 178vh; /* 16:9 */
     overflow: hidden;
 }
 
