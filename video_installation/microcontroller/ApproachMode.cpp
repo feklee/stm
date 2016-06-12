@@ -6,7 +6,7 @@ ApproachMode::ApproachMode(Motor &motor, BiasVoltage &biasVoltage) :
   motor_(motor), biasVoltage_(biasVoltage) {}
 
 void ApproachMode::reset() {
-  biasVoltage_.set(50);
+  biasVoltage_.set(10);
   motor_.down(500);
 }
 

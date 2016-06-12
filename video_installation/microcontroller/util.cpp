@@ -21,5 +21,5 @@ template void printValue<unsigned long>(const char *, unsigned long);
 template void printValue<float>(const char *, float);
 
 float readVoltage(uint8_t pin) {
-  return float(analogRead(pin)) / 0xffff;
+  return 3.3 * float(analogRead(pin)) / 0xffff;
 }

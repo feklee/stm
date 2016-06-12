@@ -4,5 +4,6 @@
 #include "Fader.hpp"
 
 void Fader::print() {
-  printValue("faderUpate", readVoltage(potPin_));
+  float value = float(analogRead(potPin_)) / 0xffff; // [0, 1]
+  printValue("faderPosition", value);
 }

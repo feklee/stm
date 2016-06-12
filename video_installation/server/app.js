@@ -75,8 +75,8 @@ function onData(data) {
     case 'scanDuration':
         console.log('Scan duration: ' + data.duration);
         break;
-    case 'faderUpdate':
-        mixer.faderPosition = data.position;
+    case 'faderPosition':
+        mixer.faderPosition = data.value;
         break;
     case 'error':
         console.log("STM error: " + data.message);

@@ -1,3 +1,4 @@
+#include <SPI.h>
 #include <ArduinoJson.h>
 #include "Fader.hpp"
 #include "IdleMode.hpp"
@@ -19,6 +20,7 @@ void setup() {
   analogReadResolution(16);
   biasVoltage.setup();
   motor.setup();
+  SPI.begin();
 }
 
 void switchMode(Mode &newMode) {
