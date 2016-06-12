@@ -16,6 +16,7 @@ static Mode *mode = &idleMode;
 void setup() {
   Serial.begin(115200);
   analogReadResolution(16);
+  motor.setup();
 }
 
 void switchMode(Mode &newMode) {

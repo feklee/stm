@@ -1,7 +1,7 @@
 #pragma once
 
 class Fader {
-  const int potPin_ = A1;
+  const uint8_t potPin_ = A1;
   float currentValue();
   void printJson(float);
 
