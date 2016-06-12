@@ -24,14 +24,16 @@ Coding conventions
 Ideas
 =====
 
-  * Fader: Regularly output its value, and possibly also compare tick values,
-    or get rid of comparison altogether.
+  * Serve static files.
 
-  * Server static files.
+  * Make JavaScript code consistent with Arduino code: `voltage` → `signal`
 
   * Slowly scroll up graphs on fade-out, e.g. by sending small data packages,
     or by running an animation, putting it in “fade out mode”, or even using a
     CSS animation.
+
+    Maybe introduce `graph.fadeOut()` and call it from the finish function of
+    the scan image.
 
   * Idle mode: Don’t record positions, or only optionally.
 

@@ -31,7 +31,7 @@ long signalLogHead = 0;
 long signalLogSize = 0;
 
 void step(boolean rotateClockwise) {
-  static byte position;
+  static byte position; // fixme: Needs to be initialized? (e.g. to 0)
   sendPosition(position);
   position = nextPosition(position, rotateClockwise);
 }

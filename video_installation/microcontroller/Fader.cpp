@@ -2,11 +2,8 @@
 
 #include <Arduino.h>
 #include <ArduinoJson.h>
+#include "util.hpp"
 #include "Fader.hpp"
-
-float Fader::currentValue() {
-  return float(analogRead(potPin_)) / 0xffff;
-}
 
 void Fader::printJson(float value) {
   const int bufferSize = JSON_OBJECT_SIZE(2);
@@ -21,5 +18,5 @@ void Fader::printJson(float value) {
 }
 
 void Fader::read() {
-  printJson(currentValue());
+  printJson(readVoltage(potPin_));
 }

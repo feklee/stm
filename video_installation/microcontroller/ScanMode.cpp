@@ -53,7 +53,7 @@ void ScanMode::scanChunk() {
     position_.setX(head_ % sideLen_);
     position_.setY(head_ / sideLen_);
     position_.setZ(z_);
-    position_.measureVoltage();
+    position_.measureSignal();
     position_.logCurrentValues();
     advanceZ();
     head_ ++;

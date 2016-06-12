@@ -2,6 +2,7 @@
 
 #include <Arduino.h>
 #include <ArduinoJson.h>
+#include "util.hpp"
 #include "Position.hpp"
 
 void Position::printJson() {
@@ -19,7 +20,7 @@ void Position::printJson() {
     Serial.print(",");
     Serial.print(datum.z);
     Serial.print(",");
-    dtostrf(datum.voltage, 0, 2, buffer);
+    dtostrf(datum.signal, 0, 2, buffer);
     Serial.print(buffer);
     Serial.print("]");
   }
@@ -34,7 +35,7 @@ void Position::flushLog() {
 }
 
 void Position::logCurrentValues() {
-  log_[logHead_] = current_;
+  log_[logHead_] = currentValues_;
   logHead_ ++;
   if (logHead_ >= logSize_) {
     flushLog();
@@ -42,17 +43,27 @@ void Position::logCurrentValues() {
 }
 
 void Position::setX(uint8_t x) {
-  current_.x = x;
+  currentValues_.x = x;
 }
 
 void Position::setY(uint8_t y) {
-  current_.y = y;
+  currentValues_.y = y;
 }
 
 void Position::setZ(uint16_t z) {
-  current_.z = z;
+  currentValues_.z = z;
 }
 
-void Position::measureVoltage() {
-  current_.voltage = 0.5;
+void Position::measureSignal() {
+  currentValues_.signal = readVoltage(signalMeasurePin_);
+}
+
+// fixme: signal -> position?
+boolean Position::signalIsInLimit(boolean isMovingDown,
+                                  float limitingSignal /* V */) {
+  if (isMovingDown) {
+    return currentValues_.signal < limitingSignal;
+  } else {
+    return currentValues_.signal > limitingSignal;
+  }
 }

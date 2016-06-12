@@ -1,12 +1,19 @@
+// For explanation of motor control, see:
+// <http://www.instructables.com/id/BYJ48-Stepper-Motor>
+
 #include <Arduino.h>
 #include "Motor.hpp"
+
+Motor::Motor(Position &position) : position_(position) {}
 
 void Motor::down(long steps) {
   long stepsLeft;
   activate();
-  stepsLeft = rotate(steps, false, 5);
+  stepsLeft = rotate(steps, false, 5); // fixme: configurable
   deactivate();
   Serial.println(steps - stepsLeft); // fixme
+  position_.logCurrentValues(); // fixme
+  position_.flushLog(); // fixme
 }
 
 void Motor::setPins(byte val0, byte val1, byte val2, byte val3) {
@@ -16,8 +23,8 @@ void Motor::setPins(byte val0, byte val1, byte val2, byte val3) {
   digitalWrite(pins_[3], val3);
 }
 
-void Motor::sendPosition() {
-  switch (position_) {
+void Motor::sendShaftPosition() {
+  switch (shaftPosition_) {
   case 0:
     setPins(LOW, LOW, LOW, HIGH);
     break;
@@ -45,21 +52,27 @@ void Motor::sendPosition() {
   }
 }
 
-void Motor::advancePosition(boolean rotateClockwise) {
-  position_ += (rotateClockwise ? 1 : -1);
-  position_ &= 7;
+void Motor::advanceShaftPosition(boolean rotateClockwise) {
+  shaftPosition_ += (rotateClockwise ? 1 : -1);
+  shaftPosition_ &= 7;
 }
 
 
 void Motor::step(boolean rotateClockwise) {
-  sendPosition();
-  advancePosition(rotateClockwise);
+  sendShaftPosition();
+  advanceShaftPosition(rotateClockwise);
+}
+
+boolean Motor::isMovingDown(boolean rotateClockwise) {
+  return !rotateClockwise;
 }
 
 long Motor::rotate(long stepsLeft, boolean rotateClockwise,
                    float limitingSignal /* V */) {
-  while (stepsLeft > 0/* fixme: && signalIsInLimit(isMovingDown(rotateClockwise),
-                                          limitingSignal)*/) {
+  position_.measureSignal();
+  while (stepsLeft > 0 &&
+         position_.signalIsInLimit(isMovingDown(rotateClockwise),
+                                   limitingSignal)) {
     step(rotateClockwise);
     stepsLeft --;
     delay(1);

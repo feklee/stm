@@ -7,7 +7,7 @@
 
 static Fader fader;
 static Position position;
-static Motor motor;
+static Motor motor(position);
 static IdleMode idleMode;
 static ScanMode scanMode(position, idleMode);
 static ApproachMode approachMode(motor);

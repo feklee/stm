@@ -1,13 +1,6 @@
 #pragma once
 
-void printError(const char *message) {
-  const int bufferSize = JSON_OBJECT_SIZE(2);
-  StaticJsonBuffer<bufferSize> jsonBuffer;
+#include <Arduino.h>
 
-  JsonObject &root = jsonBuffer.createObject();
-  root["type"] = "error";
-  root["message"] = message;
-
-  root.printTo(Serial);
-  Serial.println();
-}
+void printError(const char *);
+float readVoltage(uint8_t);
