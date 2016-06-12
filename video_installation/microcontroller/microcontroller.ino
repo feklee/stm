@@ -1,6 +1,7 @@
 #include <ArduinoJson.h>
 #include "Fader.hpp"
-#include "Mode.hpp"
+#include "IdleMode.hpp"
+#include "ScanMode.hpp"
 #include "util.hpp"
 
 static Fader fader(A1);

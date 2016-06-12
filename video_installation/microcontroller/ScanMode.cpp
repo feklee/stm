@@ -1,17 +1,6 @@
-// Modes that the microscope can be in.
-
 #include <limits.h>
 #include <ArduinoJson.h>
-#include "Mode.hpp"
-
-IdleMode::IdleMode() {}
-
-void IdleMode::reset() {}
-
-Mode *IdleMode::step() {
-  delay(250);
-  return 0;
-}
+#include "ScanMode.hpp"
 
 ScanMode::ScanMode(Position &position, IdleMode &successor) :
   position_(position), successor_(successor) {
