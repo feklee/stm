@@ -4,8 +4,6 @@
 #include <ArduinoJson.h>
 #include "Fader.hpp"
 
-Fader::Fader(int potPin) : potPin_(potPin) {}
-
 float Fader::currentValue() {
   return float(analogRead(potPin_)) / 0xffff;
 }

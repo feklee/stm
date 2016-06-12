@@ -5,7 +5,7 @@
 #include "ApproachMode.hpp"
 #include "util.hpp"
 
-static Fader fader(A1);
+static Fader fader;
 static Position position;
 static Motor motor;
 static IdleMode idleMode;

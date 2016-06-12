@@ -1,11 +1,10 @@
 #pragma once
 
 class Fader {
-  int potPin_;
+  const int potPin_ = A1;
   float currentValue();
   void printJson(float);
 
 public:
-  Fader(int);
   void read();
 };
