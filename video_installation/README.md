@@ -27,6 +27,8 @@ Ideas
   * Fader: Regularly output its value, and possibly also compare tick values,
     or get rid of comparison altogether.
 
+  * Server static files.
+
   * Idle mode: Don’t record positions, or only optionally.
 
   * Allow submission of programs as a succession of modes. Programs / Modes can

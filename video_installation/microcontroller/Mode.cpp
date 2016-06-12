@@ -4,7 +4,9 @@
 #include <ArduinoJson.h>
 #include "Mode.hpp"
 
-IdleMode::IdleMode() {}
+IdleMode::IdleMode() {
+  delay(250);
+}
 
 void IdleMode::reset() {}
 
