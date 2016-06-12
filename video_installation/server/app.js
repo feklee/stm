@@ -45,7 +45,10 @@ function sendIfConnected(data) {
 
 function sendAsGraphPoints(positions) {
     var points = positions.map(function (position) {
-        return {z: position[2] / 0xffff, voltage: position[3]};
+        return [
+            position[2] / 0xffff, // z
+            position[3] // voltage
+        ];
     });
     sendIfConnected({
         type: 'graphPoints',
@@ -55,11 +58,11 @@ function sendAsGraphPoints(positions) {
 
 function interpretPositionLog(positions) {
     var scanPixels = positions.map(function (position) {
-        return {
-            x: position[0],
-            y: position[1],
-            intensity: position[2] / 0xffff
-        };
+        return [
+            position[0], // x
+            position[1], // y
+            position[2] / 0xffff // intensity
+        ];
     });
     mixer.onScanPixels(scanPixels);
     sendAsGraphPoints(positions);

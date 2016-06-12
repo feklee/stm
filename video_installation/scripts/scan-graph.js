@@ -5,7 +5,7 @@
 define(function () {
     'use strict';
 
-    var canvas = document.querySelector('canvas.scan-graph');
+    var canvas = document.querySelector('canvas.scan.graph');
     var ctx = canvas.getContext('2d');
     var lastTimestamp = window.performance.now();
     var points = [];
@@ -63,7 +63,8 @@ define(function () {
 
     function draw(timestamp) {
         clearCanvas();
-        drawProperty("z");
+        drawProperty(0); // z
+        drawProperty(1); // voltage
         scrollUp((timestamp - lastTimestamp) * pointDrawRate);
         lastTimestamp = timestamp;
         window.requestAnimationFrame(draw);
@@ -73,8 +74,6 @@ define(function () {
         points.push(...newPoints);
     }
 
-    canvas.setAttribute('width', 100);
-    canvas.setAttribute('height', 900);
     window.requestAnimationFrame(draw);
 
     return {

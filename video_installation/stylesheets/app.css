@@ -14,8 +14,12 @@ canvas.finished {
     transition: opacity 4s;
 }
 
-canvas.scan-graph {
+canvas.graph {
     height: 100vh;
     position: absolute;
+}
+
+canvas.scan.graph {
     right: 0;
+    background: lightblue;
 }

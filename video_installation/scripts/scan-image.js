@@ -22,11 +22,11 @@ define(['beam'], function (beam) {
     }
 
     function isLastPixel(pixel) {
-        return pixel.x === sideLen - 1 && pixel.y === sideLen - 1;
+        return pixel[0] === sideLen - 1 && pixel[1] === sideLen - 1;
     }
 
     function isFirstPixel(pixel) {
-        return pixel.x === 0 && pixel.y === 0;
+        return pixel[0] === 0 && pixel[1] === 0;
     }
 
     function clear() {
@@ -35,6 +35,9 @@ define(['beam'], function (beam) {
     }
 
     function drawPixel(pixel) {
+        var x = pixel[0];
+        var y = pixel[1];
+
         canvas.classList.remove('finished');
         if (isLastPixel(pixel)) {
             finish();
@@ -42,9 +45,9 @@ define(['beam'], function (beam) {
         if (isFirstPixel(pixel)) {
             clear();
         }
-        ctx.fillStyle = intensityString(pixel.intensity);
-        ctx.fillRect(offset + pixel.x, offset + pixel.y, 1, 1);
-        beam.draw(pixel.x, pixel.y);
+        ctx.fillStyle = intensityString(pixel[2]);
+        ctx.fillRect(offset + x, offset + y, 1, 1);
+        beam.draw(x, y);
     }
 
     function appendPixels(newPixels) {

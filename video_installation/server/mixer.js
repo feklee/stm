@@ -25,13 +25,15 @@ function sendSideLen() {
     });
 }
 
-function visibilityOfScan(scanPixel) {
+function visibilityOfScan(scanPixelIntensity) {
     if (faderPosition === 1.0) {
         // because attenuationOfScan does not really go to infinity
         return 0;
     } else {
-        return Math.pow(2 * Math.abs(scanPixel.intensity - 0.5),
-                attenuationOfScan);
+        return Math.pow(
+            2 * Math.abs(scanPixelIntensity - 0.5),
+            attenuationOfScan
+        );
     }
 }
 
@@ -43,15 +45,16 @@ function sendMixedPixels() {
 }
 
 function onScanPixel(scanPixel) {
-    var x = scanPixel.x;
-    var y = scanPixel.y;
-    var v = visibilityOfScan(scanPixel);
+    var x = scanPixel[0];
+    var y = scanPixel[1];
+    var intensity = scanPixel[2];
+    var v = visibilityOfScan(intensity);
 
-    mixedPixels.push({
-        x: x,
-        y: y,
-        intensity: scanPixel.intensity * v + image.intensity(x, y) * (1 - v)
-    });
+    mixedPixels.push([
+        x,
+        y,
+        intensity * v + image.intensity(x, y) * (1 - v)
+    ]);
 }
 
 function onScanPixels(scanPixels) {
