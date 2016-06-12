@@ -5,4 +5,4 @@
 require.config({
     baseUrl: "scripts"
 });
-require(['app']);
+require(['index']);

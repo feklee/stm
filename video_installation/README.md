@@ -1,14 +1,18 @@
 Instructions
 ============
 
- 1. Upload code to Teensy 3 or compatible.
+ 1. Build and upload Arduino sketch `microcontroller` to Teensy 3 or
+    compatible.
 
  2. Start server:
 
         $ cd server
         $ node app.js
 
- 3. Open `app.html` in browser, in full screen mode on a 16:9 screen.
+ 3. Open index page in browser, in full screen mode on a 16:9 screen. Example
+    URL (adapt to your system):
+
+        http://localhost:8080
 
 
 Coding conventions
@@ -33,9 +37,6 @@ Ideas
 
   * Allow submission of programs as a succession of modes. Programs / Modes can
     be interrupted by sending another one.
-
-  * Speed up, to get faster feedback loop and avoid crashes: Do approach, scan,
-    retract in one go, and only in the end send data.
 
 
 Legal
