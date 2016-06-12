@@ -2,12 +2,15 @@
 #include "Fader.hpp"
 #include "IdleMode.hpp"
 #include "ScanMode.hpp"
+#include "ApproachMode.hpp"
 #include "util.hpp"
 
 static Fader fader(A1);
 static Position position;
+static Motor motor;
 static IdleMode idleMode;
 static ScanMode scanMode(position, idleMode);
+static ApproachMode approachMode(motor);
 static Mode *mode = &idleMode;
 
 void setup() {
@@ -44,6 +47,8 @@ void interpretSerialInput(const String &s) {
   if (requestedMode == "scan") {
     scanMode.setSideLen(jsonRoot["sideLen"]);
     switchMode(scanMode);
+  } else if (requestedMode == "approach") {
+    switchMode(approachMode);
   } else {
     switchMode(idleMode);
   }
