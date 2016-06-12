@@ -26,8 +26,6 @@ Ideas
 
   * Serve static files.
 
-  * Make JavaScript code consistent with Arduino code: `voltage` → `signal`
-
   * Slowly scroll up graphs on fade-out, e.g. by sending small data packages,
     or by running an animation, putting it in “fade out mode”, or even using a
     CSS animation.
@@ -35,19 +33,11 @@ Ideas
     Maybe introduce `graph.fadeOut()` and call it from the finish function of
     the scan image.
 
-  * Idle mode: Don’t record positions, or only optionally.
-
   * Allow submission of programs as a succession of modes. Programs / Modes can
     be interrupted by sending another one.
 
   * Speed up, to get faster feedback loop and avoid crashes: Do approach, scan,
     retract in one go, and only in the end send data.
-
-  * To speed up, things to try:
-
-      + Don’t check fader in every loop.
-
-      + Disable serialization.
 
 
 Legal

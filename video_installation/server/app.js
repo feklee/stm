@@ -64,7 +64,7 @@ function interpretPositionLog(positions) {
     });
     mixer.onScanPixels(scanPixels);
     sendAsGraphPoints(positions, 0, 2, 1 / 0xffff); // z
-    sendAsGraphPoints(positions, 1, 3); // voltage
+    sendAsGraphPoints(positions, 1, 3, 1 / 3.3); // signal
 }
 
 function onData(data) {
@@ -73,7 +73,7 @@ function onData(data) {
         interpretPositionLog(data.positions);
         break;
     case 'scanDuration':
-        console.log('Scan duration: ' + data.duration);
+        console.log('Scan duration: ' + data.value);
         break;
     case 'faderPosition':
         mixer.faderPosition = data.value;
