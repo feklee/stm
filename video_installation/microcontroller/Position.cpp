@@ -68,3 +68,7 @@ boolean Position::signalIsInLimit(boolean isMovingDown,
     return currentValues_.signal > limitingSignal;
   }
 }
+
+void Position::printSignal() {
+  printValue("signal", currentValues_.signal);
+}

@@ -2,18 +2,17 @@
 // <http://www.instructables.com/id/BYJ48-Stepper-Motor>
 
 #include <Arduino.h>
+#include "util.hpp"
 #include "Motor.hpp"
 
 Motor::Motor(Position &position) : position_(position) {}
 
-void Motor::down(long steps) {
+void Motor::down(long steps, float maxSignal) {
   long stepsLeft;
   activate();
-  stepsLeft = rotate(steps, false, 1); // fixme: configurable
+  stepsLeft = rotate(steps, false, maxSignal);
   deactivate();
-  Serial.println(steps - stepsLeft); // fixme
-  position_.logCurrentValues(); // fixme
-  position_.flushLog(); // fixme
+  printValue("motorStepsMoved", steps - stepsLeft);
 }
 
 void Motor::setPins(byte val0, byte val1, byte val2, byte val3) {

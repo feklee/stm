@@ -26,4 +26,5 @@ public:
   void measureSignal();
   void setBiasVoltageFactor(float);
   boolean signalIsInLimit(boolean, float);
+  void printSignal();
 };

@@ -18,6 +18,7 @@ template <typename T> void printValue(const char *type, T value) {
 }
 
 template void printValue<unsigned long>(const char *, unsigned long);
+template void printValue<long>(const char *, long);
 template void printValue<float>(const char *, float);
 
 float readVoltage(uint8_t pin) {

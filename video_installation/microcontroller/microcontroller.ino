@@ -71,4 +71,6 @@ void loop() {
   }
   fader.print();
   biasVoltage.print();
+  position.measureSignal();
+  position.printSignal();
 }

@@ -19,6 +19,6 @@ class Motor {
 
 public:
   Motor(Position &);
-  void down(long);
+  void down(long, float);
   void setup();
 };
