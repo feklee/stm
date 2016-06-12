@@ -1,5 +1,4 @@
 #include <Arduino.h>
-#include <ArduinoJson.h>
 #include "ApproachMode.hpp"
 
 ApproachMode::ApproachMode(Motor &motor, BiasVoltage &biasVoltage) :
@@ -11,5 +10,6 @@ void ApproachMode::reset() {
 
 Mode *ApproachMode::step() {
   motor_.down(500, 1);
+  // fixme: if steps left, then finish (go to idle)
   return 0;
 }

@@ -2,17 +2,30 @@
 // <http://www.instructables.com/id/BYJ48-Stepper-Motor>
 
 #include <Arduino.h>
+#include <limits.h>
 #include "util.hpp"
 #include "Motor.hpp"
 
 Motor::Motor(Position &position) : position_(position) {}
 
-void Motor::down(long steps, float maxSignal) {
+boolean Motor::down(long steps, float maxSignal /* V */) {
+  boolean maxSignalReached;
   long stepsLeft;
   activate();
   stepsLeft = rotate(steps, false, maxSignal);
   deactivate();
-  printValue("motorStepsMoved", steps - stepsLeft);
+  maxSignalReached = stepsLeft > 0;
+  return maxSignalReached;
+}
+
+boolean Motor::up(long steps, float minSignal /* V */) {
+  boolean minSignalReached;
+  long stepsLeft;
+  activate();
+  stepsLeft = rotate(steps, true, minSignal);
+  deactivate();
+  minSignalReached = stepsLeft > 0;
+  return minSignalReached;
 }
 
 void Motor::setPins(byte val0, byte val1, byte val2, byte val3) {

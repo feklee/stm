@@ -4,6 +4,7 @@
 #include "IdleMode.hpp"
 #include "ScanMode.hpp"
 #include "ApproachMode.hpp"
+#include "RetractMode.hpp"
 #include "util.hpp"
 
 static Fader fader;
@@ -13,6 +14,7 @@ static Motor motor(position);
 static IdleMode idleMode;
 static ScanMode scanMode(position, idleMode);
 static ApproachMode approachMode(motor, biasVoltage);
+static RetractMode retractMode(motor, biasVoltage);
 static Mode *mode = &idleMode;
 
 void setup() {
@@ -54,6 +56,8 @@ void interpretSerialInput(const String &s) {
     switchMode(scanMode);
   } else if (requestedMode == "approach") {
     switchMode(approachMode);
+  } else if (requestedMode == "retract") {
+    switchMode(retractMode);
   } else {
     switchMode(idleMode);
   }
