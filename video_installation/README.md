@@ -8,7 +8,7 @@ Instructions
         $ cd server
         $ node app.js
 
- 3. Open `app.html` in browser.
+ 3. Open `app.html` in browser, in full screen mode on a 16:9 screen.
 
 
 Coding conventions

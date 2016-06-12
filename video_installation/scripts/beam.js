@@ -25,8 +25,8 @@ define(function () {
         ctx.globalCompositeOperation = 'destination-out';
         ctx.fillStyle = 'rgba(0, 0, 0, ' + alpha + ')';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
-        window.requestAnimationFrame(fade);
         timestampAtPreviousFrame = timestamp;
+        window.requestAnimationFrame(fade);
     }
 
     window.requestAnimationFrame(fade);

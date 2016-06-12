@@ -9,8 +9,9 @@ define(['beam'], function (beam) {
     var ctx = canvas.getContext('2d');
     var offset = 2; // px
     var sideLen = 0;
-    var timestampAtPreviousFrame = window.performance.now();
+    var lastTimestamp = window.performance.now();
     var pixels = [];
+    var pixelDrawRate = 0; // pixels / ms
 
     function intensityString(intensity) {
         return 'rgb(0,' + Math.floor(255 * intensity) + ',0)';
@@ -46,31 +47,34 @@ define(['beam'], function (beam) {
         beam.draw(pixel.x, pixel.y);
     }
 
-    function addPixels(newPixels) {
+    function appendPixels(newPixels) {
         pixels.push(...newPixels);
     }
 
-    function drawPixels(timestamp) {
-        var pixelRate = 100 / 20; // pixels / ms
-        var maxRemainingPixelsToDraw =
-                (timestamp - timestampAtPreviousFrame) * pixelRate;
-        while (pixels.length > 0 && maxRemainingPixelsToDraw > 0) {
+    function draw(timestamp) {
+        var maxPixelsToDraw =
+                (timestamp - lastTimestamp) * pixelDrawRate;
+        var pixelsToDraw = Math.min(maxPixelsToDraw, pixels.length);
+        while (pixelsToDraw > 0) {
             drawPixel(pixels.shift());
-            maxRemainingPixelsToDraw -= 1;
+            pixelsToDraw -= 1;
         }
-        timestampAtPreviousFrame = timestamp;
-        window.requestAnimationFrame(drawPixels);
+        lastTimestamp = timestamp;
+        window.requestAnimationFrame(draw);
     }
 
-    window.requestAnimationFrame(drawPixels);
+    window.requestAnimationFrame(draw);
 
     return {
-        addPixels: addPixels,
+        appendPixels: appendPixels,
         set sideLen(newSideLen) {
             sideLen = newSideLen;
             canvas.setAttribute('width', sideLen + 2 * offset);
             canvas.setAttribute('height', sideLen + 2 * offset);
             beam.sideLen = sideLen;
+        },
+        set pixelDrawRate(newPixelDrawRate) {
+            pixelDrawRate = newPixelDrawRate;
         },
         clear: clear
     };

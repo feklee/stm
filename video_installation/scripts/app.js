@@ -6,6 +6,11 @@ define(['scan-image', 'scan-graph'], function (scanImage, scanGraph) {
     'use strict';
 
     var client = new window.WebSocket('ws://localhost:8080/');
+    var drawRate = 20; // items / ms
+
+    scanImage.pixelDrawRate = drawRate;
+    scanGraph.pointDrawRate = drawRate;
+    scanGraph.verticalStretchFactor = 3;
 
     client.onerror = function () {
         window.console.log('Connection error');
@@ -32,7 +37,7 @@ define(['scan-image', 'scan-graph'], function (scanImage, scanGraph) {
             scanImage.sideLen = data.sideLen;
             break;
         case 'mixedPixels':
-            scanImage.addPixels(data.pixels);
+            scanImage.appendPixels(data.pixels);
             break;
         case 'graphPoints':
             scanGraph.appendPoints(data.points);

@@ -7,23 +7,83 @@ define(function () {
 
     var canvas = document.querySelector('canvas.scan-graph');
     var ctx = canvas.getContext('2d');
-    var offset = 2; // px
+    var lastTimestamp = window.performance.now();
+    var points = [];
+    var pointDrawRate = 0; // points / ms
+    var verticalStretchFactor = 1;
 
-    function draw() {
-        ctx.fillStyle = 'rgb(0, ' + Math.round(255 * Math.random()) + ', 0)';
-        ctx.fillRect(offset, offset,
-                canvas.width - 2 * offset,
-                canvas.height - 2 * offset);
+    function maxNumberOfVisiblePoints() {
+        return Math.ceil(
+            canvas.height / verticalStretchFactor
+        );
+    }
+
+    function scrollUp(n) {
+        var minLength = maxNumberOfVisiblePoints();
+        while (n > 0 && points.length > minLength) {
+            points.shift();
+            n -= 1;
+        }
+    }
+
+    function clearCanvas() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+
+    function numberOfPointsToDraw() {
+        return Math.max(Math.min(
+            maxNumberOfVisiblePoints(),
+            points.length
+        ), 0);
+    }
+
+    function canvasPoint(x, y) {
+        return [100 * x, verticalStretchFactor * y];
+    }
+
+    function drawProperty(name) {
+        var point;
+        var n = numberOfPointsToDraw();
+        var i = 0;
+
+        if (n === 0) {
+            return;
+        }
+
+        ctx.beginPath();
+        ctx.moveTo(...canvasPoint(points[0][name], 0));
+        while (i < n) {
+            point = points[i];
+            ctx.lineTo(...canvasPoint(point[name], i));
+            i += 1;
+        }
+        ctx.strokeStyle = 'green';
+        ctx.stroke();
+    }
+
+    function draw(timestamp) {
+        clearCanvas();
+        drawProperty("z");
+        scrollUp((timestamp - lastTimestamp) * pointDrawRate);
+        lastTimestamp = timestamp;
         window.requestAnimationFrame(draw);
+    }
+
+    function appendPoints(newPoints) {
+        points.push(...newPoints);
     }
 
     canvas.setAttribute('width', 100);
     canvas.setAttribute('height', 900);
-
-    draw();
+    window.requestAnimationFrame(draw);
 
     return {
-        appendPoints: function (points) {
+        appendPoints: appendPoints,
+        set pointDrawRate(newPointDrawRate) {
+            pointDrawRate = newPointDrawRate;
+        },
+        set verticalStretchFactor(newVerticalStretchFactor) {
+            verticalStretchFactor = newVerticalStretchFactor;
         }
     };
 });
