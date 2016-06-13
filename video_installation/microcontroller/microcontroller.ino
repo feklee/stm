@@ -1,11 +1,11 @@
 #include <SPI.h>
 #include <ArduinoJson.h>
 #include "Fader.hpp"
-#include "Piezo.hpp"
 #include "IdleMode.hpp"
 #include "ScanMode.hpp"
 #include "ApproachMode.hpp"
 #include "RetractMode.hpp"
+#include "PiezoPlayMode.hpp"
 #include "util.hpp"
 
 static Fader fader;
@@ -17,6 +17,7 @@ static IdleMode idleMode;
 static ScanMode scanMode(position);
 static ApproachMode approachMode(motor, biasVoltage);
 static RetractMode retractMode(motor, biasVoltage);
+static PiezoPlayMode piezoPlayMode(piezo);
 static Mode *mode = &idleMode;
 
 void setup() {
@@ -63,6 +64,8 @@ void interpretSerialInput(const String &s) {
     switchMode(approachMode);
   } else if (requestedMode == "retract") {
     switchMode(retractMode);
+  } else if (requestedMode == "piezoPlay") {
+    switchMode(piezoPlayMode);
   } else {
     switchMode(idleMode);
   }

@@ -11,5 +11,5 @@ class Piezo {
 public:
   void setup();
   void displaceForDuration(long, unsigned long);
-  void play();
+  void play(unsigned long);
 };

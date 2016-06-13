@@ -5,7 +5,6 @@
 void Piezo::setup() {
   pinMode(chipSelectPin_, OUTPUT);
   digitalWrite(chipSelectPin_, HIGH);
-  play();
 }
 
 void Piezo::displace() {
@@ -32,14 +31,14 @@ void Piezo::displaceForDuration(long displacement,
   delay(waitTime);
 }
 
-void Piezo::play() {
-  float frequency = 440 /* Hz */;
-  long duration = 1000 / frequency / 2 /* ms */,
-    totalDuration = 2000 /* ms */;
+void Piezo::play(unsigned long duration /* ms */) {
+  float frequency = 440; // Hz
+  unsigned long startTime = millis();
 
-  for (long i = 0; i < totalDuration / (2 * duration); i ++) {
-    displaceForDuration(0xffff, duration);
-    displaceForDuration(0, duration);
+  while (elapsedTime(startTime, millis()) < duration) {
+    long d = 1000 / frequency / 2; // ms
+    displaceForDuration(0xffff, d);
+    displaceForDuration(0, d);
   }
 }
 
