@@ -7,7 +7,7 @@
 
 void TipPosition::printLog() {
   char buffer[8];
-  Serial.print("{\"type\":\"positionLog\",\"positions\":[");
+  Serial.print("{\"type\":\"tipPositionLog\",\"positions\":[");
   for (int i = 0; i < logHead_; i ++) {
     Datum &datum = log_[i];
     if (i > 0) {

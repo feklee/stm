@@ -47,8 +47,8 @@ function sendIfConnected(data) {
 }
 
 function sendAsGraphPoints(positions, graphIndex, index, scale = 1) {
-    var points = positions.map(function (position) {
-        return scale * position[index];
+    var points = positions.map(function (tipPosition) {
+        return scale * tipPosition[index];
     });
     sendIfConnected({
         type: 'graphPoints',
@@ -57,12 +57,12 @@ function sendAsGraphPoints(positions, graphIndex, index, scale = 1) {
     });
 }
 
-function interpretPositionLog(positions) {
-    var scanPixels = positions.map(function (position) {
+function interpretTipPositionLog(positions) {
+    var scanPixels = positions.map(function (tipPosition) {
         return [
-            position[0], // x
-            position[1], // y
-            position[2] / 0xffff // intensity
+            tipPosition[0], // x
+            tipPosition[1], // y
+            tipPosition[2] / 0xffff // intensity
         ];
     });
     mixer.onScanPixels(scanPixels);
@@ -72,8 +72,8 @@ function interpretPositionLog(positions) {
 
 function onData(data) {
     switch (data.type) {
-    case 'positionLog':
-        interpretPositionLog(data.positions);
+    case 'tipPositionLog':
+        interpretTipPositionLog(data.positions);
         break;
     case 'scanDuration':
         console.log('Scan duration: ' + data.value);
