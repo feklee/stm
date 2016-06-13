@@ -7,7 +7,7 @@ Instructions
  2. Start server:
 
         $ cd server
-        $ node app.js
+        $ npm start
 
  3. Open index page in browser, in full screen mode on a 16:9 screen. Example
     URL (adapt to your system):
@@ -27,6 +27,8 @@ Coding conventions
 
 Ideas
 =====
+
+  * Add to graph: `transitionOut()`
 
   * Maybe rename `Position` to `TipPosition`.
 
