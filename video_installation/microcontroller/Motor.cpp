@@ -39,15 +39,16 @@ void Motor::sendPosition() {
     setPins(HIGH, LOW, LOW, HIGH);
     break;
   }
+  delay(1); // positions sent in too fast succession → motor hangs
 }
 
 void Motor::stepDown() {
-  position_ --;
+  position_ = (position_ - 1) & 7;
   sendPosition();
 }
 
 void Motor::stepUp() {
-  position_ ++;
+  position_ = (position_ + 1) & 7;
   sendPosition();
 }
 

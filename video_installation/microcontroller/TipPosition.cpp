@@ -58,6 +58,7 @@ void TipPosition::measureSignal() {
   currentValues_.signal = readVoltage(signalMeasurePin_);
 }
 
+// fixme: remove?
 boolean TipPosition::signalIsInLimit(boolean isMovingDown,
                                      float limitingSignal /* V */) {
   if (isMovingDown) {

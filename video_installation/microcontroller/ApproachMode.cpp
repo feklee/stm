@@ -9,11 +9,9 @@ void ApproachMode::reset() {
   biasVoltage_.set(50);
 }
 
-boolean ApproachMode::moveDown() {
+boolean ApproachMode::rotateMotor() {
   const int steps = 500;
   const float limitingSignal = 1; // V
-
-  motor_.activate();
   for (int i = 0; i < steps; i ++) {
     motor_.stepDown();
     tipPosition_.measureSignal();
@@ -23,8 +21,14 @@ boolean ApproachMode::moveDown() {
       return true;
     }
   }
-  motor_.deactivate();
   return false;
+}
+
+boolean ApproachMode::moveDown() {
+  motor_.activate();
+  boolean limitingSignalReached = rotateMotor();
+  motor_.deactivate();
+  return limitingSignalReached;
 }
 
 boolean ApproachMode::step() {
