@@ -12,11 +12,11 @@ static Fader fader;
 static TipPosition tipPosition;
 static BiasVoltage biasVoltage;
 static Piezo piezo;
-static Motor motor(tipPosition);
+static Motor motor;
 static IdleMode idleMode;
 static ScanMode scanMode(tipPosition);
-static ApproachMode approachMode(motor, biasVoltage);
-static RetractMode retractMode(motor, biasVoltage);
+static ApproachMode approachMode(motor, biasVoltage, tipPosition);
+static RetractMode retractMode(motor, biasVoltage, tipPosition);
 static PiezoPlayMode piezoPlayMode(piezo);
 static Mode *mode = &idleMode;
 

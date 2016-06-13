@@ -8,9 +8,11 @@
 class ApproachMode : public Mode {
   Motor &motor_;
   BiasVoltage &biasVoltage_;
+  TipPosition &tipPosition_; // fixme: better store Signal?
+  boolean moveDown();
 
 public:
-  ApproachMode(Motor &, BiasVoltage &);
+  ApproachMode(Motor &, BiasVoltage &, TipPosition &);
   void reset();
   boolean step();
 };

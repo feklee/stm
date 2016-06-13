@@ -8,8 +8,10 @@
 class RetractMode : public Mode {
   Motor &motor_;
   BiasVoltage &biasVoltage_;
+  TipPosition &tipPosition_; // fixme: better store Signal?
+  boolean moveUp(float);
 
 public:
-  RetractMode(Motor &, BiasVoltage &);
+  RetractMode(Motor &, BiasVoltage &, TipPosition &tipPosition);
   boolean step();
 };

@@ -5,28 +5,6 @@
 #include "util.hpp"
 #include "Motor.hpp"
 
-Motor::Motor(TipPosition &tipPosition) : tipPosition_(tipPosition) {}
-
-boolean Motor::down(long steps, float limitingSignal /* V */) {
-  boolean limitingSignalReached;
-  long stepsLeft;
-  activate();
-  stepsLeft = rotate(steps, false, limitingSignal);
-  deactivate();
-  limitingSignalReached = stepsLeft > 0;
-  return limitingSignalReached;
-}
-
-boolean Motor::up(long steps, float limitingSignal /* V */) {
-  boolean limitingSignalReached;
-  long stepsLeft;
-  activate();
-  stepsLeft = rotate(steps, true, limitingSignal);
-  deactivate();
-  limitingSignalReached = stepsLeft > 0;
-  return limitingSignalReached;
-}
-
 void Motor::setPins(byte val0, byte val1, byte val2, byte val3) {
   digitalWrite(pins_[0], val0);
   digitalWrite(pins_[1], val1);
@@ -63,33 +41,14 @@ void Motor::sendPosition() {
   }
 }
 
-void Motor::advancePosition(boolean rotateClockwise) {
-  position_ += (rotateClockwise ? 1 : -1);
-  position_ &= 7;
-}
-
-
-void Motor::step(boolean rotateClockwise) {
+void Motor::stepDown() {
+  position_ --;
   sendPosition();
-  advancePosition(rotateClockwise);
 }
 
-boolean Motor::isMovingDown(boolean rotateClockwise) {
-  return !rotateClockwise;
-}
-
-long Motor::rotate(long stepsLeft, boolean rotateClockwise,
-                   float limitingSignal /* V */) {
-  tipPosition_.measureSignal();
-  while (stepsLeft > 0 &&
-         tipPosition_.signalIsInLimit(isMovingDown(rotateClockwise),
-                                   limitingSignal)) {
-    step(rotateClockwise);
-    stepsLeft --;
-    delay(1);
-  }
-
-  return stepsLeft;
+void Motor::stepUp() {
+  position_ ++;
+  sendPosition();
 }
 
 void Motor::activate() {
