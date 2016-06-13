@@ -2,10 +2,10 @@
 
 #include <Arduino.h>
 #include "Mode.hpp"
-#include "Position.hpp"
+#include "TipPosition.hpp"
 
 class ScanMode : public Mode {
-  Position &position_;
+  TipPosition &tipPosition_;
   int sideLen_;
   uint16_t z_ = 0xffff / 2;
   long head_;
@@ -19,7 +19,7 @@ class ScanMode : public Mode {
   boolean headIsAtLimit();
 
 public:
-  ScanMode(Position &);
+  ScanMode(TipPosition &);
   void reset();
   boolean step();
   void setSideLen(int);

@@ -9,12 +9,12 @@
 #include "util.hpp"
 
 static Fader fader;
-static Position position;
+static TipPosition tipPosition;
 static BiasVoltage biasVoltage;
 static Piezo piezo;
-static Motor motor(position);
+static Motor motor(tipPosition);
 static IdleMode idleMode;
-static ScanMode scanMode(position);
+static ScanMode scanMode(tipPosition);
 static ApproachMode approachMode(motor, biasVoltage);
 static RetractMode retractMode(motor, biasVoltage);
 static PiezoPlayMode piezoPlayMode(piezo);
@@ -83,6 +83,6 @@ void loop() {
   }
   fader.print();
   biasVoltage.print();
-  position.measureSignal();
-  position.printSignal();
+  tipPosition.measureSignal();
+  tipPosition.printSignal();
 }

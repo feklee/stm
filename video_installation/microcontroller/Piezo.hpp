@@ -1,7 +1,6 @@
 #pragma once
 
 #include <Arduino.h>
-#include "Position.hpp"
 
 class Piezo {
   const uint8_t chipSelectPin_ = 7;

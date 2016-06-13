@@ -2,7 +2,7 @@
 #include "util.hpp"
 #include "ScanMode.hpp"
 
-ScanMode::ScanMode(Position &position) : position_(position) {
+ScanMode::ScanMode(TipPosition &tipPosition) : tipPosition_(tipPosition) {
   reset();
 }
 
@@ -26,7 +26,7 @@ void ScanMode::printDuration() {
 }
 
 void ScanMode::finish() {
-  position_.flushLog();
+  tipPosition_.flushLog();
   printDuration();
 }
 
@@ -37,11 +37,11 @@ boolean ScanMode::headIsAtLimit() {
 
 void ScanMode::scanChunk() {
   for (int j = 0; j < chunkSize_ && !headIsAtLimit(); j ++) {
-    position_.setX(head_ % sideLen_);
-    position_.setY(head_ / sideLen_);
-    position_.setZ(z_);
-    position_.measureSignal();
-    position_.logCurrentValues();
+    tipPosition_.setX(head_ % sideLen_);
+    tipPosition_.setY(head_ / sideLen_);
+    tipPosition_.setZ(z_);
+    tipPosition_.measureSignal();
+    tipPosition_.logCurrentValues();
     advanceZ();
     head_ ++;
   }

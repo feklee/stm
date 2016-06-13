@@ -5,7 +5,7 @@
 #include "util.hpp"
 #include "Motor.hpp"
 
-Motor::Motor(Position &position) : position_(position) {}
+Motor::Motor(TipPosition &tipPosition) : tipPosition_(tipPosition) {}
 
 boolean Motor::down(long steps, float limitingSignal /* V */) {
   boolean limitingSignalReached;
@@ -34,8 +34,8 @@ void Motor::setPins(byte val0, byte val1, byte val2, byte val3) {
   digitalWrite(pins_[3], val3);
 }
 
-void Motor::sendShaftPosition() {
-  switch (shaftPosition_) {
+void Motor::sendPosition() {
+  switch (position_) {
   case 0:
     setPins(LOW, LOW, LOW, HIGH);
     break;
@@ -63,15 +63,15 @@ void Motor::sendShaftPosition() {
   }
 }
 
-void Motor::advanceShaftPosition(boolean rotateClockwise) {
-  shaftPosition_ += (rotateClockwise ? 1 : -1);
-  shaftPosition_ &= 7;
+void Motor::advancePosition(boolean rotateClockwise) {
+  position_ += (rotateClockwise ? 1 : -1);
+  position_ &= 7;
 }
 
 
 void Motor::step(boolean rotateClockwise) {
-  sendShaftPosition();
-  advanceShaftPosition(rotateClockwise);
+  sendPosition();
+  advancePosition(rotateClockwise);
 }
 
 boolean Motor::isMovingDown(boolean rotateClockwise) {
@@ -80,9 +80,9 @@ boolean Motor::isMovingDown(boolean rotateClockwise) {
 
 long Motor::rotate(long stepsLeft, boolean rotateClockwise,
                    float limitingSignal /* V */) {
-  position_.measureSignal();
+  tipPosition_.measureSignal();
   while (stepsLeft > 0 &&
-         position_.signalIsInLimit(isMovingDown(rotateClockwise),
+         tipPosition_.signalIsInLimit(isMovingDown(rotateClockwise),
                                    limitingSignal)) {
     step(rotateClockwise);
     stepsLeft --;

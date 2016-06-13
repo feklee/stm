@@ -2,7 +2,7 @@
 
 #include "BiasVoltage.hpp"
 
-class Position {
+class TipPosition {
   struct Datum {
     uint8_t x;
     uint8_t y;
@@ -15,7 +15,7 @@ class Position {
   Datum currentValues_;
   int logHead_ = 0;
   const uint8_t signalMeasurePin_ = A2;
-  void printJson();
+  void printLog();
 
 public:
   void logCurrentValues();
