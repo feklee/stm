@@ -2,7 +2,6 @@
 // <http://www.instructables.com/id/BYJ48-Stepper-Motor>
 
 #include <Arduino.h>
-#include <limits.h>
 #include "util.hpp"
 #include "Motor.hpp"
 

@@ -1,6 +1,7 @@
 #include <SPI.h>
 #include <ArduinoJson.h>
 #include "Fader.hpp"
+#include "Piezo.hpp"
 #include "IdleMode.hpp"
 #include "ScanMode.hpp"
 #include "ApproachMode.hpp"
@@ -10,6 +11,7 @@
 static Fader fader;
 static Position position;
 static BiasVoltage biasVoltage;
+static Piezo piezo;
 static Motor motor(position);
 static IdleMode idleMode;
 static ScanMode scanMode(position);
@@ -20,8 +22,11 @@ static Mode *mode = &idleMode;
 void setup() {
   Serial.begin(115200);
   analogReadResolution(16);
+
   biasVoltage.setup();
+  piezo.setup();
   motor.setup();
+
   SPI.begin();
 }
 

@@ -18,10 +18,7 @@ void ScanMode::advanceZ() {
 
 unsigned long ScanMode::duration() {
   unsigned long endTime = micros();
-  bool overflowHappened = endTime < startTime_;
-  return (overflowHappened ?
-          ULONG_MAX - startTime_ + endTime :
-          endTime - startTime_);
+  return elapsedTime(startTime_, endTime);
 }
 
 void ScanMode::printDuration() {

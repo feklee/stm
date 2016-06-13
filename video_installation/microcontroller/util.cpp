@@ -1,4 +1,5 @@
 #include <ArduinoJson.h>
+#include <limits.h>
 #include "util.hpp"
 
 void printError(const char *message) {
@@ -23,4 +24,13 @@ template void printValue<float>(const char *, float);
 
 float readVoltage(uint8_t pin) {
   return 3.3 * float(analogRead(pin)) / 0xffff;
+}
+
+// Accounts for one overflow, but not for multiple ones!
+unsigned long elapsedTime(unsigned long startTime /* time units */,
+                          unsigned long endTime /* time units */) {
+  bool overflowHappened = endTime < startTime;
+  return (overflowHappened ?
+          ULONG_MAX - startTime + endTime :
+          endTime - startTime);
 }

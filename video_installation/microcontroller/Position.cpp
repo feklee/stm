@@ -1,5 +1,4 @@
-// Position of the microscope, i.e. x, y, z, and current signal at bias
-// voltage
+// Position of the tip, i.e. x, y, z, and current signal at bias voltage
 
 #include <Arduino.h>
 #include <ArduinoJson.h>
