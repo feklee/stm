@@ -11,6 +11,5 @@ class RetractMode : public Mode {
 
 public:
   RetractMode(Motor &, BiasVoltage &);
-  void reset();
   boolean step();
 };

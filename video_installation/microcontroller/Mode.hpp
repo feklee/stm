@@ -2,6 +2,6 @@
 
 class Mode {
 public:
-  virtual void reset() = 0;
-  virtual boolean step() = 0;
+  virtual void reset();
+  virtual boolean step();
 };
