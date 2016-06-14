@@ -45,10 +45,10 @@ function connect(settings) {
 }
 
 function startScan() {
-    port.write(JSON.stringify({
+    port.write(JSON.stringify([{
         mode: 'scan',
         sideLen: 128
-    }));
+    }]));
 }
 
 module.exports = {
