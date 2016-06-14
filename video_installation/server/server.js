@@ -90,7 +90,8 @@ function interpretPositions(positions) {
     }
 }
 
-function interpretNewMode() {
+function interpretNewMode(newMode) {
+    mode = newMode;
     console.log("New mode: " + mode);
     var isFinished = mode === 'idle';
     if (isFinished) {
