@@ -21,7 +21,7 @@ static IdleMode idleMode;
 static ScanMode scanMode(tipPositionLog, current);
 static ApproachMode approachMode(motor, biasVoltage, current, piezo,
                                  currentLog);
-static RetractMode retractMode(motor, biasVoltage, current);
+static RetractMode retractMode(motor, biasVoltage, current, currentLog);
 static PiezoPlayMode piezoPlayMode(piezo);
 static Mode *mode = &idleMode;
 

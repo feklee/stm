@@ -14,8 +14,8 @@ class ApproachMode : public Mode {
   Current &current_;
   Piezo &piezo_;
   CurrentLog &currentLog_;
-  boolean probeWithPiezo(unsigned int);
-  boolean probe();
+  boolean displacePiezoInSteps(unsigned int);
+  boolean rotateMotor();
   void reapproachFinely();
   boolean approach();
   void finish();

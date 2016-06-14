@@ -2,13 +2,15 @@
 #include "RetractMode.hpp"
 
 RetractMode::RetractMode(Motor &motor, BiasVoltage &biasVoltage,
-                         Current &current) :
-  motor_(motor), biasVoltage_(biasVoltage), current_(current) {}
+                         Current &current, CurrentLog &currentLog) :
+  motor_(motor), biasVoltage_(biasVoltage), current_(current),
+  currentLog_(currentLog) {}
 
 boolean RetractMode::rotateMotor(int steps, float targetSignal) {
   for (int i = 0; i < steps; i ++) {
     motor_.stepUp();
     current_.measure();
+    currentLog_.add(current_);
     if (current_.signal() <= targetSignal) {
       return true;
     }
@@ -16,7 +18,7 @@ boolean RetractMode::rotateMotor(int steps, float targetSignal) {
   return false;
 }
 
-boolean RetractMode::moveUp(
+boolean RetractMode::retract(
   int steps,
   float targetSignal = -1 // V, outside bounds by default
 ) {
@@ -27,9 +29,9 @@ boolean RetractMode::moveUp(
 }
 
 boolean RetractMode::step() {
-  boolean targetSignalReached = moveUp(500, 0.1);
+  boolean targetSignalReached = retract(500, 0.1);
   if (targetSignalReached) {
-    moveUp(1000);
+    retract(1000);
     return false;
   }
   return true;
