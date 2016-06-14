@@ -1,11 +1,13 @@
 #pragma once
 
 #include <Arduino.h>
-#include "Mode.hpp"
 #include "TipPosition.hpp"
+#include "Current.hpp"
+#include "Mode.hpp"
 
 class ScanMode : public Mode {
   TipPosition &tipPosition_;
+  Current &current_;
   int sideLen_;
   uint16_t z_ = 0xffff / 2;
   long head_;
@@ -19,7 +21,7 @@ class ScanMode : public Mode {
   boolean headIsAtLimit();
 
 public:
-  ScanMode(TipPosition &);
+  ScanMode(TipPosition &, Current &);
   void reset();
   boolean step();
   void setSideLen(int);

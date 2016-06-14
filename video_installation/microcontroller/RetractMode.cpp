@@ -2,15 +2,15 @@
 #include "RetractMode.hpp"
 
 RetractMode::RetractMode(Motor &motor, BiasVoltage &biasVoltage,
-                         TipPosition &tipPosition) :
-  motor_(motor), biasVoltage_(biasVoltage), tipPosition_(tipPosition) {}
+                         Current &current) :
+  motor_(motor), biasVoltage_(biasVoltage), current_(current) {}
 
 boolean RetractMode::rotateMotor(int steps, float limitingSignal) {
   for (int i = 0; i < steps; i ++) {
     motor_.stepUp();
-    tipPosition_.measureSignal();
+    current_.measure();
     boolean limitingSignalReached =
-      !tipPosition_.signalIsInLimit(false, limitingSignal); // fixme: just compare signal?
+      !current_.isInLimit(false, limitingSignal); // fixme: just compare signal?
     if (limitingSignalReached) {
       return true;
     }

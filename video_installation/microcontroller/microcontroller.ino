@@ -6,17 +6,19 @@
 #include "ApproachMode.hpp"
 #include "RetractMode.hpp"
 #include "PiezoPlayMode.hpp"
+#include "TipPositionLog.hpp"
 #include "util.hpp"
 
 static Fader fader;
-static TipPosition tipPosition;
+static Current current;
+static TipPosition tipPosition(current);
 static BiasVoltage biasVoltage;
 static Piezo piezo;
 static Motor motor;
 static IdleMode idleMode;
-static ScanMode scanMode(tipPosition);
-static ApproachMode approachMode(motor, biasVoltage, tipPosition);
-static RetractMode retractMode(motor, biasVoltage, tipPosition);
+static ScanMode scanMode(tipPositionLog, current);
+static ApproachMode approachMode(motor, biasVoltage, current);
+static RetractMode retractMode(motor, biasVoltage, current);
 static PiezoPlayMode piezoPlayMode(piezo);
 static Mode *mode = &idleMode;
 
@@ -83,6 +85,6 @@ void loop() {
   }
   fader.print();
   biasVoltage.print();
-  tipPosition.measureSignal();
-  tipPosition.printSignal();
+  current.measure();
+  current.print();
 }

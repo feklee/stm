@@ -2,8 +2,8 @@
 #include "ApproachMode.hpp"
 
 ApproachMode::ApproachMode(Motor &motor, BiasVoltage &biasVoltage,
-                           TipPosition &tipPosition) :
-  motor_(motor), biasVoltage_(biasVoltage), tipPosition_(tipPosition) {}
+                           Current &current) :
+  motor_(motor), biasVoltage_(biasVoltage), current_(current) {}
 
 void ApproachMode::reset() {
   biasVoltage_.set(50);
@@ -14,9 +14,9 @@ boolean ApproachMode::rotateMotor() {
   const float limitingSignal = 1; // V
   for (int i = 0; i < steps; i ++) {
     motor_.stepDown();
-    tipPosition_.measureSignal();
+    current_.measure();
     boolean limitingSignalReached =
-      !tipPosition_.signalIsInLimit(true, limitingSignal); // fixme: just compare signal?
+      !current_.isInLimit(true, limitingSignal); // fixme: just compare signal?
     if (limitingSignalReached) {
       return true;
     }

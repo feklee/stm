@@ -3,17 +3,18 @@
 #include <Arduino.h>
 #include "Motor.hpp"
 #include "BiasVoltage.hpp"
+#include "Current.hpp"
 #include "Mode.hpp"
 
 class ApproachMode : public Mode {
   Motor &motor_;
   BiasVoltage &biasVoltage_;
-  TipPosition &tipPosition_; // fixme: better store Signal?
+  Current &current_;
   boolean rotateMotor();
   boolean moveDown();
 
 public:
-  ApproachMode(Motor &, BiasVoltage &, TipPosition &);
+  ApproachMode(Motor &, BiasVoltage &, Current &);
   void reset();
   boolean step();
 };
