@@ -53,6 +53,8 @@ Ideas
 
       + Rename to `ModeChain`, with methods `append` and `next`.
 
+  * Adjust piezo during scan, trying to keep current constant.
+
   * Slowly scroll up graphs on fade-out, e.g. by sending small data packages,
     or by running an animation, putting it in “fade out mode”, or even using a
     CSS animation.
