@@ -11,5 +11,6 @@ public:
   void setup();
   void displaceForDuration(uint16_t, unsigned long);
   void displace(uint16_t);
+  uint16_t displacement();
   void play(unsigned long);
 };

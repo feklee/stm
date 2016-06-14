@@ -37,7 +37,7 @@ boolean RetractMode::retract(
 boolean RetractMode::step() {
   boolean targetSignalReached = retract(500, 0.1);
   if (targetSignalReached) {
-    retract(1000);
+    retract(250);
     return false;
   }
   return true;

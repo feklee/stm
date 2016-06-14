@@ -2,8 +2,9 @@
 #include "util.hpp"
 #include "ScanMode.hpp"
 
-ScanMode::ScanMode(TipPositionLog &tipPositionLog, Current &current) :
-  tipPositionLog_(tipPositionLog), current_(current) {
+ScanMode::ScanMode(TipPositionLog &tipPositionLog, Current &current,
+                   Piezo &piezo) :
+  tipPositionLog_(tipPositionLog), current_(current), piezo_(piezo) {
   reset();
 }
 
@@ -14,11 +15,6 @@ const char *ScanMode::name() {
 void ScanMode::reset() {
   head_ = 0;
   startTime_ = micros();
-}
-
-void ScanMode::advanceZ() {
-  const uint16_t amplitude = 0xfff;
-  z_ = max(0, min(0xffff, z_ + random(-amplitude, amplitude + 1)));
 }
 
 unsigned long ScanMode::duration() {
@@ -44,9 +40,9 @@ void ScanMode::scanChunk() {
   for (int j = 0; j < chunkSize_ && !headIsAtLimit(); j ++) {
     uint8_t x = head_ % sideLen_;
     uint8_t y = head_ / sideLen_;
+    uint16_t z = piezo_.displacement();
     current_.measure();
-    tipPositionLog_.add(x, y, z_, current_.signal());
-    advanceZ();
+    tipPositionLog_.add(x, y, z, current_.signal());
     head_ ++;
   }
 }

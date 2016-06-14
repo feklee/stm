@@ -17,7 +17,7 @@ static BiasVoltage biasVoltage;
 static Piezo piezo;
 static Motor motor;
 static IdleMode idleMode;
-static ScanMode scanMode(tipPositionLog, current);
+static ScanMode scanMode(tipPositionLog, current, piezo);
 static ApproachMode approachMode(motor, biasVoltage, current, piezo,
                                  tipPositionLog);
 static RetractMode retractMode(motor, biasVoltage, current, piezo,

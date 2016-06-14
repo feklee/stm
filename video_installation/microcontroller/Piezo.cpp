@@ -46,3 +46,7 @@ void Piezo::displace(uint16_t displacement) {
   displacement_ = displacement;
   sendDisplacement();
 }
+
+uint16_t Piezo::displacement() {
+  return displacement_;
+}

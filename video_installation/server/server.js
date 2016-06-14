@@ -63,7 +63,7 @@ function interpretScanPositions(positions) {
         return [
             position[0], // x
             position[1], // y
-            position[2] / 0xffff // intensity
+            position[3] / 3.3 // intensity
         ];
     });
     mixer.onScanPixels(scanPixels);
