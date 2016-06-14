@@ -5,7 +5,7 @@ RetractMode::RetractMode(Motor &motor, BiasVoltage &biasVoltage,
                          Current &current, Piezo &piezo,
                          TipPositionLog &tipPositionLog) :
   motor_(motor), biasVoltage_(biasVoltage), current_(current),
-  tipPositionLog_(tipPositionLog) {}
+  piezo_(piezo), tipPositionLog_(tipPositionLog) {}
 
 boolean RetractMode::rotateMotor(int steps, float targetSignal) {
   for (int i = 0; i < steps; i ++) {
@@ -23,6 +23,7 @@ boolean RetractMode::retract(
   int steps,
   float targetSignal = -1 // V, outside bounds by default
 ) {
+  piezo_.displace(0);
   motor_.activate();
   boolean targetSignalReached = rotateMotor(steps, targetSignal);
   motor_.deactivate();

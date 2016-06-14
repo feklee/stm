@@ -12,6 +12,7 @@ class RetractMode : public Mode {
   Motor &motor_;
   BiasVoltage &biasVoltage_;
   Current &current_;
+  Piezo &piezo_;
   TipPositionLog &tipPositionLog_;
   boolean rotateMotor(int, float);
   boolean retract(int, float);
