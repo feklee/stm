@@ -37,7 +37,7 @@ function onConnectedToStm() {
         mixer.browserConnection = browserConnection;
     });
 
-    setInterval(stm.approachScanRetract, 20000);
+    stm.approachScanRetract();
 }
 
 function sendIfConnected(data) {
@@ -90,6 +90,14 @@ function interpretPositions(positions) {
     }
 }
 
+function interpretNewMode() {
+    console.log("New mode: " + mode);
+    var isFinished = mode === 'idle';
+    if (isFinished) {
+        setTimeout(stm.approachScanRetract, 5000);
+    }
+}
+
 function onData(data) {
     switch (data.type) {
     case 'tipPositionLog':
@@ -102,8 +110,7 @@ function onData(data) {
         mixer.faderPosition = data.value;
         break;
     case 'newMode':
-        mode = data.value;
-        console.log("New mode: " + mode);
+        interpretNewMode(data.value);
         break;
     case 'error':
         console.log("STM error: " + data.message);
