@@ -7,6 +7,10 @@ RetractMode::RetractMode(Motor &motor, BiasVoltage &biasVoltage,
   motor_(motor), biasVoltage_(biasVoltage), current_(current),
   piezo_(piezo), tipPositionLog_(tipPositionLog) {}
 
+const char *RetractMode::name() {
+  return "retract";
+}
+
 boolean RetractMode::rotateMotor(int steps, float targetSignal) {
   for (int i = 0; i < steps; i ++) {
     motor_.stepUp();

@@ -38,6 +38,7 @@ void setup() {
 void switchMode(Mode &newMode) {
   mode = &newMode;
   mode->reset();
+  printValue("newMode", mode->name());
 }
 
 void interpretSerialInput(const String &s) {
@@ -61,14 +62,14 @@ void interpretSerialInput(const String &s) {
   }
 
   String requestedMode = jsonRoot["mode"];
-  if (requestedMode == "scan") {
+  if (requestedMode == scanMode.name()) {
     scanMode.setSideLen(jsonRoot["sideLen"]);
     switchMode(scanMode);
-  } else if (requestedMode == "approach") {
+  } else if (requestedMode == approachMode.name()) {
     switchMode(approachMode);
-  } else if (requestedMode == "retract") {
+  } else if (requestedMode == retractMode.name()) {
     switchMode(retractMode);
-  } else if (requestedMode == "piezoPlay") {
+  } else if (requestedMode == piezoPlayMode.name()) {
     switchMode(piezoPlayMode);
   } else {
     switchMode(idleMode);

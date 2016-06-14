@@ -19,5 +19,6 @@ class RetractMode : public Mode {
 
 public:
   RetractMode(Motor &, BiasVoltage &, Current &, Piezo &, TipPositionLog &);
+  const char *name();
   boolean step();
 };

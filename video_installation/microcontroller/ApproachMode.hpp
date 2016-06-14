@@ -22,6 +22,7 @@ class ApproachMode : public Mode {
 
 public:
   ApproachMode(Motor &, BiasVoltage &, Current &, Piezo &, TipPositionLog &);
+  const char *name();
   void reset();
   boolean step();
 };

@@ -8,5 +8,6 @@ class PiezoPlayMode : public Mode {
 
 public:
   PiezoPlayMode(Piezo &);
+  const char *name();
   boolean step();
 };

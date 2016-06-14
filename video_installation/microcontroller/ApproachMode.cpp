@@ -7,6 +7,10 @@ ApproachMode::ApproachMode(Motor &motor, BiasVoltage &biasVoltage,
   motor_(motor), biasVoltage_(biasVoltage), current_(current), piezo_(piezo),
   tipPositionLog_(tipPositionLog) {}
 
+const char *ApproachMode::name() {
+  return "approach";
+}
+
 void ApproachMode::reset() {
   biasVoltage_.set(50);
 }

@@ -7,6 +7,10 @@ ScanMode::ScanMode(TipPositionLog &tipPositionLog, Current &current) :
   reset();
 }
 
+const char *ScanMode::name() {
+  return "scan";
+}
+
 void ScanMode::reset() {
   head_ = 0;
   startTime_ = micros();

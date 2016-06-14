@@ -22,6 +22,7 @@ class ScanMode : public Mode {
 
 public:
   ScanMode(TipPositionLog &, Current &);
+  const char *name();
   void reset();
   boolean step();
   void setSideLen(int);
