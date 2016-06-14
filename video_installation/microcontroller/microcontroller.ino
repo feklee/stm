@@ -17,7 +17,7 @@ static Piezo piezo;
 static Motor motor;
 static IdleMode idleMode;
 static ScanMode scanMode(tipPositionLog, current);
-static ApproachMode approachMode(motor, biasVoltage, current);
+static ApproachMode approachMode(motor, biasVoltage, current, piezo);
 static RetractMode retractMode(motor, biasVoltage, current);
 static PiezoPlayMode piezoPlayMode(piezo);
 static Mode *mode = &idleMode;

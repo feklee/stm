@@ -4,11 +4,12 @@
 
 class Piezo {
   const uint8_t chipSelectPin_ = 7;
-  long displacement_ = 0;
-  void displace();
+  uint16_t displacement_ = 0;
+  void sendDisplacement();
 
 public:
   void setup();
-  void displaceForDuration(long, unsigned long);
+  void displaceForDuration(uint16_t, unsigned long);
+  void displace(uint16_t);
   void play(unsigned long);
 };

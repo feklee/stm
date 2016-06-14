@@ -2,35 +2,58 @@
 #include "ApproachMode.hpp"
 
 ApproachMode::ApproachMode(Motor &motor, BiasVoltage &biasVoltage,
-                           Current &current) :
-  motor_(motor), biasVoltage_(biasVoltage), current_(current) {}
+                           Current &current, Piezo &piezo) :
+  motor_(motor), biasVoltage_(biasVoltage), current_(current), piezo_(piezo) {}
 
 void ApproachMode::reset() {
   biasVoltage_.set(50);
 }
 
-boolean ApproachMode::rotateMotor() {
-  const int steps = 500;
+boolean ApproachMode::probeWithPiezo(unsigned int increment) {
   const float targetSignal = 1; // V
-  for (int i = 0; i < steps; i ++) {
-    motor_.stepDown();
+
+  for (long i = 0; i <= 0xffff; i += increment) {
+    piezo_.displace(i);
     current_.measure();
     if (current_.signal() >= targetSignal) {
-      return true;
+      return true; // target signal reached
     }
+    i += increment;
   }
   return false;
 }
 
-boolean ApproachMode::moveDown() {
+boolean ApproachMode::probe() {
+  const int steps = 500;
+  for (int i = 0; i < steps; i ++) {
+    boolean targetSignalReached = probeWithPiezo(100);
+    if (targetSignalReached) {
+      return true;
+    }
+    motor_.stepDown();
+  }
+  return false;
+}
+
+void ApproachMode::reapproachFinely() {
+  piezo_.displace(0);
+  probeWithPiezo(10);
+}
+
+boolean ApproachMode::approach() {
   motor_.activate();
-  boolean targetSignalReached = rotateMotor();
+  boolean targetSignalReached = probe();
   motor_.deactivate();
+
+  if (targetSignalReached) {
+    reapproachFinely();
+  }
+
   return targetSignalReached;
 }
 
 boolean ApproachMode::step() {
-  boolean targetSignalReached = moveDown();
+  boolean targetSignalReached = approach();
   if (targetSignalReached) {
     return false;
   }

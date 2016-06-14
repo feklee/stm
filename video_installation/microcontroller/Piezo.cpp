@@ -7,7 +7,7 @@ void Piezo::setup() {
   digitalWrite(chipSelectPin_, HIGH);
 }
 
-void Piezo::displace() {
+void Piezo::sendDisplacement() {
   byte dacChannel = 0;
   digitalWrite(chipSelectPin_, LOW);
   SPI.beginTransaction(SPISettings(1400000, MSBFIRST, SPI_MODE0));
@@ -17,11 +17,11 @@ void Piezo::displace() {
   digitalWrite(chipSelectPin_, HIGH);
 }
 
-void Piezo::displaceForDuration(long displacement,
+void Piezo::displaceForDuration(uint16_t displacement,
                                 unsigned long duration /* ms */) {
   unsigned long startTime = millis();
   displacement_ = displacement;
-  displace();
+  sendDisplacement();
   unsigned long endTime = millis();
   unsigned long e = elapsedTime(startTime, endTime);
   if (e >= duration) {
@@ -42,109 +42,7 @@ void Piezo::play(unsigned long duration /* ms */) {
   }
 }
 
-#if 0 // fixme
-
-long Piezo::singleStep(long stepsLeft, boolean moveDown,
-                       boolean limitSignal,
-                       float limitingSignal /* V */,
-                       long stepIncrement) {
-  int direction = moveDown ? 1 : -1;
-
-  while (stepsLeft > 0 &&
-         (!limitSignal || signalIsInLimit(moveDown, limitingSignal))) {
-    if (!stepPiezo(direction * stepIncrement)) {
-      break;
-    }
-    stepsLeft -= stepIncrement;
-  }
-  return stepsLeft;
+void Piezo::displace(uint16_t displacement) {
+  displacement_ = displacement;
+  sendDisplacement();
 }
-
-long Piezo::move(long stepsLeft, boolean moveDown,
-                 boolean limitSignal,
-                 float limitingSignal /* V */,
-                 long stepIncrement) { // fixme: rename to displace?
-  if (!limitSignal) {
-    int direction = moveDown ? 1 : -1;
-    stepPiezo(direction * stepsLeft);
-    return 0;
-  }
-
-  return singleStepPiezo(stepsLeft, moveDown, limitSignal, limitingSignal,
-                         stepIncrement);
-}
-
-void Piezo::down(String &parameters) {
-  String s;
-  long steps, stepsLeft, stepIncrement = 1;
-  float maxSignal = 0;
-  boolean limitSignal = false;
-
-  if ((s = shift(parameters)) == "") {
-    help();
-    return;
-  }
-
-  steps = s.toInt();
-
-  if ((s = shift(parameters)) != "") {
-    maxSignal = s.toFloat();
-    limitSignal = true;
-  }
-
-  if ((s = shift(parameters)) != "") {
-    stepIncrement = s.toInt();
-  }
-
-  stepsLeft = movePiezo(steps, true, limitSignal, maxSignal, stepIncrement);
-
-  printSummary(steps - stepsLeft);
-}
-
-void piezo::up(String &parameters) {
-  String s;
-  long steps, stepsLeft, stepIncrement = 1;
-  float minSignal = 0;
-  boolean limitSignal = false;
-
-  if ((s = shift(parameters)) == "") {
-    help();
-    return;
-  }
-
-  steps = s.toInt();
-
-  if ((s = shift(parameters)) != "") {
-    minSignal = s.toFloat();
-    limitSignal = true;
-  }
-
-  if ((s = shift(parameters)) != "") {
-    stepIncrement = s.toInt();
-  }
-
-  stepsLeft = movePiezo(steps, false, limitSignal, minSignal, stepIncrement);
-  printSummary(steps - stepsLeft);
-}
-
-boolean Piezo::step(int step) {
-  if ((piezoPosition == 0xffff && step > 0) ||
-      (piezoPosition == 0 && step < 0)) {
-    return false; // not stepped
-  }
-  piezoPosition += step;
-  if (piezoPosition < 0) {
-    piezoPosition = 0;
-  } else if (piezoPosition > 0xffff) {
-    piezoPosition = 0xffff;
-  }
-
-  positionPiezo();
-  return true;
-}
-
-void Piezo::moveAllTheWayUp() {
-  movePiezo(0xffff, false, false, 0, 1);
-}
-
-#endif
