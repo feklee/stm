@@ -5,7 +5,7 @@
 
 void TipPositionLog::print() {
   char buffer[8];
-  Serial.print("{\"type\":\"tipPositionLog\",\"positions\":["); // fixme: just send tipPositions
+  Serial.print("{\"type\":\"tipPositionLog\",\"positions\":[");
   for (int i = 0; i < head_; i ++) {
     Entry &entry = entries_[i];
     if (i > 0) {

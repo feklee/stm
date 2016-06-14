@@ -7,21 +7,20 @@
 #include "RetractMode.hpp"
 #include "PiezoPlayMode.hpp"
 #include "TipPositionLog.hpp"
-#include "CurrentLog.hpp"
 #include "util.hpp"
 
 static Fader fader;
 static Current current;
 static TipPositionLog tipPositionLog;
-static CurrentLog currentLog;
 static BiasVoltage biasVoltage;
 static Piezo piezo;
 static Motor motor;
 static IdleMode idleMode;
 static ScanMode scanMode(tipPositionLog, current);
 static ApproachMode approachMode(motor, biasVoltage, current, piezo,
-                                 currentLog);
-static RetractMode retractMode(motor, biasVoltage, current, currentLog);
+                                 tipPositionLog);
+static RetractMode retractMode(motor, biasVoltage, current, piezo,
+                               tipPositionLog);
 static PiezoPlayMode piezoPlayMode(piezo);
 static Mode *mode = &idleMode;
 

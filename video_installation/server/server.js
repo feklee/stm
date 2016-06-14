@@ -57,12 +57,12 @@ function sendAsGraphPoints(positions, graphIndex, index, scale = 1) {
     });
 }
 
-function interpretTipPositionLog(positions) {
-    var scanPixels = positions.map(function (tipPosition) {
+function interpretTipPositions(positions) {
+    var scanPixels = positions.map(function (position) {
         return [
-            tipPosition[0], // x
-            tipPosition[1], // y
-            tipPosition[2] / 0xffff // intensity
+            position[0], // x
+            position[1], // y
+            position[2] / 0xffff // intensity
         ];
     });
     mixer.onScanPixels(scanPixels);
@@ -73,7 +73,7 @@ function interpretTipPositionLog(positions) {
 function onData(data) {
     switch (data.type) {
     case 'tipPositionLog':
-        interpretTipPositionLog(data.positions);
+        interpretTipPositions(data.positions);
         break;
     case 'scanDuration':
         console.log('Scan duration: ' + data.value);

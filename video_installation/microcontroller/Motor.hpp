@@ -1,7 +1,6 @@
 #pragma once
 
 #include <Arduino.h>
-#include "TipPosition.hpp"
 
 class Motor {
   const uint8_t pins_[4] = {2, 3, 4, 5};

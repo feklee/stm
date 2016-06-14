@@ -2,15 +2,16 @@
 #include "RetractMode.hpp"
 
 RetractMode::RetractMode(Motor &motor, BiasVoltage &biasVoltage,
-                         Current &current, CurrentLog &currentLog) :
+                         Current &current, Piezo &piezo,
+                         TipPositionLog &tipPositionLog) :
   motor_(motor), biasVoltage_(biasVoltage), current_(current),
-  currentLog_(currentLog) {}
+  tipPositionLog_(tipPositionLog) {}
 
 boolean RetractMode::rotateMotor(int steps, float targetSignal) {
   for (int i = 0; i < steps; i ++) {
     motor_.stepUp();
     current_.measure();
-    currentLog_.add(current_);
+    tipPositionLog_.add(0, 0, 0, current_.signal());
     if (current_.signal() <= targetSignal) {
       return true;
     }

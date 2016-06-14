@@ -4,18 +4,19 @@
 #include "Motor.hpp"
 #include "BiasVoltage.hpp"
 #include "Current.hpp"
-#include "CurrentLog.hpp"
+#include "Piezo.hpp"
+#include "TipPositionLog.hpp"
 #include "Mode.hpp"
 
 class RetractMode : public Mode {
   Motor &motor_;
   BiasVoltage &biasVoltage_;
   Current &current_;
-  CurrentLog &currentLog_;
+  TipPositionLog &tipPositionLog_;
   boolean rotateMotor(int, float);
   boolean retract(int, float);
 
 public:
-  RetractMode(Motor &, BiasVoltage &, Current &, CurrentLog &);
+  RetractMode(Motor &, BiasVoltage &, Current &, Piezo &, TipPositionLog &);
   boolean step();
 };

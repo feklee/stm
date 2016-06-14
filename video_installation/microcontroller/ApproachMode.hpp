@@ -5,7 +5,7 @@
 #include "BiasVoltage.hpp"
 #include "Current.hpp"
 #include "Piezo.hpp"
-#include "CurrentLog.hpp"
+#include "TipPositionLog.hpp"
 #include "Mode.hpp"
 
 class ApproachMode : public Mode {
@@ -13,7 +13,7 @@ class ApproachMode : public Mode {
   BiasVoltage &biasVoltage_;
   Current &current_;
   Piezo &piezo_;
-  CurrentLog &currentLog_;
+  TipPositionLog &tipPositionLog_;
   boolean displacePiezoInSteps(unsigned int);
   boolean rotateMotor();
   void reapproachFinely();
@@ -21,7 +21,7 @@ class ApproachMode : public Mode {
   void finish();
 
 public:
-  ApproachMode(Motor &, BiasVoltage &, Current &, Piezo &, CurrentLog &);
+  ApproachMode(Motor &, BiasVoltage &, Current &, Piezo &, TipPositionLog &);
   void reset();
   boolean step();
 };

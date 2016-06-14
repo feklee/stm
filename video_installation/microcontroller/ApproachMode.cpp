@@ -3,9 +3,9 @@
 
 ApproachMode::ApproachMode(Motor &motor, BiasVoltage &biasVoltage,
                            Current &current, Piezo &piezo,
-                           CurrentLog &currentLog) :
+                           TipPositionLog &tipPositionLog) :
   motor_(motor), biasVoltage_(biasVoltage), current_(current), piezo_(piezo),
-  currentLog_(currentLog) {}
+  tipPositionLog_(tipPositionLog) {}
 
 void ApproachMode::reset() {
   biasVoltage_.set(50);
@@ -17,7 +17,7 @@ boolean ApproachMode::displacePiezoInSteps(unsigned int increment) {
   for (long i = 0; i <= 0xffff; i += increment) {
     piezo_.displace(i);
     current_.measure();
-    currentLog_.add(current_);
+    tipPositionLog_.add(0, 0, i, current_.signal());
     if (current_.signal() >= targetSignal) {
       return true; // target signal reached
     }
@@ -56,7 +56,7 @@ boolean ApproachMode::approach() {
 }
 
 void ApproachMode::finish() {
-  currentLog_.flush();
+  tipPositionLog_.flush();
 }
 
 boolean ApproachMode::step() {
