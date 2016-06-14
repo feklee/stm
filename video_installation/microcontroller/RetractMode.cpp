@@ -5,13 +5,11 @@ RetractMode::RetractMode(Motor &motor, BiasVoltage &biasVoltage,
                          Current &current) :
   motor_(motor), biasVoltage_(biasVoltage), current_(current) {}
 
-boolean RetractMode::rotateMotor(int steps, float limitingSignal) {
+boolean RetractMode::rotateMotor(int steps, float targetSignal) {
   for (int i = 0; i < steps; i ++) {
     motor_.stepUp();
     current_.measure();
-    boolean limitingSignalReached =
-      !current_.isInLimit(false, limitingSignal); // fixme: just compare signal?
-    if (limitingSignalReached) {
+    if (current_.signal() <= targetSignal) {
       return true;
     }
   }
@@ -20,17 +18,17 @@ boolean RetractMode::rotateMotor(int steps, float limitingSignal) {
 
 boolean RetractMode::moveUp(
   int steps,
-  float limitingSignal = -1 // V, outside bounds by default
+  float targetSignal = -1 // V, outside bounds by default
 ) {
   motor_.activate();
-  boolean limitingSignalReached = rotateMotor(steps, limitingSignal);
+  boolean targetSignalReached = rotateMotor(steps, targetSignal);
   motor_.deactivate();
-  return limitingSignalReached;
+  return targetSignalReached;
 }
 
 boolean RetractMode::step() {
-  boolean limitingSignalReached = moveUp(500, 0.1);
-  if (limitingSignalReached) {
+  boolean targetSignalReached = moveUp(500, 0.1);
+  if (targetSignalReached) {
     moveUp(1000);
     return false;
   }

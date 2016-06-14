@@ -11,13 +11,11 @@ void ApproachMode::reset() {
 
 boolean ApproachMode::rotateMotor() {
   const int steps = 500;
-  const float limitingSignal = 1; // V
+  const float targetSignal = 1; // V
   for (int i = 0; i < steps; i ++) {
     motor_.stepDown();
     current_.measure();
-    boolean limitingSignalReached =
-      !current_.isInLimit(true, limitingSignal); // fixme: just compare signal?
-    if (limitingSignalReached) {
+    if (current_.signal() >= targetSignal) {
       return true;
     }
   }
@@ -26,14 +24,14 @@ boolean ApproachMode::rotateMotor() {
 
 boolean ApproachMode::moveDown() {
   motor_.activate();
-  boolean limitingSignalReached = rotateMotor();
+  boolean targetSignalReached = rotateMotor();
   motor_.deactivate();
-  return limitingSignalReached;
+  return targetSignalReached;
 }
 
 boolean ApproachMode::step() {
-  boolean limitingSignalReached = moveDown();
-  if (limitingSignalReached) {
+  boolean targetSignalReached = moveDown();
+  if (targetSignalReached) {
     return false;
   }
   return true;

@@ -12,5 +12,4 @@ public:
   void measure();
   void print();
   float signal();
-  boolean isInLimit(boolean, float);
 };
