@@ -1,12 +1,11 @@
 // Positions of the tip, i.e. x, y, z, and current signal at bias voltage
 
 #include <Arduino.h>
-#include "util.hpp"
 #include "TipPositionLog.hpp"
 
 void TipPositionLog::print() {
   char buffer[8];
-  Serial.print("{\"type\":\"tipPositionLog\",\"positions\":[");
+  Serial.print("{\"type\":\"tipPositionLog\",\"positions\":["); // fixme: just send tipPositions
   for (int i = 0; i < head_; i ++) {
     Entry &entry = entries_[i];
     if (i > 0) {

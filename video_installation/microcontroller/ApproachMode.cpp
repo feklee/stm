@@ -2,8 +2,10 @@
 #include "ApproachMode.hpp"
 
 ApproachMode::ApproachMode(Motor &motor, BiasVoltage &biasVoltage,
-                           Current &current, Piezo &piezo) :
-  motor_(motor), biasVoltage_(biasVoltage), current_(current), piezo_(piezo) {}
+                           Current &current, Piezo &piezo,
+                           CurrentLog &currentLog) :
+  motor_(motor), biasVoltage_(biasVoltage), current_(current), piezo_(piezo),
+  currentLog_(currentLog) {}
 
 void ApproachMode::reset() {
   biasVoltage_.set(50);
@@ -15,6 +17,7 @@ boolean ApproachMode::probeWithPiezo(unsigned int increment) {
   for (long i = 0; i <= 0xffff; i += increment) {
     piezo_.displace(i);
     current_.measure();
+    currentLog_.add(current_);
     if (current_.signal() >= targetSignal) {
       return true; // target signal reached
     }
@@ -52,10 +55,15 @@ boolean ApproachMode::approach() {
   return targetSignalReached;
 }
 
+void ApproachMode::finish() {
+  currentLog_.flush();
+}
+
 boolean ApproachMode::step() {
   boolean targetSignalReached = approach();
   if (targetSignalReached) {
     return false;
   }
+  finish();
   return true;
 }
