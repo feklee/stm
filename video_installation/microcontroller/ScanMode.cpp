@@ -41,7 +41,7 @@ void ScanMode::scanChunk() {
     uint8_t x = head_ % sideLen_;
     uint8_t y = head_ / sideLen_;
     current_.measure();
-    tipPositionLog_.add({x, y, z_, current_.signal()});
+    tipPositionLog_.add(x, y, z_, current_.signal());
     advanceZ();
     head_ ++;
   }

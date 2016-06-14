@@ -11,7 +11,7 @@
 
 static Fader fader;
 static Current current;
-static TipPosition tipPosition(current);
+static TipPositionLog tipPositionLog;
 static BiasVoltage biasVoltage;
 static Piezo piezo;
 static Motor motor;
