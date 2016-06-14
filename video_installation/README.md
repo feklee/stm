@@ -28,6 +28,20 @@ Coding conventions
 Ideas
 =====
 
+  * `ModeQueue`:
+
+      + Actually an array is sufficient, because wrap-around will never happen.
+
+      + Make sure that the same mode is not twice in queue, because parameters
+        can only be for one. Idea for JSON:
+
+            {"approach":{"position":1},"retract":{"position":3},
+            "scan":{"position":2,"sideLen":16}}
+
+        Then store the positions in the mode objects. To find the next
+        position, iterate over them and compare `position()` to current
+        position.
+
   * Slowly scroll up graphs on fade-out, e.g. by sending small data packages,
     or by running an animation, putting it in “fade out mode”, or even using a
     CSS animation.
