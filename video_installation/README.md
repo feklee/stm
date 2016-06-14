@@ -35,12 +35,21 @@ Ideas
       + Make sure that the same mode is not twice in queue, because parameters
         can only be for one. Idea for JSON:
 
-            {"approach":{"position":1},"retract":{"position":3},
-            "scan":{"position":2,"sideLen":16}}
+            {"approach":{"queuePosition":1},"retract":{"queuePosition":3},
+            "scan":{"queuePosition":2,"sideLen":16}}
 
         Then store the positions in the mode objects. To find the next
-        position, iterate over them and compare `position()` to current
-        position.
+        position, iterate over them and compare `queuePosition()` to position
+        of last object.
+
+        Then one can also use the size of an array `modes` for initializing the
+        JSON parser.
+
+        Mode object method `removeFromQueue()`: Sets position to
+        `idleMode.queuePosition() + 1`.
+
+        Or just keep as is, and live with the overwriting fact, note it down
+        maybe.
 
   * Slowly scroll up graphs on fade-out, e.g. by sending small data packages,
     or by running an animation, putting it in “fade out mode”, or even using a
