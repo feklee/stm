@@ -12,6 +12,7 @@ var args = process.argv.slice(2);
 var browserConnection = null;
 var nodeStatic = require('node-static');
 var fileServer = new nodeStatic.Server('./public', {cache: 0});
+var mode = '';
 
 function onConnectedToStm() {
     var port = 8080;
@@ -32,11 +33,11 @@ function onConnectedToStm() {
 
     wsServer.on('request', function (request) {
         browserConnection = request.accept(null, request.origin);
-        console.log((new Date()) + ' Connection from browser accepted.');
+        console.log('Connection from browser accepted');
         mixer.browserConnection = browserConnection;
     });
 
-    setInterval(stm.startScan, 10000);
+    setInterval(stm.approachScanRetract, 20000);
 }
 
 function sendIfConnected(data) {
@@ -57,7 +58,7 @@ function sendAsGraphPoints(positions, graphIndex, index, scale = 1) {
     });
 }
 
-function interpretTipPositions(positions) {
+function interpretScanPositions(positions) {
     var scanPixels = positions.map(function (position) {
         return [
             position[0], // x
@@ -67,19 +68,42 @@ function interpretTipPositions(positions) {
     });
     mixer.onScanPixels(scanPixels);
     sendAsGraphPoints(positions, 0, 2, 1 / 0xffff); // z
-    sendAsGraphPoints(positions, 1, 3, 1 / 3.3); // signal
+    sendAsGraphPoints(positions, 1, 3, 1 / 3.3); // current signal
+}
+
+function interpretApproachRetractPositions(positions) {
+    sendAsGraphPoints(positions, 2, 2, 1 / 0xffff); // z
+    sendAsGraphPoints(positions, 3, 3, 1 / 3.3); // current signal
+}
+
+function interpretPositions(positions) {
+    switch (mode) {
+    case 'scan':
+        interpretScanPositions(positions);
+        break;
+    case 'approach':
+        interpretApproachRetractPositions(positions);
+        break;
+    case 'retract':
+        interpretApproachRetractPositions(positions);
+        break;
+    }
 }
 
 function onData(data) {
     switch (data.type) {
     case 'tipPositionLog':
-        interpretTipPositions(data.positions);
+        interpretPositions(data.positions);
         break;
     case 'scanDuration':
         console.log('Scan duration: ' + data.value);
         break;
     case 'faderPosition':
         mixer.faderPosition = data.value;
+        break;
+    case 'newMode':
+        mode = data.value;
+        console.log("New mode: " + mode);
         break;
     case 'error':
         console.log("STM error: " + data.message);
@@ -90,7 +114,7 @@ function onData(data) {
 if (args.length === 0) {
     stm.listSerialPorts(
         function (ports) {
-            console.log('Specify com port name as first argument.');
+            console.log('Specify com port name as first argument');
             console.log('');
             console.log('Available ports:');
             ports.forEach(function (port) {

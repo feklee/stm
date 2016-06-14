@@ -38,21 +38,25 @@ function connect(settings) {
             settings.onData(data);
         } catch (e) {
             if (e.name === 'SyntaxError') {
-                console.log('Data is not valid JSON', json);
+                console.log('Data is not valid JSON: ' + json);
             }
         }
     });
 }
 
-function startScan() {
+function approachScanRetract() {
     port.write(JSON.stringify([{
+        mode: 'approach'
+    }, {
         mode: 'scan',
         sideLen: 128
+    }, {
+        mode: 'retract'
     }]));
 }
 
 module.exports = {
     listSerialPorts: listSerialPorts,
     connect: connect,
-    startScan: startScan
+    approachScanRetract: approachScanRetract
 };
