@@ -10,11 +10,11 @@ template <typename T> void printValue(const char *type, T value) {
   const int bufferSize = JSON_OBJECT_SIZE(2);
   StaticJsonBuffer<bufferSize> jsonBuffer;
 
-  JsonObject &jsonRoot = jsonBuffer.createObject();
-  jsonRoot["type"] = type;
-  jsonRoot["value"] = value;
+  JsonObject &root = jsonBuffer.createObject();
+  root["type"] = type;
+  root["value"] = value;
 
-  jsonRoot.printTo(Serial);
+  root.printTo(Serial);
   Serial.println();
 }
 
