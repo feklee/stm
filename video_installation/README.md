@@ -28,16 +28,12 @@ Coding conventions
 Ideas
 =====
 
-  * Add to graph: `transitionOut()`
-
-  * Maybe rename `Position` to `TipPosition`.
-
   * Slowly scroll up graphs on fade-out, e.g. by sending small data packages,
     or by running an animation, putting it in “fade out mode”, or even using a
     CSS animation.
 
-    Maybe introduce `graph.fadeOut()` and call it from the finish function of
-    the scan image.
+    Maybe introduce `graph.transitionOut()` and call it from the finish
+    function of the scan image.
 
   * Allow submission of programs as a succession of modes. Programs / Modes can
     be interrupted by sending another one.
