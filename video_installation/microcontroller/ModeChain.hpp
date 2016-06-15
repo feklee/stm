@@ -2,20 +2,19 @@
 
 #include "Mode.hpp"
 
-class ModeQueue {
+class ModeChain {
 public:
   static const int maxSize = 20;
 
 private:
   Mode *modes[maxSize];
-  int front_ = 0;
-  int size_ = 0;
+  int first_ = 0;
+  int last_ = -1;
   Mode &defaultMode_;
-  int end();
 
 public:
-  ModeQueue(Mode &);
+  ModeChain(Mode &);
   void clear();
-  Mode &pop();
-  void push(Mode &);
+  Mode &next();
+  void append(Mode &);
 };

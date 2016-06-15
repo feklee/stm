@@ -7,7 +7,7 @@
 #include "RetractMode.hpp"
 #include "PiezoPlayMode.hpp"
 #include "TipPositionLog.hpp"
-#include "ModeQueue.hpp"
+#include "ModeChain.hpp"
 #include "util.hpp"
 
 static Fader fader;
@@ -24,7 +24,7 @@ static RetractMode retractMode(motor, biasVoltage, current, piezo,
                                tipPositionLog);
 static PiezoPlayMode piezoPlayMode(piezo);
 static Mode *mode = &idleMode;
-static ModeQueue modeQueue(idleMode);
+static ModeChain modeChain(idleMode);
 
 void setup() {
   Serial.begin(115200);
@@ -63,10 +63,10 @@ void interpretSerialInput(const String &s) {
   const int maxStringLength = 512;
   char t[maxStringLength + 1];
   const int maxNumberOfExpectedProperties = 20;
-  const int maxQueueSize = ModeQueue::maxSize;
+  const int maxChainSize = ModeChain::maxSize;
   const int bufferSize =
-    JSON_ARRAY_SIZE(maxQueueSize) +
-    maxQueueSize * maxNumberOfExpectedProperties;
+    JSON_ARRAY_SIZE(maxChainSize) +
+    maxChainSize * maxNumberOfExpectedProperties;
   StaticJsonBuffer<bufferSize> jsonBuffer;
 
   if (s.length() > maxStringLength) {
@@ -82,11 +82,11 @@ void interpretSerialInput(const String &s) {
     return;
   }
 
-  modeQueue.clear();
+  modeChain.clear();
   for (unsigned int i = 0; i < root.size(); i ++) {
-    modeQueue.push(modeFromNode(root[i]));
+    modeChain.append(modeFromNode(root[i]));
   }
-  switchMode(modeQueue.pop());
+  switchMode(modeChain.next());
 }
 
 void loop() {
@@ -97,7 +97,7 @@ void loop() {
   }
   continueStepping = mode->step();
   if (!continueStepping) {
-    switchMode(modeQueue.pop());
+    switchMode(modeChain.next());
   }
   fader.print();
   biasVoltage.print();

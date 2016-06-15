@@ -28,30 +28,7 @@ Coding conventions
 Ideas
 =====
 
-  * `ModeQueue`:
-
-      + Actually an array is sufficient, because wrap-around will never happen.
-
-      + Make sure that the same mode is not twice in queue, because parameters
-        can only be for one. Idea for JSON:
-
-            {"approach":{"queuePosition":1},"retract":{"queuePosition":3},
-            "scan":{"queuePosition":2,"sideLen":16}}
-
-        Then store the positions in the mode objects. To find the next
-        position, iterate over them and compare `queuePosition()` to position
-        of last object.
-
-        Then one can also use the size of an array `modes` for initializing the
-        JSON parser.
-
-        Mode object method `removeFromQueue()`: Sets position to
-        `idleMode.queuePosition() + 1`.
-
-        Or just keep as is, and live with the overwriting fact, note it down
-        maybe.
-
-      + Rename to `ModeChain`, with methods `append` and `next`.
+  * `boolean` → `bool`
 
   * Adjust piezo during scan, trying to keep current constant.
 
