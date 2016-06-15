@@ -53,6 +53,8 @@ Mode &modeFromNode(JsonObject &node) {
     return scanMode;
   } else if (name == approachMode.name()) {
     approachMode.setTargetCurrentSignal(node["targetCurrentSignal"]);
+    approachMode.setFinePiezoStepSize(node["finePiezoStepSize"]);
+    approachMode.setCoarsePiezoStepSize(node["coarsePiezoStepSize"]);
     return approachMode;
   } else if (name == retractMode.name()) {
     retractMode.setTargetCurrentSignal(node["targetCurrentSignal"]);

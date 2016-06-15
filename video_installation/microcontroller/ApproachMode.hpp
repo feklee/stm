@@ -15,7 +15,9 @@ class ApproachMode : public Mode {
   Piezo &piezo_;
   TipPositionLog &tipPositionLog_;
   float targetCurrentSignal_ = 1;
-  bool displacePiezoInSteps(unsigned int);
+  uint16_t finePiezoStepSize_ = 10;
+  uint16_t coarsePiezoStepSize_ = 100;
+  bool displacePiezoInSteps(uint16_t);
   bool rotateMotor();
   void reapproachFinely();
   bool approach();
@@ -27,4 +29,6 @@ public:
   void reset();
   bool step();
   void setTargetCurrentSignal(float);
+  void setFinePiezoStepSize(uint16_t);
+  void setCoarsePiezoStepSize(uint16_t);
 };

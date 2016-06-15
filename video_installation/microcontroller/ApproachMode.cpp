@@ -15,15 +15,14 @@ void ApproachMode::reset() {
   biasVoltage_.set(50);
 }
 
-bool ApproachMode::displacePiezoInSteps(unsigned int increment) {
-  for (long i = 0; i <= 0xffff; i += increment) {
+bool ApproachMode::displacePiezoInSteps(uint16_t stepSize) {
+  for (long i = 0; i <= 0xffff; i += stepSize) {
     piezo_.displace(i);
     current_.measure();
     tipPositionLog_.add(0, 0, i, current_.signal());
     if (current_.signal() >= targetCurrentSignal_) {
       return true; // target signal reached
     }
-    i += increment;
   }
   return false;
 }
@@ -31,7 +30,7 @@ bool ApproachMode::displacePiezoInSteps(unsigned int increment) {
 bool ApproachMode::rotateMotor() {
   const int steps = 500;
   for (int i = 0; i < steps; i ++) {
-    bool targetSignalReached = displacePiezoInSteps(100);
+    bool targetSignalReached = displacePiezoInSteps(coarsePiezoStepSize_);
     if (targetSignalReached) {
       return true;
     }
@@ -42,7 +41,7 @@ bool ApproachMode::rotateMotor() {
 
 void ApproachMode::reapproachFinely() {
   piezo_.displace(0);
-  displacePiezoInSteps(10);
+  displacePiezoInSteps(finePiezoStepSize_);
 }
 
 bool ApproachMode::approach() {
@@ -72,4 +71,12 @@ bool ApproachMode::step() {
 
 void ApproachMode::setTargetCurrentSignal(float targetCurrentSignal) {
   targetCurrentSignal_ = targetCurrentSignal;
+}
+
+void ApproachMode::setFinePiezoStepSize(uint16_t finePiezoStepSize) {
+  finePiezoStepSize_ = finePiezoStepSize;
+}
+
+void ApproachMode::setCoarsePiezoStepSize(uint16_t coarsePiezoStepSize) {
+  coarsePiezoStepSize_ = coarsePiezoStepSize;
 }
