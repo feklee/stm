@@ -92,7 +92,7 @@ function interpretPositions(positions) {
 
 function interpretNewMode(newMode) {
     mode = newMode;
-    console.log("New mode: " + mode);
+    console.log("Mode: " + mode);
     var isFinished = mode === 'idle';
     if (isFinished) {
         setTimeout(stm.approachScanRetract, 5000);
@@ -105,7 +105,7 @@ function onData(data) {
         interpretPositions(data.positions);
         break;
     case 'scanDuration':
-        console.log('Scan duration: ' + data.value);
+        console.log('Scan duration: ' + data.value / 1000000 + ' s');
         break;
     case 'faderPosition':
         mixer.faderPosition = data.value;
