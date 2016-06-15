@@ -49,7 +49,9 @@ function approachScanRetract() {
         mode: 'approach'
     }, {
         mode: 'scan',
-        sideLen: 128
+        sideLen: 128,
+        maxAdjustmentSteps: 1,
+        adjustmentDelta: 1000
     }, {
         mode: 'retract'
     }]));

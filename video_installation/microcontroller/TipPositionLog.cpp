@@ -4,7 +4,6 @@
 #include "TipPositionLog.hpp"
 
 void TipPositionLog::print() {
-  char buffer[8];
   Serial.print("{\"type\":\"tipPositionLog\",\"positions\":[");
   for (int i = 0; i < head_; i ++) {
     Entry &entry = entries_[i];
@@ -18,8 +17,7 @@ void TipPositionLog::print() {
     Serial.print(",");
     Serial.print(entry.z);
     Serial.print(",");
-    dtostrf(entry.currentSignal, 0, 2, buffer);
-    Serial.print(buffer);
+    Serial.print(entry.currentSignal);
     Serial.print("]");
   }
   Serial.println("]}");

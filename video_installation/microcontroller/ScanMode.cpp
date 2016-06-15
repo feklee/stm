@@ -37,8 +37,8 @@ bool ScanMode::headIsAtLimit() {
 }
 
 void ScanMode::moveTipUp() {
-  for (int i = 0; i < maxAdjustmentSteps; i ++) {
-    piezo_.displaceByDelta(-adjustmentDelta);
+  for (int i = 0; i < maxAdjustmentSteps_; i ++) {
+    piezo_.displaceByDelta(-adjustmentDelta_);
     current_.measure();
     bool targetSignalReached = current_.signal() < targetSignal_;
     if (targetSignalReached) {
@@ -48,8 +48,8 @@ void ScanMode::moveTipUp() {
 }
 
 void ScanMode::moveTipDown() {
-  for (int i = 0; i < maxAdjustmentSteps; i ++) {
-    piezo_.displaceByDelta(adjustmentDelta);
+  for (int i = 0; i < maxAdjustmentSteps_; i ++) {
+    piezo_.displaceByDelta(adjustmentDelta_);
     current_.measure();
     bool targetSignalReached = current_.signal() > targetSignal_;
     if (targetSignalReached) {
