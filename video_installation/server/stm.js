@@ -46,14 +46,17 @@ function connect(settings) {
 
 function approachScanRetract() {
     port.write(JSON.stringify([{
-        mode: 'approach'
+        mode: 'approach',
+        targetCurrentSignal: 1.5
     }, {
         mode: 'scan',
         sideLen: 128,
         maxAdjustmentSteps: 0,
-        adjustmentDelta: 1000
+        adjustmentDelta: 1000,
+        targetCurrentSignal: 1.5 // V
     }, {
-        mode: 'retract'
+        mode: 'retract',
+        targetCurrentSignal: 0.1
     }]));
 }
 

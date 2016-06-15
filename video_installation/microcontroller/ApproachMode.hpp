@@ -14,6 +14,7 @@ class ApproachMode : public Mode {
   Current &current_;
   Piezo &piezo_;
   TipPositionLog &tipPositionLog_;
+  float targetCurrentSignal_ = 1;
   bool displacePiezoInSteps(unsigned int);
   bool rotateMotor();
   void reapproachFinely();
@@ -25,4 +26,5 @@ public:
   const char *name();
   void reset();
   bool step();
+  void setTargetCurrentSignal(float);
 };

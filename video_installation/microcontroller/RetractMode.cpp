@@ -35,10 +35,14 @@ bool RetractMode::retract(
 }
 
 bool RetractMode::step() {
-  bool targetSignalReached = retract(500, 0.1);
+  bool targetSignalReached = retract(500, targetCurrentSignal_);
   if (targetSignalReached) {
     retract(250);
     return false;
   }
   return true;
+}
+
+void RetractMode::setTargetCurrentSignal(float targetCurrentSignal) {
+  targetCurrentSignal_ = targetCurrentSignal;
 }

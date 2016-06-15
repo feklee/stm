@@ -16,13 +16,11 @@ void ApproachMode::reset() {
 }
 
 bool ApproachMode::displacePiezoInSteps(unsigned int increment) {
-  const float targetSignal = 1; // V
-
   for (long i = 0; i <= 0xffff; i += increment) {
     piezo_.displace(i);
     current_.measure();
     tipPositionLog_.add(0, 0, i, current_.signal());
-    if (current_.signal() >= targetSignal) {
+    if (current_.signal() >= targetCurrentSignal_) {
       return true; // target signal reached
     }
     i += increment;
@@ -70,4 +68,8 @@ bool ApproachMode::step() {
   }
   finish();
   return true;
+}
+
+void ApproachMode::setTargetCurrentSignal(float targetCurrentSignal) {
+  targetCurrentSignal_ = targetCurrentSignal;
 }
