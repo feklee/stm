@@ -35,9 +35,6 @@ Ideas
     Maybe introduce `graph.transitionOut()` and call it from the finish
     function of the scan image.
 
-  * Allow submission of programs as a succession of modes. Programs / Modes can
-    be interrupted by sending another one.
-
 
 Legal
 =====
