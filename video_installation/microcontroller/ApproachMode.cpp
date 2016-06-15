@@ -15,7 +15,7 @@ void ApproachMode::reset() {
   biasVoltage_.set(50);
 }
 
-boolean ApproachMode::displacePiezoInSteps(unsigned int increment) {
+bool ApproachMode::displacePiezoInSteps(unsigned int increment) {
   const float targetSignal = 1; // V
 
   for (long i = 0; i <= 0xffff; i += increment) {
@@ -30,10 +30,10 @@ boolean ApproachMode::displacePiezoInSteps(unsigned int increment) {
   return false;
 }
 
-boolean ApproachMode::rotateMotor() {
+bool ApproachMode::rotateMotor() {
   const int steps = 500;
   for (int i = 0; i < steps; i ++) {
-    boolean targetSignalReached = displacePiezoInSteps(100);
+    bool targetSignalReached = displacePiezoInSteps(100);
     if (targetSignalReached) {
       return true;
     }
@@ -47,9 +47,9 @@ void ApproachMode::reapproachFinely() {
   displacePiezoInSteps(10);
 }
 
-boolean ApproachMode::approach() {
+bool ApproachMode::approach() {
   motor_.activate();
-  boolean targetSignalReached = rotateMotor();
+  bool targetSignalReached = rotateMotor();
   motor_.deactivate();
 
   if (targetSignalReached) {
@@ -63,8 +63,8 @@ void ApproachMode::finish() {
   tipPositionLog_.flush();
 }
 
-boolean ApproachMode::step() {
-  boolean targetSignalReached = approach();
+bool ApproachMode::step() {
+  bool targetSignalReached = approach();
   if (targetSignalReached) {
     return false;
   }

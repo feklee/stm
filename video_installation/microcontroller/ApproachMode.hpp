@@ -14,15 +14,15 @@ class ApproachMode : public Mode {
   Current &current_;
   Piezo &piezo_;
   TipPositionLog &tipPositionLog_;
-  boolean displacePiezoInSteps(unsigned int);
-  boolean rotateMotor();
+  bool displacePiezoInSteps(unsigned int);
+  bool rotateMotor();
   void reapproachFinely();
-  boolean approach();
+  bool approach();
   void finish();
 
 public:
   ApproachMode(Motor &, BiasVoltage &, Current &, Piezo &, TipPositionLog &);
   const char *name();
   void reset();
-  boolean step();
+  bool step();
 };

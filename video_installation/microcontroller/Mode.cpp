@@ -3,8 +3,8 @@
 
 void Mode::reset() {}
 
-boolean Mode::step() {
-  boolean continueStepping = false;
+bool Mode::step() {
+  bool continueStepping = false;
   return continueStepping;
 }
 

@@ -5,6 +5,6 @@
 class Mode {
 public:
   virtual void reset();
-  virtual boolean step();
+  virtual bool step();
   virtual const char *name();
 };

@@ -31,7 +31,7 @@ void ScanMode::finish() {
   printDuration();
 }
 
-boolean ScanMode::headIsAtLimit() {
+bool ScanMode::headIsAtLimit() {
   const int limit = sideLen_ * sideLen_;
   return head_ == limit;
 }
@@ -47,7 +47,7 @@ void ScanMode::scanChunk() {
   }
 }
 
-boolean ScanMode::step() {
+bool ScanMode::step() {
   scanChunk();
   if (headIsAtLimit()) {
     finish();

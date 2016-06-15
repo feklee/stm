@@ -19,12 +19,12 @@ class ScanMode : public Mode {
   void advanceZ();
   void finish();
   void scanChunk();
-  boolean headIsAtLimit();
+  bool headIsAtLimit();
 
 public:
   ScanMode(TipPositionLog &, Current &, Piezo &);
   const char *name();
   void reset();
-  boolean step();
+  bool step();
   void setSideLen(int);
 };

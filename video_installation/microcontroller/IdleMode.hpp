@@ -5,5 +5,5 @@
 class IdleMode : public Mode {
 public:
   const char *name();
-  boolean step();
+  bool step();
 };

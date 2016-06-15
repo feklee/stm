@@ -5,7 +5,7 @@ const char *IdleMode::name() {
   return "idle";
 }
 
-boolean IdleMode::step() {
+bool IdleMode::step() {
   delay(250);
   return true;
 }

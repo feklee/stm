@@ -90,7 +90,7 @@ void interpretSerialInput(const String &s) {
 }
 
 void loop() {
-  boolean continueStepping;
+  bool continueStepping;
 
   if (Serial.available() > 0) {
     interpretSerialInput(Serial.readString());

@@ -7,7 +7,7 @@ const char *PiezoPlayMode::name() {
   return "piezoPlay";
 }
 
-boolean PiezoPlayMode::step() {
+bool PiezoPlayMode::step() {
   piezo_.play(250);
   return true;
 }
