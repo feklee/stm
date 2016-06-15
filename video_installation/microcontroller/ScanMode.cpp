@@ -36,12 +36,43 @@ bool ScanMode::headIsAtLimit() {
   return head_ == limit;
 }
 
+void ScanMode::moveTipUp() {
+  for (int i = 0; i < maxAdjustmentSteps; i ++) {
+    piezo_.displaceByDelta(-adjustmentDelta);
+    current_.measure();
+    bool targetSignalReached = current_.signal() < targetSignal_;
+    if (targetSignalReached) {
+      return;
+    }
+  }
+}
+
+void ScanMode::moveTipDown() {
+  for (int i = 0; i < maxAdjustmentSteps; i ++) {
+    piezo_.displaceByDelta(adjustmentDelta);
+    current_.measure();
+    bool targetSignalReached = current_.signal() > targetSignal_;
+    if (targetSignalReached) {
+      return;
+    }
+  }
+}
+
+void ScanMode::adjustTipHeight() {
+  current_.measure();
+  if (current_.signal() > targetSignal_) {
+    moveTipUp();
+  } else {
+    moveTipDown();
+  }
+}
+
 void ScanMode::scanChunk() {
   for (int j = 0; j < chunkSize_ && !headIsAtLimit(); j ++) {
+    adjustTipHeight();
     uint8_t x = head_ % sideLen_;
     uint8_t y = head_ / sideLen_;
     uint16_t z = piezo_.displacement();
-    current_.measure();
     tipPositionLog_.add(x, y, z, current_.signal());
     head_ ++;
   }
@@ -56,6 +87,14 @@ bool ScanMode::step() {
   return true;
 }
 
-void ScanMode::setSideLen(int x) {
-  sideLen_ = x;
+void ScanMode::setSideLen(int sideLen) {
+  sideLen_ = sideLen;
+}
+
+void ScanMode::setMaxAdjustmentSteps(int maxAdjustmentSteps) {
+  maxAdjustmentSteps_ = maxAdjustmentSteps;
+}
+
+void ScanMode::setAdjustmentDelta(int adjustmentDelta) {
+  adjustmentDelta_ = adjustmentDelta;
 }

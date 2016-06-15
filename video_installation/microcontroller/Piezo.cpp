@@ -47,6 +47,25 @@ void Piezo::displace(uint16_t displacement) {
   sendDisplacement();
 }
 
+void Piezo::addToDisplacement(uint16_t delta) {
+  if (delta > 0) {
+    displacement_ =
+      (0xffff - displacement_ < delta) ?
+      0xffff :
+      displacement_ + delta;
+  } else {
+    displacement_ =
+      (displacement_ < delta) ?
+      0 :
+      displacement_ + delta;
+  }
+}
+
+void Piezo::displaceByDelta(uint16_t delta) {
+  addToDisplacement(delta);
+  sendDisplacement();
+}
+
 uint16_t Piezo::displacement() {
   return displacement_;
 }

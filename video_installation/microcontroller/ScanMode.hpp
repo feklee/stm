@@ -14,9 +14,14 @@ class ScanMode : public Mode {
   unsigned long startTime_; // µs
   int chunkSize_ = 250;
   Piezo &piezo_;
+  float targetSignal_ = 1; // V
+  int maxAdjustmentSteps_ = 0;
+  int adjustmentDelta_ = 0;
   unsigned long duration();
   void printDuration();
-  void advanceZ();
+  void adjustTipHeight();
+  void moveTipUp();
+  void moveTipDown();
   void finish();
   void scanChunk();
   bool headIsAtLimit();
@@ -27,4 +32,6 @@ public:
   void reset();
   bool step();
   void setSideLen(int);
+  void setMaxAdjustmentSteps(int);
+  void setAdjustmentDelta(int);
 };

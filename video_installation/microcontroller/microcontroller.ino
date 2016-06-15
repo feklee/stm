@@ -47,6 +47,8 @@ Mode &modeFromNode(JsonObject &node) {
   String name = node["mode"].asString();
   if (name == scanMode.name()) {
     scanMode.setSideLen(node["sideLen"]);
+    scanMode.setMaxAdjustmentSteps(node["maxAdjustmentSteps"]);
+    scanMode.setAdjustmentDelta(node["adjustmentDelta"]);
     return scanMode;
   } else if (name == approachMode.name()) {
     return approachMode;
