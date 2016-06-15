@@ -61,7 +61,7 @@ void Piezo::addToDisplacement(uint16_t delta) {
   }
 }
 
-void Piezo::displaceByDelta(uint16_t delta) {
+void Piezo::displaceByDelta(int delta) {
   addToDisplacement(delta);
   sendDisplacement();
 }

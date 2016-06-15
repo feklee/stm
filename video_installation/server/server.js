@@ -114,7 +114,7 @@ function onData(data) {
         interpretNewMode(data.value);
         break;
     case 'error':
-        console.log("STM error: " + data.message);
+        console.log("STM error: " + data.value);
         break;
     }
 }

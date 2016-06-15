@@ -12,7 +12,7 @@ public:
   void setup();
   void displaceForDuration(uint16_t, unsigned long);
   void displace(uint16_t);
-  void displaceByDelta(uint16_t);
+  void displaceByDelta(int);
   uint16_t displacement();
   void play(unsigned long);
 };

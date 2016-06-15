@@ -50,7 +50,7 @@ function approachScanRetract() {
     }, {
         mode: 'scan',
         sideLen: 128,
-        maxAdjustmentSteps: 1,
+        maxAdjustmentSteps: 2,
         adjustmentDelta: 1000
     }, {
         mode: 'retract'
