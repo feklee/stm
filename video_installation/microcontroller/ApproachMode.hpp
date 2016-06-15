@@ -17,6 +17,7 @@ class ApproachMode : public Mode {
   float targetCurrentSignal_ = 1;
   uint16_t finePiezoStepSize_ = 10;
   uint16_t coarsePiezoStepSize_ = 100;
+  float lastSignal_;
   bool displacePiezoInSteps(uint16_t);
   bool rotateMotor();
   void reapproachFinely();

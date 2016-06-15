@@ -113,6 +113,12 @@ function onData(data) {
     case 'newMode':
         interpretNewMode(data.value);
         break;
+    case 'peakCoarseApproachSignal':
+        console.log('Peak coarse approach signal: ' + data.value + ' V');
+        break;
+    case 'peakFineApproachSignal':
+        console.log('Peak fine approach signal: ' + data.value + ' V');
+        break;
     case 'error':
         console.log("STM error: " + data.value);
         break;

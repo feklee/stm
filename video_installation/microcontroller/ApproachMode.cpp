@@ -1,4 +1,5 @@
 #include <Arduino.h>
+#include "util.hpp"
 #include "ApproachMode.hpp"
 
 ApproachMode::ApproachMode(Motor &motor, BiasVoltage &biasVoltage,
@@ -20,8 +21,10 @@ bool ApproachMode::displacePiezoInSteps(uint16_t stepSize) {
     piezo_.displace(i);
     current_.measure();
     tipPositionLog_.add(0, 0, i, current_.signal());
-    if (current_.signal() >= targetCurrentSignal_) {
-      return true; // target signal reached
+    lastSignal_ = current_.signal();
+    bool targetSignalReached = lastSignal_ >= targetCurrentSignal_;
+    if (targetSignalReached) {
+      return true;
     }
   }
   return false;
@@ -32,6 +35,7 @@ bool ApproachMode::rotateMotor() {
   for (int i = 0; i < steps; i ++) {
     bool targetSignalReached = displacePiezoInSteps(coarsePiezoStepSize_);
     if (targetSignalReached) {
+      printValue("peakCoarseApproachSignal", lastSignal_);
       return true;
     }
     motor_.stepDown();
@@ -42,6 +46,7 @@ bool ApproachMode::rotateMotor() {
 void ApproachMode::reapproachFinely() {
   piezo_.displace(0);
   displacePiezoInSteps(finePiezoStepSize_);
+  printValue("peakFineApproachSignal", lastSignal_);
 }
 
 bool ApproachMode::approach() {
