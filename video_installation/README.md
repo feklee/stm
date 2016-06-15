@@ -28,8 +28,6 @@ Coding conventions
 Ideas
 =====
 
-  * `boolean` → `bool`
-
   * Adjust piezo during scan, trying to keep current constant.
 
   * Slowly scroll up graphs on fade-out, e.g. by sending small data packages,
