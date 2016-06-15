@@ -35,7 +35,7 @@ bool RetractMode::retract(
 }
 
 bool RetractMode::step() {
-  bool targetSignalReached = retract(500, targetCurrentSignal_);
+  bool targetSignalReached = retract(500, targetSignal_);
   if (targetSignalReached) {
     retract(250);
     return false;
@@ -43,6 +43,6 @@ bool RetractMode::step() {
   return true;
 }
 
-void RetractMode::setTargetCurrentSignal(float targetCurrentSignal) {
-  targetCurrentSignal_ = targetCurrentSignal;
+void RetractMode::setTargetSignal(float targetSignal) {
+  targetSignal_ = targetSignal;
 }

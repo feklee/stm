@@ -40,7 +40,7 @@ void ScanMode::moveTipUp() {
   for (int i = 0; i < maxAdjustmentSteps_; i ++) {
     piezo_.displaceByDelta(-adjustmentDelta_);
     current_.measure();
-    bool targetSignalReached = current_.signal() < targetCurrentSignal_;
+    bool targetSignalReached = current_.signal() < targetSignal_;
     if (targetSignalReached) {
       return;
     }
@@ -51,7 +51,7 @@ void ScanMode::moveTipDown() {
   for (int i = 0; i < maxAdjustmentSteps_; i ++) {
     piezo_.displaceByDelta(adjustmentDelta_);
     current_.measure();
-    bool targetSignalReached = current_.signal() > targetCurrentSignal_;
+    bool targetSignalReached = current_.signal() > targetSignal_;
     if (targetSignalReached) {
       return;
     }
@@ -60,7 +60,7 @@ void ScanMode::moveTipDown() {
 
 void ScanMode::adjustTipHeight() {
   current_.measure();
-  if (current_.signal() > targetCurrentSignal_) {
+  if (current_.signal() > targetSignal_) {
     moveTipUp();
   } else {
     moveTipDown();
@@ -99,6 +99,6 @@ void ScanMode::setAdjustmentDelta(int adjustmentDelta) {
   adjustmentDelta_ = adjustmentDelta;
 }
 
-void ScanMode::setTargetCurrentSignal(float targetCurrentSignal) {
-  targetCurrentSignal_ = targetCurrentSignal;
+void ScanMode::setTargetSignal(float targetSignal) {
+  targetSignal_ = targetSignal;
 }

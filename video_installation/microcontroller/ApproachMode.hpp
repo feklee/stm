@@ -14,7 +14,7 @@ class ApproachMode : public Mode {
   Current &current_;
   Piezo &piezo_;
   TipPositionLog &tipPositionLog_;
-  float targetCurrentSignal_ = 1;
+  float targetSignal_ = 1;
   uint16_t finePiezoStepSize_ = 10;
   uint16_t coarsePiezoStepSize_ = 100;
   float lastSignal_;
@@ -29,7 +29,7 @@ public:
   const char *name();
   void reset();
   bool step();
-  void setTargetCurrentSignal(float);
+  void setTargetSignal(float);
   void setFinePiezoStepSize(uint16_t);
   void setCoarsePiezoStepSize(uint16_t);
 };

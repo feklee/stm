@@ -22,7 +22,7 @@ bool ApproachMode::displacePiezoInSteps(uint16_t stepSize) {
     current_.measure();
     tipPositionLog_.add(0, 0, i, current_.signal());
     lastSignal_ = current_.signal();
-    bool targetSignalReached = lastSignal_ >= targetCurrentSignal_;
+    bool targetSignalReached = lastSignal_ >= targetSignal_;
     if (targetSignalReached) {
       return true;
     }
@@ -74,8 +74,8 @@ bool ApproachMode::step() {
   return true;
 }
 
-void ApproachMode::setTargetCurrentSignal(float targetCurrentSignal) {
-  targetCurrentSignal_ = targetCurrentSignal;
+void ApproachMode::setTargetSignal(float targetSignal) {
+  targetSignal_ = targetSignal;
 }
 
 void ApproachMode::setFinePiezoStepSize(uint16_t finePiezoStepSize) {

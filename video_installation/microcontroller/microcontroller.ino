@@ -49,15 +49,15 @@ Mode &modeFromNode(JsonObject &node) {
     scanMode.setSideLen(node["sideLen"]);
     scanMode.setMaxAdjustmentSteps(node["maxAdjustmentSteps"]);
     scanMode.setAdjustmentDelta(node["adjustmentDelta"]);
-    scanMode.setTargetCurrentSignal(node["targetCurrentSignal"]);
+    scanMode.setTargetSignal(node["targetSignal"]);
     return scanMode;
   } else if (name == approachMode.name()) {
-    approachMode.setTargetCurrentSignal(node["targetCurrentSignal"]);
+    approachMode.setTargetSignal(node["targetSignal"]);
     approachMode.setFinePiezoStepSize(node["finePiezoStepSize"]);
     approachMode.setCoarsePiezoStepSize(node["coarsePiezoStepSize"]);
     return approachMode;
   } else if (name == retractMode.name()) {
-    retractMode.setTargetCurrentSignal(node["targetCurrentSignal"]);
+    retractMode.setTargetSignal(node["targetSignal"]);
     return retractMode;
   } else if (name == piezoPlayMode.name()) {
     return piezoPlayMode;
