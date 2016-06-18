@@ -4,12 +4,16 @@ Instructions
  1. Build and upload Arduino sketch `microcontroller` to Teensy 3 or
     compatible.
 
- 2. Start server:
+ 2. List available serial ports for communication with the Teensy:
 
-        $ cd server
+        $ cd server/
         $ npm start
 
- 3. Open index page in browser, in full screen mode on a 16:9 screen. Example
+ 3. Start server, here with serial port `COM59`:
+
+        $ npm start COM59
+
+ 4. Open index page in browser, in full screen mode on a 16:9 screen. Example
     URL (adapt to your system):
 
         http://localhost:8080
