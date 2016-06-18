@@ -1,4 +1,5 @@
-// Mixes the image ("ideal") and the data from the microscope ("real").
+// Mixes a simulated scan ("ideal") with data received from the microscope
+// ("real").
 
 /*jslint node: true, es6: true, maxlen: 80 */
 
@@ -6,7 +7,7 @@
 
 var sideLen = 128;
 var browserConnection = null;
-var image = require('./image');
+var simulator = require('./simulator');
 var attenuationOfScan = 0;
 var faderPosition = 0;
 var mixedPixels = [];
@@ -53,7 +54,7 @@ function onScanPixel(scanPixel) {
     mixedPixels.push([
         x,
         y,
-        intensity * v + image.intensity(x, y) * (1 - v)
+        intensity * v + simulator.intensity(x, y) * (1 - v)
     ]);
 }
 
