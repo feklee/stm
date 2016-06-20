@@ -107,7 +107,7 @@ void setup() {
   setupPiezoSPI();
   setupBiasRegulatorSPI();
   SPI.begin();
-  setBiasVoltageFactor(0.01);
+  setBiasVoltageFactor(0.015);
   analogReadResolution(16);
   prompt();
 }
@@ -432,7 +432,7 @@ void interpretSetBias(String &parameters) {
     return;
   }
 
-  setBiasVoltageFactor(s.toFloat() / 5000);
+  setBiasVoltageFactor(s.toFloat() / 3300);
   printSummary();
 }
 
