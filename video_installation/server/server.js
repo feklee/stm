@@ -47,7 +47,10 @@ function sendIfConnected(data) {
     browserConnection.sendUTF(JSON.stringify(data));
 }
 
-function sendAsGraphPoints(positions, graphIndex, index, scale = 1) {
+function sendAsGraphPoints(positions, graphIndex, index, scale) {
+    if (!scale) {
+        scale = 1;
+    }
     var points = positions.map(function (tipPosition) {
         return scale * tipPosition[index];
     });
