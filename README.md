@@ -17,8 +17,18 @@ Coding conventions
   * JavaScript passes JSLint.
 
 
+Thanks for donations
+====================
+
+  * [hackerspaceshop][1]: Teensy bluetooth serial module
+
+  * HU Berlin: used graphite, platinum-iridium tips
+
+
 Legal
 =====
 
 Unless mentioned otherwise, stuff is licensed under the WTFPL version 2:
 <http://www.wtfpl.net/>
+
+[1]: https://hackerspaceshop.com/
