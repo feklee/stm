@@ -10,7 +10,7 @@
   "license": "WTFPL",
   "dependencies": {
     "node-static": "^0.7.7",
-    "serialport": "^2.1.0",
+    "serialport": "^3.1.2",
     "websocket": "^1.0.23"
   }
 }
