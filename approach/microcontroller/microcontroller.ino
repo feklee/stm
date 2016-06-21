@@ -586,7 +586,7 @@ void woodpeckerDown(float maxSignal, long stepIncrement,
     // Breaks loop if signal is strong enough and the motor has positioned the
     // piezo in a position where there is good room to move the tip up and down
     // with the piezo.
-    if (piezoWasStoppedBeforeReachingEnd /* fixme (restore?): && piezoPosition > 0x7fff */) {
+    if (piezoWasStoppedBeforeReachingEnd && piezoPosition > 0x7fff) {
       break;
     }
   }
