@@ -5,10 +5,10 @@
 
 #include <SPI.h>
 
-#define MOTOR_PIN0 2
-#define MOTOR_PIN1 3
-#define MOTOR_PIN2 4
-#define MOTOR_PIN3 5
+#define MOTOR_PIN0 5
+#define MOTOR_PIN1 4
+#define MOTOR_PIN2 3
+#define MOTOR_PIN3 2
 #define MOTOR_ACTIVATION_PIN 9
 #define SIGNAL_MEASURE_PIN A2
 #define BIAS_MEASURE_PIN A3
@@ -31,7 +31,7 @@ long signalLogHead = 0;
 long signalLogSize = 0;
 
 void step(boolean rotateClockwise) {
-  static byte position; // fixme: Needs to be initialized? (e.g. to 0)
+  static byte position = 0;
   sendPosition(position);
   position = nextPosition(position, rotateClockwise);
 }
@@ -107,7 +107,7 @@ void setup() {
   setupPiezoSPI();
   setupBiasRegulatorSPI();
   SPI.begin();
-  setBiasVoltageFactor(0.01);
+  setBiasVoltageFactor(0.015);
   analogReadResolution(16);
   prompt();
 }
@@ -432,7 +432,7 @@ void interpretSetBias(String &parameters) {
     return;
   }
 
-  setBiasVoltageFactor(s.toFloat() / 5000);
+  setBiasVoltageFactor(s.toFloat() / 3300);
   printSummary();
 }
 
@@ -586,7 +586,7 @@ void woodpeckerDown(float maxSignal, long stepIncrement,
     // Breaks loop if signal is strong enough and the motor has positioned the
     // piezo in a position where there is good room to move the tip up and down
     // with the piezo.
-    if (piezoWasStoppedBeforeReachingEnd /* fixme (restore?): && piezoPosition > 0x7fff */) {
+    if (piezoWasStoppedBeforeReachingEnd && piezoPosition > 0x7fff) {
       break;
     }
   }

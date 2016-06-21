@@ -25,7 +25,7 @@ void BiasVoltage::setFactor(float factor /* [0, 1] */) {
 }
 
 void BiasVoltage::set(float voltage /* mV */) {
-  setFactor(voltage / 5000);
+  setFactor(voltage / 3300);
 }
 
 float BiasVoltage::measuredValue() { // mV
