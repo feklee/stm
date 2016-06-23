@@ -27,7 +27,7 @@ function sendSideLen() {
 }
 
 function visibilityOfScan(scanPixelIntensity) {
-    if (faderPosition === 1.0) {
+    if (faderPosition === 0.0) {
         // because attenuationOfScan does not really go to infinity
         return 0;
     } else {
@@ -71,7 +71,7 @@ module.exports = {
     },
     set faderPosition(x) {
         faderPosition = x;
-        attenuationOfScan = Math.tan(x * Math.PI / 2);
+        attenuationOfScan = Math.tan((1 - x) * Math.PI / 2);
     },
     onScanPixels: onScanPixels
 };
