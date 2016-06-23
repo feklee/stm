@@ -11,11 +11,6 @@ canvas {
     position: absolute;
 }
 
-canvas.scan {
-    width: 1080px;
-    height: 1080px;
-}
-
 canvas.image {
     transition: opacity 0s;
 }

@@ -13,6 +13,12 @@ define(['beam'], function (beam) {
     var pixels = [];
     var pixelDrawRate = 0; // pixels / ms
 
+    function scaleToFit() {
+        var scaleFactor = 1080 / canvas.width;
+        canvas.style.transformOrigin = "0 0";
+        canvas.style.transform = "scale(" + scaleFactor + ")";
+    }
+
     function intensityString(intensity) {
         return 'rgb(0,' + Math.floor(255 * intensity) + ',0)';
     }
@@ -74,6 +80,7 @@ define(['beam'], function (beam) {
             sideLen = newSideLen;
             canvas.setAttribute('width', sideLen + 2 * offset);
             canvas.setAttribute('height', sideLen + 2 * offset);
+            scaleToFit();
             beam.sideLen = sideLen;
         },
         set pixelDrawRate(newPixelDrawRate) {
