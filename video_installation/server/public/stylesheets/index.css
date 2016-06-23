@@ -2,6 +2,8 @@ html {
     background: black;
     width: 178vh; /* 16:9 */
     overflow: hidden;
+
+    background: red;
 }
 
 canvas.scan {

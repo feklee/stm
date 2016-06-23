@@ -48,7 +48,7 @@ function sendIfConnected(data) {
 }
 
 function sendAsGraphPoints(positions, graphIndex, index, scale) {
-    if (!scale) {
+    if (scale === undefined) {
         scale = 1;
     }
     var points = positions.map(function (tipPosition) {
