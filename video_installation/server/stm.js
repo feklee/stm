@@ -47,7 +47,7 @@ function connect(settings) {
 function approachScanRetract() {
     port.write(JSON.stringify([{
         mode: 'approach',
-        targetSignal: 1.5, // V
+        targetSignal: 1.0, // V
         coarsePiezoStepSize: 100,
         finePiezoStepSize: 10
     }, {
@@ -55,7 +55,7 @@ function approachScanRetract() {
         sideLen: 128,
         maxAdjustmentSteps: 0,
         adjustmentDelta: 1000,
-        targetSignal: 1.5 // V
+        targetSignal: 1.0 // V
     }, {
         mode: 'retract',
         targetSignal: 0.1 // V
