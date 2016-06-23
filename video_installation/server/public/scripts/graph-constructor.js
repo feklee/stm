@@ -39,10 +39,11 @@ define(function () {
         }
 
         function canvasPoint(x, y) {
-            return [
+            var p = [
                 0.8 * canvas.width * (x - 0.5) + canvas.width / 2,
                 spec.verticalStretchFactor * y
             ];
+            return p.map(Math.round);
         }
 
         function draw() {

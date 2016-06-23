@@ -1,23 +1,23 @@
 html {
     background: black;
-    width: 178vh; /* 16:9 */
+    height: 1080px;
+    width: 1920px;
     overflow: hidden;
 
     background: red;
 }
 
+canvas {
+    position: absolute;
+}
+
 canvas.scan {
-    height: 100vh;
+    width: 1080px;
+    height: 1080px;
 }
 
 canvas.image {
-    float: left;
     transition: opacity 0s;
-}
-
-canvas.beam {
-    position: absolute;
-    left: 0;
 }
 
 canvas.finished {
@@ -26,6 +26,22 @@ canvas.finished {
 }
 
 canvas.graph {
-    float: left;
-    height: 100vh;
+    width: 210px;
+    height: 1080px;
+}
+
+canvas.graph.index-0 {
+    left: 1080px;
+}
+
+canvas.graph.index-1 {
+    left: 1290px;
+}
+
+canvas.graph.index-2 {
+    left: 1500px;
+}
+
+canvas.graph.index-3 {
+    left: 1710px;
 }
