@@ -1,12 +1,12 @@
 {
     "rendering_size": {
-        "width"     : 3840,
-        "height"    : 2160
+        "width": 1920,
+        "height": 1080
     },
     "keyboard": {
-        "use"       : false,
-        "color"     :"BLACK"
+        "use": false,
+        "color": "BLACK"
     },
     "mode": "key",
-    "spatial_navigation" : true,
+    "spatial_navigation" : false
 }
