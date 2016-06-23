@@ -15,7 +15,7 @@ canvas.image {
 
 canvas.finished {
     opacity: 0;
-    transition: opacity 4s;
+    transition: opacity 10s ease-out 0s;
 }
 
 canvas.graph {
