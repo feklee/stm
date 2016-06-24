@@ -3,7 +3,7 @@
 
 void Current::measure() {
   signal_ = readVoltage(measurePin_);
-#if 1
+#if 0
   signal_ = 2 * float(rand()) / RAND_MAX; // For simulation (debugging)
 #endif
 }
