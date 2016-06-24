@@ -17,7 +17,7 @@ var onData;
 
 var i = 0;
 function simulatedData() { // fixme
-    var j = 500;
+    var j = 100;
     var positions = [];
     var x;
     var y;
@@ -42,7 +42,7 @@ function simulateData() { // fixme
     mode = 'scan';
     setInterval(function () {
         onData(simulatedData());
-    }, 500);
+    }, 20);
 }
 
 function onConnectedToStm() {
