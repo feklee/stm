@@ -31,7 +31,6 @@ function simulatedData() { // fixme
             i = 0;
         }
     }
-    console.log(i, y);
 
     return {
         type: 'tipPositionLog',
@@ -131,7 +130,7 @@ function interpretNewMode(newMode) {
     console.log("Mode: " + mode);
     var isFinished = mode === 'idle';
     if (isFinished) {
-        setTimeout(stm.approachScanRetract, 5000);
+        setTimeout(stm.approachScanRetract, 500);
     }
 }
 

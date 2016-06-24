@@ -24,8 +24,9 @@ define(['beam'], function (beam) {
         canvas.setAttribute('height', actualWidth + 2 * offset);
     }
 
-    function intensityString(intensity) {
-        return 'rgb(0,' + Math.floor(255 * intensity) + ',0)';
+    function intensityString(intensity, alpha) {
+        return 'rgba(0,' + Math.floor(255 * intensity) + ',0,' +
+                alpha + ')';
     }
 
     function finish() {
@@ -42,13 +43,10 @@ define(['beam'], function (beam) {
 
     function clear() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-// fixme        beam.clear();
+        beam.clear();
     }
 
-    function drawPixel(pixel) {
-        var x = pixel[0];
-        var y = pixel[1];
-
+    function updateCanvas(pixel) {
         canvas.classList.remove('finished');
         if (isLastPixel(pixel)) {
             finish();
@@ -56,9 +54,37 @@ define(['beam'], function (beam) {
         if (isFirstPixel(pixel)) {
             clear();
         }
-        ctx.fillStyle = intensityString(pixel[2]);
-        ctx.fillRect(offset + x, offset + y, 1, 1);
-// fixme        beam.draw(x, y);
+    }
+
+    function gradient(pixel) {
+        var x = Math.round(offset + pixel[0] * pixelSize + pixelSize / 2);
+        var y = Math.round(offset + pixel[1] * pixelSize + pixelSize / 2);
+        var intensity = pixel[2];
+        var g = ctx.createRadialGradient(
+            x,
+            y,
+            0.5 * pixelSize,
+            x,
+            y,
+            1.5 * pixelSize
+        );
+        g.addColorStop(0, intensityString(intensity, 1));
+        g.addColorStop(1, intensityString(intensity, 0));
+        return g;
+    }
+
+    function drawPixel(pixel) {
+        updateCanvas(pixel);
+
+        ctx.fillStyle = gradient(pixel);
+        ctx.fillRect(
+            offset + pixel[0] * pixelSize - pixelSize,
+            offset + pixel[1] * pixelSize - pixelSize,
+            3 * pixelSize,
+            3 * pixelSize
+        );
+
+        beam.draw(pixel);
     }
 
     function appendPixels(newPixels) {
