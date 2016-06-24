@@ -8,7 +8,8 @@ define([
 ], function (image, graphConstructor) {
     'use strict';
 
-    var client = new window.WebSocket('ws://192.168.1.9:8080/');
+    var host = 'localhost'; // fixme '192.168.1.9';
+    var client = new window.WebSocket('ws://' + host + ':8080/');
     var drawRate = 20; // items / ms
     var graphIndexes = [0, 1, 2, 3];
 

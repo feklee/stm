@@ -13,6 +13,38 @@ var browserConnection = null;
 var nodeStatic = require('node-static');
 var fileServer = new nodeStatic.Server('./public', {cache: 0});
 var mode = '';
+var onData;
+
+var i = 0;
+function simulatedData() { // fixme
+    var j = 500;
+    var positions = [];
+    var x;
+    var y;
+    while (j > 0) {
+        x = i % 128;
+        y = Math.floor(i / 128);
+        positions.push([x, y, 0, 3.3 * Math.random()]);
+        j -= 1;
+        i += 1;
+        if (i >= 128 * 128) {
+            i = 0;
+        }
+    }
+    console.log(i, y);
+
+    return {
+        type: 'tipPositionLog',
+        positions: positions
+    };
+}
+
+function simulateData() { // fixme
+    mode = 'scan';
+    setInterval(function () {
+        onData(simulatedData());
+    }, 500);
+}
 
 function onConnectedToStm() {
     var port = 8080;
@@ -37,7 +69,8 @@ function onConnectedToStm() {
         mixer.browserConnection = browserConnection;
     });
 
-    stm.approachScanRetract();
+    simulateData();
+// fixme    stm.approachScanRetract();
 }
 
 function sendIfConnected(data) {
@@ -102,7 +135,7 @@ function interpretNewMode(newMode) {
     }
 }
 
-function onData(data) {
+onData = function (data) {
     switch (data.type) {
     case 'tipPositionLog':
         interpretPositions(data.positions);
@@ -126,7 +159,9 @@ function onData(data) {
         console.log("STM error: " + data.value);
         break;
     }
-}
+};
+
+/* fixme
 
 if (args.length === 0) {
     stm.listSerialPorts(
@@ -147,3 +182,7 @@ if (args.length === 0) {
         onData: onData
     });
 }
+
+*/
+
+onConnectedToStm();
