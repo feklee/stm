@@ -47,11 +47,11 @@ define(['beam'], function (beam) {
     }
 
     function updateCanvas(pixel) {
-        canvas.classList.remove('finished');
         if (isLastPixel(pixel)) {
             finish();
         }
         if (isFirstPixel(pixel)) {
+            canvas.classList.remove('finished');
             clear();
         }
     }

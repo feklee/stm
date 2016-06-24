@@ -14,9 +14,10 @@ var nodeStatic = require('node-static');
 var fileServer = new nodeStatic.Server('./public', {cache: 0});
 var mode = '';
 var onData;
+var debug = false;
 
 var i = 0;
-function simulatedData() { // fixme
+function simulatedData() {
     var j = 100;
     var positions = [];
     var x;
@@ -38,7 +39,7 @@ function simulatedData() { // fixme
     };
 }
 
-function simulateData() { // fixme
+function simulateData() {
     mode = 'scan';
     setInterval(function () {
         onData(simulatedData());
@@ -68,8 +69,10 @@ function onConnectedToStm() {
         mixer.browserConnection = browserConnection;
     });
 
-    simulateData();
-// fixme    stm.approachScanRetract();
+    if (debug) {
+        simulateData();
+    }
+    stm.approachScanRetract();
 }
 
 function sendIfConnected(data) {
@@ -160,8 +163,6 @@ onData = function (data) {
     }
 };
 
-/* fixme
-
 if (args.length === 0) {
     stm.listSerialPorts(
         function (ports) {
@@ -182,6 +183,6 @@ if (args.length === 0) {
     });
 }
 
-*/
-
-onConnectedToStm();
+if (debug) {
+    onConnectedToStm();
+}

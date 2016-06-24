@@ -17,6 +17,7 @@ class RetractMode : public Mode {
   float targetSignal_ = 0.1;
   bool rotateMotor(int, float);
   bool retract(int, float);
+  void finish();
 
 public:
   RetractMode(Motor &, BiasVoltage &, Current &, Piezo &, TipPositionLog &);

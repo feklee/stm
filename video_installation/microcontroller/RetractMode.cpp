@@ -34,10 +34,15 @@ bool RetractMode::retract(
   return targetSignalReached;
 }
 
+void RetractMode::finish() {
+  retract(250);
+  tipPositionLog_.flush();
+}
+
 bool RetractMode::step() {
   bool targetSignalReached = retract(500, targetSignal_);
   if (targetSignalReached) {
-    retract(250);
+    finish();
     return false;
   }
   return true;

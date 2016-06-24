@@ -8,9 +8,9 @@ define([
 ], function (image, graphConstructor) {
     'use strict';
 
-    var host = 'localhost'; // fixme '192.168.1.9';
-    var client = new window.WebSocket('ws://' + host + ':8080/');
-    var drawRate = 20; // items / ms
+    var hostname = window.location.hostname;
+    var client = new window.WebSocket('ws://' + hostname + ':8080/');
+    var drawRate = 5; // items / ms
     var graphIndexes = [0, 1, 2, 3];
 
     var graphs = graphIndexes.map(function (index) {

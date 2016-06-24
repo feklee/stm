@@ -68,9 +68,9 @@ void ApproachMode::finish() {
 bool ApproachMode::step() {
   bool targetSignalReached = approach();
   if (targetSignalReached) {
+    finish();
     return false;
   }
-  finish();
   return true;
 }
 
