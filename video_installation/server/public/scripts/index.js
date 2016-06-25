@@ -10,7 +10,7 @@ define([
 
     var hostname = window.location.hostname;
     var client = new window.WebSocket('ws://' + hostname + ':8080/');
-    var drawRate = 10; // items / ms
+    var drawRate = 15; // items / ms
     var graphIndexes = [0, 1, 2, 3];
 
     var graphs = graphIndexes.map(function (index) {

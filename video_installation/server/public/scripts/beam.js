@@ -7,50 +7,19 @@ define(function () {
 
     var canvas = document.querySelector('canvas.scan.beam');
     var ctx = canvas.getContext('2d');
-    var offset = 0; // px
+    var offset = 2; // px
     var timestampAtPreviousFrame = window.performance.now();
-    var sideLen = 0;
-    var pixelSize = 1; // px
 
-    function resize() {
-        var minimumOffset = 16; // px
-        var availableWidth = 1080 - 2 * minimumOffset; // px
-        pixelSize = Math.floor(availableWidth / sideLen);
-        var actualWidth = sideLen * pixelSize;
-        offset = Math.floor((1080 - actualWidth) / 2);
-        canvas.setAttribute('width', actualWidth + 2 * offset);
-        canvas.setAttribute('height', actualWidth + 2 * offset);
+    function scaleToFit() {
+        var scaleFactor = 1080 / canvas.width;
+        canvas.style.transformOrigin = "0 0";
+        canvas.style.transform = "scale(" + scaleFactor + ")";
     }
 
-    function intensityString(alpha) {
-        return 'rgba(255,255,255,' + alpha + ')';
-    }
-
-    function gradient(pixel) {
-        var x = Math.round(offset + pixel[0] * pixelSize + pixelSize / 2);
-        var y = Math.round(offset + pixel[1] * pixelSize + pixelSize / 2);
-        var g = ctx.createRadialGradient(
-            x,
-            y,
-            0.5 * pixelSize,
-            x,
-            y,
-            1.5 * pixelSize
-        );
-        g.addColorStop(0, intensityString(1));
-        g.addColorStop(1, intensityString(0));
-        return g;
-    }
-
-    function draw(pixel) {
+    function draw(x, y) {
         ctx.globalCompositeOperation = 'source-over';
-        ctx.fillStyle = gradient(pixel);
-        ctx.fillRect(
-            offset + pixel[0] * pixelSize - pixelSize,
-            offset + pixel[1] * pixelSize - pixelSize,
-            3 * pixelSize,
-            3 * pixelSize
-        );
+        ctx.fillStyle = 'white';
+        ctx.fillRect(offset + x, offset + y, 1, 1);
     }
 
     function clear() {
@@ -71,8 +40,9 @@ define(function () {
     return {
         draw: draw,
         set sideLen(newSideLen) {
-            sideLen = newSideLen;
-            resize();
+            canvas.setAttribute('width', newSideLen + 2 * offset);
+            canvas.setAttribute('height', newSideLen + 2 * offset);
+            scaleToFit();
         },
         clear: clear
     };

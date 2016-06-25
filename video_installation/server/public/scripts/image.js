@@ -7,26 +7,20 @@ define(['beam'], function (beam) {
 
     var canvas = document.querySelector('canvas.scan.image');
     var ctx = canvas.getContext('2d');
-    var offset = 0; // px
+    var offset = 2; // px
     var sideLen = 0;
     var lastTimestamp = window.performance.now();
     var pixels = [];
     var pixelDrawRate = 0; // pixels / ms
-    var pixelSize = 1; // px
 
-    function resize() {
-        var minimumOffset = 16; // px
-        var availableWidth = 1080 - 2 * minimumOffset; // px
-        pixelSize = Math.floor(availableWidth / sideLen);
-        var actualWidth = sideLen * pixelSize;
-        offset = Math.floor((1080 - actualWidth) / 2);
-        canvas.setAttribute('width', actualWidth + 2 * offset);
-        canvas.setAttribute('height', actualWidth + 2 * offset);
+    function scaleToFit() {
+        var scaleFactor = 1080 / canvas.width;
+        canvas.style.transformOrigin = "0 0";
+        canvas.style.transform = "scale(" + scaleFactor + ")";
     }
 
-    function intensityString(intensity, alpha) {
-        return 'rgba(0,' + Math.floor(255 * intensity) + ',0,' +
-                alpha + ')';
+    function intensityString(intensity) {
+        return 'rgb(0,' + Math.floor(255 * intensity) + ',0)';
     }
 
     function finish() {
@@ -56,35 +50,14 @@ define(['beam'], function (beam) {
         }
     }
 
-    function gradient(pixel) {
-        var x = Math.round(offset + pixel[0] * pixelSize + pixelSize / 2);
-        var y = Math.round(offset + pixel[1] * pixelSize + pixelSize / 2);
-        var intensity = pixel[2];
-        var g = ctx.createRadialGradient(
-            x,
-            y,
-            0.5 * pixelSize,
-            x,
-            y,
-            1.5 * pixelSize
-        );
-        g.addColorStop(0, intensityString(intensity, 1));
-        g.addColorStop(1, intensityString(intensity, 0));
-        return g;
-    }
-
     function drawPixel(pixel) {
         updateCanvas(pixel);
 
-        ctx.fillStyle = gradient(pixel);
-        ctx.fillRect(
-            offset + pixel[0] * pixelSize - pixelSize,
-            offset + pixel[1] * pixelSize - pixelSize,
-            3 * pixelSize,
-            3 * pixelSize
-        );
-
-        beam.draw(pixel);
+        var x = pixel[0];
+        var y = pixel[1];
+        ctx.fillStyle = intensityString(pixel[2]);
+        ctx.fillRect(offset + x, offset + y, 1, 1);
+        beam.draw(x, y);
     }
 
     function appendPixels(newPixels) {
@@ -109,7 +82,9 @@ define(['beam'], function (beam) {
         appendPixels: appendPixels,
         set sideLen(newSideLen) {
             sideLen = newSideLen;
-            resize();
+            canvas.setAttribute('width', sideLen + 2 * offset);
+            canvas.setAttribute('height', sideLen + 2 * offset);
+            scaleToFit();
             beam.sideLen = sideLen;
         },
         set pixelDrawRate(newPixelDrawRate) {
