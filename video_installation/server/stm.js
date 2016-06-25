@@ -33,14 +33,16 @@ function connect(settings) {
         console.log('Serial port disconnected');
     });
     port.on('data', function (json) {
+        var data;
         try {
-            var data = JSON.parse(json);
-            settings.onData(data);
+            data = JSON.parse(json);
         } catch (e) {
             if (e.name === 'SyntaxError') {
                 console.log('Data is not valid JSON: ' + json);
+                return;
             }
         }
+        settings.onData(data);
     });
 }
 

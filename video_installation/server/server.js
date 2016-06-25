@@ -15,6 +15,31 @@ var fileServer = new nodeStatic.Server('./public', {cache: 0});
 var mode = '';
 var onData;
 var debug = false;
+var wstream;
+var fs = require('fs');
+var dataLogIsEnabled = false;
+
+if (dataLogIsEnabled) {
+    wstream = fs.createWriteStream('log/data_' + Date.now() + '.json');
+}
+
+if (process.platform === "win32") {
+    var rl = require("readline").createInterface({
+        input: process.stdin,
+        output: process.stdout
+    });
+
+    rl.on("SIGINT", function () {
+        process.emit("SIGINT");
+    });
+}
+
+process.on("SIGINT", function () {
+    if (dataLogIsEnabled) {
+        wstream.end();
+    }
+    process.exit();
+});
 
 var i = 0;
 function simulatedData() {
@@ -42,7 +67,7 @@ function simulatedData() {
 function simulateData() {
     mode = 'scan';
     setInterval(function () {
-        onData(simulatedData());
+        onData(JSON.stringify(simulatedData()));
     }, 20);
 }
 
@@ -138,6 +163,10 @@ function interpretNewMode(newMode) {
 }
 
 onData = function (data) {
+    if (dataLogIsEnabled) {
+        data.timestamp = Date.now();
+        wstream.write(JSON.stringify(data));
+    }
     switch (data.type) {
     case 'tipPositionLog':
         interpretPositions(data.positions);
