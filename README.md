@@ -4,7 +4,7 @@ Introduction
 Software and hardware source code for a DIY STM being developed at Fab Lab
 Berlin.
 
-For documentation, see: <https://wiki.fablab.berlin/STM>
+For documentation, see: <https://wiki.fablab.berlin/index.php/STM>
 
 
 Coding conventions
