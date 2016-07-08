@@ -3,11 +3,11 @@
 
 /*jslint node: true, es6: true, maxlen: 80 */
 
-'use strict';
+"use strict";
 
 var sideLen = 128;
 var browserConnection = null;
-var simulator = require('./simulator');
+var simulator = require("./simulator");
 var attenuationOfScan = 0;
 var faderPosition = 0;
 var mixedPixels = [];
@@ -21,7 +21,7 @@ function sendIfConnected(data) {
 
 function sendSideLen() {
     sendIfConnected({
-        type: 'sideLen',
+        type: "sideLen",
         sideLen: sideLen
     });
 }
@@ -40,7 +40,7 @@ function visibilityOfScan(scanPixelIntensity) {
 
 function sendMixedPixels() {
     sendIfConnected({
-        type: 'mixedPixels',
+        type: "mixedPixels",
         pixels: mixedPixels
     });
 }
