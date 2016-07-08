@@ -3,13 +3,13 @@
 /*global define, window */
 
 define(function () {
-    'use strict';
+    "use strict";
 
     function constructor(spec) {
         var canvas = document.querySelector(
-            'canvas.graph.index-' + spec.index
+            "canvas.graph.index-" + spec.index
         );
-        var ctx = canvas.getContext('2d');
+        var ctx = canvas.getContext("2d");
         var lastTimestamp = window.performance.now();
         var points = [];
 
@@ -62,7 +62,7 @@ define(function () {
                 ctx.lineTo(...canvasPoint(point, i));
                 i += 1;
             }
-            ctx.strokeStyle = 'green';
+            ctx.strokeStyle = "green";
             ctx.stroke();
         }
 

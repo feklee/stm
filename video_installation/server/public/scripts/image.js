@@ -2,11 +2,11 @@
 
 /*global define, window */
 
-define(['beam'], function (beam) {
-    'use strict';
+define(["beam"], function (beam) {
+    "use strict";
 
-    var canvas = document.querySelector('canvas.scan.image');
-    var ctx = canvas.getContext('2d');
+    var canvas = document.querySelector("canvas.scan.image");
+    var ctx = canvas.getContext("2d");
     var offset = 2; // px
     var sideLen = 0;
     var lastTimestamp = window.performance.now();
@@ -20,11 +20,11 @@ define(['beam'], function (beam) {
     }
 
     function intensityString(intensity) {
-        return 'rgb(0,' + Math.floor(255 * intensity) + ',0)';
+        return "rgb(0," + Math.floor(255 * intensity) + ",0)";
     }
 
     function finish() {
-        canvas.classList.add('finished');
+        canvas.classList.add("finished");
     }
 
     function isLastPixel(pixel) {
@@ -45,7 +45,7 @@ define(['beam'], function (beam) {
             finish();
         }
         if (isFirstPixel(pixel)) {
-            canvas.classList.remove('finished');
+            canvas.classList.remove("finished");
             clear();
         }
     }
@@ -82,8 +82,8 @@ define(['beam'], function (beam) {
         appendPixels: appendPixels,
         set sideLen(newSideLen) {
             sideLen = newSideLen;
-            canvas.setAttribute('width', sideLen + 2 * offset);
-            canvas.setAttribute('height', sideLen + 2 * offset);
+            canvas.setAttribute("width", sideLen + 2 * offset);
+            canvas.setAttribute("height", sideLen + 2 * offset);
             scaleToFit();
             beam.sideLen = sideLen;
         },

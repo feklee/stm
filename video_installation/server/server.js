@@ -2,25 +2,25 @@
 
 /*jslint node: true, es6: true, maxlen: 80 */
 
-'use strict';
+"use strict";
 
-var WebSocketServer = require('websocket').server;
-var http = require('http');
-var mixer = require('./mixer');
-var stm = require('./stm');
+var WebSocketServer = require("websocket").server;
+var http = require("http");
+var mixer = require("./mixer");
+var stm = require("./stm");
 var args = process.argv.slice(2);
 var browserConnection = null;
-var nodeStatic = require('node-static');
-var fileServer = new nodeStatic.Server('./public', {cache: 0});
-var mode = '';
+var nodeStatic = require("node-static");
+var fileServer = new nodeStatic.Server("./public", {cache: 0});
+var mode = "";
 var onData;
 var debug = false;
 var wstream;
-var fs = require('fs');
+var fs = require("fs");
 var dataLogIsEnabled = false;
 
 if (dataLogIsEnabled) {
-    wstream = fs.createWriteStream('log/data_' + Date.now() + '.json');
+    wstream = fs.createWriteStream("log/data_" + Date.now() + ".json");
 }
 
 if (process.platform === "win32") {
@@ -59,13 +59,13 @@ function simulatedData() {
     }
 
     return {
-        type: 'tipPositionLog',
+        type: "tipPositionLog",
         positions: positions
     };
 }
 
 function simulateData() {
-    mode = 'scan';
+    mode = "scan";
     setInterval(function () {
         onData(JSON.stringify(simulatedData()));
     }, 20);
@@ -74,13 +74,13 @@ function simulateData() {
 function onConnectedToStm() {
     var port = 8080;
     var server = http.createServer(function (request, response) {
-        request.addListener('end', function () {
+        request.addListener("end", function () {
             fileServer.serve(request, response);
         }).resume();
     }).listen(port);
 
     server.listen(port, function () {
-        console.log('Server is listening on port ' + port);
+        console.log("Server is listening on port " + port);
     });
 
     var wsServer = new WebSocketServer({
@@ -88,9 +88,9 @@ function onConnectedToStm() {
         autoAcceptConnections: false
     });
 
-    wsServer.on('request', function (request) {
+    wsServer.on("request", function (request) {
         browserConnection = request.accept(null, request.origin);
-        console.log('Connection from browser accepted');
+        console.log("Connection from browser accepted");
         mixer.browserConnection = browserConnection;
     });
 
@@ -115,7 +115,7 @@ function sendAsGraphPoints(positions, graphIndex, index, scale) {
         return scale * tipPosition[index];
     });
     sendIfConnected({
-        type: 'graphPoints',
+        type: "graphPoints",
         index: graphIndex,
         points: points
     });
@@ -141,13 +141,13 @@ function interpretApproachRetractPositions(positions) {
 
 function interpretPositions(positions) {
     switch (mode) {
-    case 'scan':
+    case "scan":
         interpretScanPositions(positions);
         break;
-    case 'approach':
+    case "approach":
         interpretApproachRetractPositions(positions);
         break;
-    case 'retract':
+    case "retract":
         interpretApproachRetractPositions(positions);
         break;
     }
@@ -156,7 +156,7 @@ function interpretPositions(positions) {
 function interpretNewMode(newMode) {
     mode = newMode;
     console.log("Mode: " + mode);
-    var isFinished = mode === 'idle';
+    var isFinished = mode === "idle";
     if (isFinished) {
         setTimeout(stm.approachScanRetract, 500);
     }
@@ -168,25 +168,25 @@ onData = function (data) {
         wstream.write(JSON.stringify(data));
     }
     switch (data.type) {
-    case 'tipPositionLog':
+    case "tipPositionLog":
         interpretPositions(data.positions);
         break;
-    case 'scanDuration':
-        console.log('Scan duration: ' + data.value / 1000000 + ' s');
+    case "scanDuration":
+        console.log("Scan duration: " + data.value / 1000000 + " s");
         break;
-    case 'faderPosition':
+    case "faderPosition":
         mixer.faderPosition = data.value;
         break;
-    case 'newMode':
+    case "newMode":
         interpretNewMode(data.value);
         break;
-    case 'peakCoarseApproachSignal':
-        console.log('Peak coarse approach signal: ' + data.value + ' V');
+    case "peakCoarseApproachSignal":
+        console.log("Peak coarse approach signal: " + data.value + " V");
         break;
-    case 'peakFineApproachSignal':
-        console.log('Peak fine approach signal: ' + data.value + ' V');
+    case "peakFineApproachSignal":
+        console.log("Peak fine approach signal: " + data.value + " V");
         break;
-    case 'error':
+    case "error":
         console.log("STM error: " + data.value);
         break;
     }
@@ -195,12 +195,12 @@ onData = function (data) {
 if (args.length === 0) {
     stm.listSerialPorts(
         function (ports) {
-            console.log('Specify com port name as first argument');
-            console.log('');
-            console.log('Available ports:');
+            console.log("Specify com port name as first argument");
+            console.log("");
+            console.log("Available ports:");
             ports.forEach(function (port) {
-                console.log('');
-                console.log('  * ' + port.comName);
+                console.log("");
+                console.log("  * " + port.comName);
             });
         }
     );

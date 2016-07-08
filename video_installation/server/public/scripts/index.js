@@ -3,13 +3,13 @@
 /*global define, window */
 
 define([
-    'image',
-    'graph-constructor'
+    "image",
+    "graph-constructor"
 ], function (image, graphConstructor) {
-    'use strict';
+    "use strict";
 
     var hostname = window.location.hostname;
-    var client = new window.WebSocket('ws://' + hostname + ':8080/');
+    var client = new window.WebSocket("ws://" + hostname + ":8080/");
     var drawRate = 15; // items / ms
     var graphIndexes = [0, 1, 2, 3];
 
@@ -24,33 +24,33 @@ define([
     image.pixelDrawRate = drawRate;
 
     client.onerror = function () {
-        window.console.log('Connection error');
+        window.console.log("Connection error");
     };
 
     client.onopen = function () {
-        window.console.log('Client connected');
+        window.console.log("Client connected");
     };
 
     client.onclose = function () {
-        window.console.log('Client closed');
+        window.console.log("Client closed");
     };
 
     client.onmessage = function (e) {
         var data;
-        if (typeof e.data === 'string') {
+        if (typeof e.data === "string") {
             data = JSON.parse(e.data);
         } else {
             return;
         }
 
         switch (data.type) {
-        case 'sideLen':
+        case "sideLen":
             image.sideLen = data.sideLen;
             break;
-        case 'mixedPixels':
+        case "mixedPixels":
             image.appendPixels(data.pixels);
             break;
-        case 'graphPoints':
+        case "graphPoints":
             graphs[data.index].appendPoints(data.points);
             break;
         }

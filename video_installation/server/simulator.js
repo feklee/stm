@@ -2,7 +2,7 @@
 
 /*jslint node: true, es6: true, maxlen: 80 */
 
-'use strict';
+"use strict";
 
 function intensity(x, y) {
     // Formula for hexagonal egg-carton modulation from arXiv:1203.5343v2:
