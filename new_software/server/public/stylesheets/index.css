@@ -1,0 +1,40 @@
+html {
+    background: black;
+    height: 1080px;
+    width: 1920px;
+    overflow: hidden;
+}
+
+canvas {
+    position: absolute;
+}
+
+canvas.image {
+    transition: opacity 0s;
+}
+
+canvas.finished {
+    opacity: 0;
+    transition: opacity 10s ease-out 0s;
+}
+
+canvas.graph {
+    width: 210px;
+    height: 1080px;
+}
+
+canvas.graph.index-0 {
+    left: 1080px;
+}
+
+canvas.graph.index-1 {
+    left: 1290px;
+}
+
+canvas.graph.index-2 {
+    left: 1500px;
+}
+
+canvas.graph.index-3 {
+    left: 1710px;
+}

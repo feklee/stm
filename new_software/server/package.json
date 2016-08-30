@@ -1,0 +1,16 @@
+{
+  "name": "app",
+  "version": "0.0.0",
+  "description": "App for using the STM as a video filter",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "WTFPL",
+  "dependencies": {
+    "node-static": "^0.7.7",
+    "serialport": "^3.1.2",
+    "websocket": "^1.0.23"
+  }
+}
