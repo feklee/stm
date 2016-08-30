@@ -1,5 +1,3 @@
-![Photo of installation](2016-06-25+02_photo.jpg)
-
 Instructions
 ============
 
