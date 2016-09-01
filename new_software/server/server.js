@@ -15,13 +15,6 @@ var fileServer = new nodeStatic.Server("./public", {cache: 0});
 var mode = "";
 var onData;
 var debug = false;
-var wstream;
-var fs = require("fs");
-var dataLogIsEnabled = false;
-
-if (dataLogIsEnabled) {
-    wstream = fs.createWriteStream("log/data_" + Date.now() + ".json");
-}
 
 if (process.platform === "win32") {
     var rl = require("readline").createInterface({
@@ -33,13 +26,6 @@ if (process.platform === "win32") {
         process.emit("SIGINT");
     });
 }
-
-process.on("SIGINT", function () {
-    if (dataLogIsEnabled) {
-        wstream.end();
-    }
-    process.exit();
-});
 
 var i = 0;
 function simulatedData() {
@@ -92,12 +78,17 @@ function onConnectedToStm() {
         browserConnection = request.accept(null, request.origin);
         console.log("Connection from browser accepted");
         mixer.browserConnection = browserConnection;
+
+        browserConnection.on("message", function (message) {
+            if (message.type === "utf8") {
+                stm.sendJson(message.utf8Data);
+            }
+        });
     });
 
     if (debug) {
         simulateData();
     }
-    stm.approachScanRetract();
 }
 
 function sendIfConnected(data) {
@@ -163,10 +154,6 @@ function interpretNewMode(newMode) {
 }
 
 onData = function (data) {
-    if (dataLogIsEnabled) {
-        data.timestamp = Date.now();
-        wstream.write(JSON.stringify(data));
-    }
     switch (data.type) {
     case "tipPositionLog":
         interpretPositions(data.positions);
@@ -188,6 +175,7 @@ onData = function (data) {
         break;
     case "error":
         console.log("STM error: " + data.value);
+        browserConnection.sendUTF(JSON.stringify(data));
         break;
     }
 };

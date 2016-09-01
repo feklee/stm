@@ -3,9 +3,8 @@
 /*global define, window */
 
 define([
-    "image",
-    "graph-constructor"
-], function (image, graphConstructor) {
+    "graph-constructor", "input-form"
+], function (graphConstructor, inputForm) {
     "use strict";
 
     var hostname = window.location.hostname;
@@ -20,8 +19,6 @@ define([
             verticalStretchFactor: 3
         });
     });
-
-    image.pixelDrawRate = drawRate;
 
     client.onerror = function () {
         window.console.log("Connection error");
@@ -38,21 +35,18 @@ define([
     client.onmessage = function (e) {
         var data;
         if (typeof e.data === "string") {
+            window.console.log(e.data);
             data = JSON.parse(e.data);
         } else {
             return;
         }
 
         switch (data.type) {
-        case "sideLen":
-            image.sideLen = data.sideLen;
-            break;
-        case "mixedPixels":
-            image.appendPixels(data.pixels);
-            break;
         case "graphPoints":
             graphs[data.index].appendPoints(data.points);
             break;
         }
     };
+
+    inputForm.client = client;
 });
