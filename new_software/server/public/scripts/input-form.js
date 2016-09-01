@@ -6,23 +6,24 @@ define(function () {
     "use strict";
 
     var submitButtonEl = document.querySelector("form>input[type=\"submit\"]");
-    var commandTextEl = document.querySelector("form>input[name=\"command\"]");
+    var inputEl =
+            document.querySelector("form>input[name=\"mode-chain-json\"]");
     var logEl = document.querySelector("form>pre");
     var client;
 
-    var appendToLog = function (command) {
-        logEl.innerHTML += command + "<br />";
+    var appendToLog = function (modeChainJson) {
+        logEl.innerHTML += modeChainJson + "<br />";
         logEl.scrollTop = logEl.scrollHeight;
     };
 
-    var submitCommand = function (command) {
-        client.send(command);
-        appendToLog(command);
+    var sendModeChainJson = function (modeChainJson) {
+        client.send(modeChainJson);
+        appendToLog(modeChainJson);
     };
 
     var submit = function (e) {
         if (client !== undefined) {
-            submitCommand(commandTextEl.value);
+            sendModeChainJson(inputEl.value);
         }
         e.preventDefault();
         document.querySelector("form").reset();

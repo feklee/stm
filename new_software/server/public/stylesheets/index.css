@@ -17,7 +17,7 @@ pre {
     overflow: scroll;
 }
 
-input[name="command"] {
+input[name="mode-chain-json"] {
     width: 1000px;
 }
 
