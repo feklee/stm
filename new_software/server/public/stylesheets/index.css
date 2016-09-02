@@ -11,10 +11,27 @@ form {
     font-size: 20px;
 }
 
-pre {
+div.log {
     width: 1080px;
     height: 100px;
-    overflow: scroll;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+svg {
+    position: absolute;
+    top: 200px;
+    display: block;
+    width: 1080px;
+    height: 200px;
+}
+
+.line {
+  fill: none;
+  stroke: steelblue;
+  stroke-width: 0.5px;
 }
 
 input[name="mode-chain-json"] {

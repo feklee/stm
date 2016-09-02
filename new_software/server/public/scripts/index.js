@@ -1,6 +1,6 @@
 /*jslint browser: true, es6: true, maxlen: 80 */
 
-/*global define, window */
+/*global define, window, d3 */
 
 define([
     "graph-constructor", "input-form"
@@ -9,16 +9,7 @@ define([
 
     var hostname = window.location.hostname;
     var client = new window.WebSocket("ws://" + hostname + ":8080/");
-    var drawRate = 15; // items / ms
-    var graphIndexes = [0, 1, 2, 3];
-
-    var graphs = graphIndexes.map(function (index) {
-        return graphConstructor({
-            index: index,
-            pointDrawRate: drawRate, // points / ms
-            verticalStretchFactor: 3
-        });
-    });
+    var scanGraph = graphConstructor("scan");
 
     client.onerror = function () {
         window.console.log("Connection error");
@@ -42,8 +33,27 @@ define([
         }
 
         switch (data.type) {
-        case "graphPoints":
-            graphs[data.index].appendPoints(data.points);
+        case "tipPositionLog":
+            window.console.log(data.positions);
+            scanGraph.render(data.positions);
+            break;
+        case "scanDuration":
+            window.console.log("Scan duration: " + data.value / 1000000 +
+                    " s");
+            break;
+        case "newMode":
+            d3.select(".mode").text(data.value);
+            break;
+        case "peakCoarseApproachSignal":
+            window.console.log("Peak coarse approach signal: " + data.value +
+                    " V");
+            break;
+        case "peakFineApproachSignal":
+            window.console.log("Peak fine approach signal: " + data.value +
+                    " V");
+            break;
+        case "error":
+            window.console.log("STM error: " + data.value);
             break;
         }
     };

@@ -8,11 +8,11 @@ define(function () {
     var submitButtonEl = document.querySelector("form>input[type=\"submit\"]");
     var inputEl =
             document.querySelector("form>input[name=\"mode-chain-json\"]");
-    var logEl = document.querySelector("form>pre");
+    var logEl = document.querySelector("div.log");
     var client;
 
     var appendToLog = function (modeChainJson) {
-        logEl.innerHTML += modeChainJson + "<br />";
+        logEl.innerHTML += "<pre>&gt; </pre><pre>" + modeChainJson + "</pre>"; // todo: escape HTML
         logEl.scrollTop = logEl.scrollHeight;
     };
 

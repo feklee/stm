@@ -1,87 +1,59 @@
 /*jslint browser: true, es6: true, maxlen: 80 */
 
-/*global define, window */
+/*global define, window, d3 */
 
 define(function () {
     "use strict";
 
-    function constructor(spec) {
-        var canvas = document.querySelector(
-            "canvas.graph.index-" + spec.index
-        );
-        var ctx = canvas.getContext("2d");
-        var lastTimestamp = window.performance.now();
-        var points = [];
+    function constructor(modeName) {
+        var width = d3.select("svg").node().getBoundingClientRect().width;
+        var height = d3.select("svg").node().getBoundingClientRect().height;
 
-        function maxNumberOfVisiblePoints() {
-            return Math.ceil(
-                canvas.height / spec.verticalStretchFactor
-            );
-        }
+        var yScale = d3.scaleLinear()
+            .domain([-0.5, 3.5])
+            .range([height, 0]);
 
-        function scrollUp(n) {
-            var minLength = maxNumberOfVisiblePoints();
-            while (n > 0 && points.length > minLength) {
-                points.shift();
-                n -= 1;
-            }
-        }
+        var svg = d3.select("body svg." + modeName);
 
-        function clearCanvas() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-        }
+        var graphGroup = svg.append("g");
 
-        function numberOfPointsToDraw() {
-            return Math.max(Math.min(
-                maxNumberOfVisiblePoints(),
-                points.length
-            ), 0);
-        }
+        var onZoom = function () {
+            graphGroup.attr("transform", d3.event.transform);
+        };
 
-        function canvasPoint(x, y) {
-            var p = [
-                0.8 * canvas.width * (x - 0.5) + canvas.width / 2,
-                spec.verticalStretchFactor * y
-            ];
-            return p.map(Math.round);
-        }
+        var zoomBehavior = d3.zoom()
+            .scaleExtent([1, 10])
+            .translateExtent([[0, 0], [width - 1, height - 1]])
+            .on("zoom", onZoom);
 
-        function draw() {
-            var point;
-            var n = numberOfPointsToDraw();
-            var i = 0;
+        svg.call(zoomBehavior);
 
-            if (n === 0) {
-                return;
-            }
+        graphGroup.selectAll("path").remove();
 
-            ctx.beginPath();
-            ctx.moveTo(...canvasPoint(points[0], 0));
-            while (i < n) {
-                point = points[i];
-                ctx.lineTo(...canvasPoint(point, i));
-                i += 1;
-            }
-            ctx.strokeStyle = "green";
-            ctx.stroke();
-        }
+        var xScale;
 
-        function animationFrame(timestamp) {
-            clearCanvas();
-            draw();
-            scrollUp((timestamp - lastTimestamp) * spec.pointDrawRate);
-            lastTimestamp = timestamp;
-            window.requestAnimationFrame(animationFrame);
-        }
+        var line = d3.line()
+            .x(function (ignore, i) {
+                return xScale(i);
+            })
+            .y(function (d) {
+                return yScale(d[3]);
+            });
 
-        function appendPoints(newPoints) {
-            points.push(...newPoints);
-        }
+        var render = function (data) {
+            xScale = d3.scaleLinear()
+                .domain([0, data.length - 1])
+                .range([0, width]);
 
-        window.requestAnimationFrame(animationFrame);
+            graphGroup.selectAll("path").remove();
+            graphGroup.append("path")
+                .datum(data)
+                .attr("class", "line")
+                .attr("d", line);
+        };
 
         return {
-            appendPoints: appendPoints
+            render: render
         };
     }
 
