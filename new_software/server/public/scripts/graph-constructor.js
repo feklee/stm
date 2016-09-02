@@ -28,11 +28,17 @@ define(function () {
 
         svg.call(zoomBehavior);
 
-        graphGroup.selectAll("path").remove();
-
         var xScale;
 
-        var line = d3.line()
+        var zLine = d3.line()
+            .x(function (ignore, i) {
+                return xScale(i);
+            })
+            .y(function (d) {
+                return yScale(d[2]);
+            });
+
+        var currentSignalLine = d3.line()
             .x(function (ignore, i) {
                 return xScale(i);
             })
@@ -48,8 +54,12 @@ define(function () {
             graphGroup.selectAll("path").remove();
             graphGroup.append("path")
                 .datum(data)
-                .attr("class", "line")
-                .attr("d", line);
+                .attr("class", "z")
+                .attr("d", zLine);
+            graphGroup.append("path")
+                .datum(data)
+                .attr("class", "current-signal")
+                .attr("d", currentSignalLine);
         };
 
         return {

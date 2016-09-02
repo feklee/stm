@@ -28,9 +28,15 @@ svg {
     height: 200px;
 }
 
-.line {
+path.z {
   fill: none;
   stroke: steelblue;
+  stroke-width: 0.5px;
+}
+
+path.current-signal {
+  fill: none;
+  stroke: red;
   stroke-width: 0.5px;
 }
 
