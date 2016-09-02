@@ -6,7 +6,6 @@
 
 var WebSocketServer = require("websocket").server;
 var http = require("http");
-var mixer = require("./mixer");
 var stm = require("./stm");
 var args = process.argv.slice(2);
 var browserConnection = null;
@@ -77,7 +76,6 @@ function onConnectedToStm() {
     wsServer.on("request", function (request) {
         browserConnection = request.accept(null, request.origin);
         console.log("Connection from browser accepted");
-        mixer.browserConnection = browserConnection;
 
         browserConnection.on("message", function (message) {
             if (message.type === "utf8") {
@@ -120,7 +118,6 @@ function interpretScanPositions(positions) {
             position[3] / 3.3 // intensity
         ];
     });
-    mixer.onScanPixels(scanPixels);
     sendAsGraphPoints(positions, 0, 2, 1 / 0xffff); // z
     sendAsGraphPoints(positions, 1, 3, 1 / 3.3); // current signal
 }
@@ -160,9 +157,6 @@ onData = function (data) {
         break;
     case "scanDuration":
         console.log("Scan duration: " + data.value / 1000000 + " s");
-        break;
-    case "faderPosition":
-        mixer.faderPosition = data.value;
         break;
     case "newMode":
         interpretNewMode(data.value);
