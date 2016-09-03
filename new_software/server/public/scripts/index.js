@@ -9,7 +9,12 @@ define([
 
     var hostname = window.location.hostname;
     var client = new window.WebSocket("ws://" + hostname + ":8080/");
-    var scanGraph = graphConstructor("scan");
+    var graphs = {
+        "scan": graphConstructor("scan"),
+        "approach": graphConstructor("approach"),
+        "retract": graphConstructor("retract")
+    };
+    var modeName = "";
 
     client.onerror = function () {
         window.console.log("Connection error");
@@ -35,14 +40,23 @@ define([
         switch (data.type) {
         case "tipPositionLog":
             window.console.log(data.positions);
-            scanGraph.render(data.positions);
+            if (graphs[modeName] !== undefined) {
+                graphs[modeName].render(data.positions);
+            }
             break;
         case "scanDuration":
             window.console.log("Scan duration: " + data.value / 1000000 +
                     " s");
             break;
         case "newMode":
-            d3.select(".mode").text(data.value);
+            d3.select(".mode-name").text(data.value);
+            modeName = data.value;
+            break;
+        case "biasVoltage":
+            d3.select(".bias-voltage").text(d3.format(".1f")(data.value));
+            break;
+        case "currentSignal":
+            d3.select(".current-signal").text(d3.format(".2f")(data.value));
             break;
         case "peakCoarseApproachSignal":
             window.console.log("Peak coarse approach signal: " + data.value +

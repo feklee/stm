@@ -5,10 +5,22 @@ html {
 }
 
 form {
-    position: absolute;
     width: 1080px;
     padding: 5px;
     font-size: 20px;
+}
+
+.bias-voltage, .current-signal {
+    display: inline-block;
+    text-align: right;
+}
+
+.bias-voltage {
+    width: 50px;
+}
+
+.current-signal {
+    width: 30px;
 }
 
 div.log {
@@ -20,12 +32,12 @@ div.log {
     word-wrap: break-word;
 }
 
-svg {
-    position: absolute;
-    top: 200px;
+svg.graph {
+    margin-top: 5px;
     display: block;
     width: 1080px;
     height: 200px;
+    background: lightgray;
 }
 
 path.z {
@@ -46,29 +58,4 @@ input[name="mode-chain-json"] {
 
 input[type="submit"] {
     top: 50px;
-}
-
-canvas {
-    position: absolute;
-}
-
-canvas.graph {
-    width: 210px;
-    height: 1080px;
-}
-
-canvas.graph.index-0 {
-    left: 1080px;
-}
-
-canvas.graph.index-1 {
-    left: 1290px;
-}
-
-canvas.graph.index-2 {
-    left: 1500px;
-}
-
-canvas.graph.index-3 {
-    left: 1710px;
 }
