@@ -30,16 +30,16 @@ define([
 
     client.onmessage = function (e) {
         var data;
+        var json;
         if (typeof e.data === "string") {
-            window.console.log(e.data);
-            data = JSON.parse(e.data);
+            json = e.data;
+            data = JSON.parse(json);
         } else {
             return;
         }
 
         switch (data.type) {
         case "tipPositionLog":
-            window.console.log(data.positions);
             if (graphs[modeName] !== undefined) {
                 graphs[modeName].render(data.positions);
             }
@@ -69,9 +69,13 @@ define([
                 data.value
             ));
             break;
+        case "faderPosition":
+            break; // todo: eventually remove
         case "error":
-            log.append("Error: " + data.value);
+            log.appendError(data.value);
             break;
+        default:
+            log.appendError("Unknown: " + json);
         }
     };
 

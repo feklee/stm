@@ -1,7 +1,4 @@
 html {
-    height: 1080px;
-    width: 1920px;
-    overflow: hidden;
     font-size: 14px;
 }
 
@@ -23,13 +20,24 @@ form {
     width: 30px;
 }
 
-div.log {
+ul.log {
     width: 1080px;
     height: 100px;
     overflow-x: hidden;
     overflow-y: scroll;
-    white-space: pre-wrap;
-    word-wrap: break-word;
+}
+
+ul.log li span {
+    display: inline-block;
+    width: 15px;
+}
+
+ul.log li.input span {
+    background: lightgreen;
+}
+
+ul.log li.error span {
+    background: red;
 }
 
 section {

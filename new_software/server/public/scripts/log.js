@@ -5,13 +5,20 @@
 define(function () {
     "use strict";
 
-    var logEl = d3.select("div.log");
+    var logEl = d3.select("ul.log");
+
+    var append = function (type, icon, text) {
+        var html = "<li class=\"" + type + "\"><span>" + icon + "</span> " +
+                text + "</li>"; // todo: escape HTML
+        logEl.html(logEl.html() + html);
+    };
 
     return {
-        append(text) {
-            var html = "<pre>&gt; </pre><pre>" +
-                    text + "</pre>"; // todo: escape HTML
-            logEl.html(logEl.html() + html);
+        appendInput(text) {
+            append("input", "&gt;", text);
+        },
+        appendError(text) {
+            append("error", "×", text);
         }
     };
 });

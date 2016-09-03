@@ -12,7 +12,7 @@ define(["log"], function (log) {
 
     var sendModeChainJson = function (modeChainJson) {
         client.send(modeChainJson);
-        log.append(modeChainJson);
+        log.appendInput(modeChainJson);
     };
 
     var submit = function (e) {
