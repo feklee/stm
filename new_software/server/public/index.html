@@ -10,24 +10,34 @@
   </head>
 
   <body>
-    <div>
-      Mode: <span class="mode-name">N/A</span>,
-      Bias voltage: <span class="bias-voltage"></span> mV,
-      Current signal: <span class="current-signal"></span> V
-    </div>
     <div class="log"></div>
     <form>
       &gt; <input name="mode-chain-json" autocomplete="off" />
       <input value="Set" type="submit">
     </form>
+    <div>
+      Mode: <span class="mode-name">N/A</span>,
+      Bias voltage: <span class="bias-voltage"></span> mV,
+      Current signal: <span class="current-signal"></span> V
+    </div>
     <section class="approach">
       <h1>Approach</h1>
       <svg class="graph"></svg>
+      <p>
+        Peak coarse approach signal:
+        <span class="peak-coarse-approach-signal">0</span> V
+      </p>
+      <p>
+        Peak fine approach signal:
+        <span class="peak-fine-approach-signal">0</span> V
+      </p>
     </section>
     <section class="scan">
       <h1>Scan</h1>
       <svg class="graph"></svg>
-      Scan duration: <span class="scan-duration">0</span> s
+      <p>
+        Scan duration: <span class="scan-duration">0</span> s
+      </p>
     </section>
     <section class="retract">
       <h1>Retract</h1>

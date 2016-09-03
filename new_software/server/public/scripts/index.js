@@ -60,12 +60,14 @@ define([
             d3.select(".current-signal").text(d3.format(".2f")(data.value));
             break;
         case "peakCoarseApproachSignal":
-            window.console.log("Peak coarse approach signal: " + data.value +
-                    " V");
+            d3.select(".peak-coarse-approach-signal").text(d3.format(".2f")(
+                data.value
+            ));
             break;
         case "peakFineApproachSignal":
-            window.console.log("Peak fine approach signal: " + data.value +
-                    " V");
+            d3.select(".peak-fine-approach-signal").text(d3.format(".2f")(
+                data.value
+            ));
             break;
         case "error":
             window.console.log("STM error: " + data.value);
