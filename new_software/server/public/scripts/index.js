@@ -45,8 +45,9 @@ define([
             }
             break;
         case "scanDuration":
-            window.console.log("Scan duration: " + data.value / 1000000 +
-                    " s");
+            d3.select(".scan-duration").text(d3.format(".3f")(
+                data.value / 1000000
+            ));
             break;
         case "newMode":
             d3.select(".mode-name").text(data.value);
