@@ -32,8 +32,12 @@ div.log {
     word-wrap: break-word;
 }
 
-svg.graph {
+section {
     margin-top: 5px;
+    border: 1px solid lightgray;
+}
+
+svg.graph {
     display: block;
     width: 1080px;
     height: 200px;

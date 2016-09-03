@@ -13,7 +13,7 @@ define(function () {
             .domain([-0.5, 3.5])
             .range([height, 0]);
 
-        var svg = d3.select("body svg." + modeName);
+        var svg = d3.select("body section." + modeName + " svg");
 
         var graphGroup = svg.append("g");
 

@@ -10,19 +10,29 @@
   </head>
 
   <body>
-    <p>
+    <div>
       Mode: <span class="mode-name">N/A</span>,
       Bias voltage: <span class="bias-voltage"></span> mV,
       Current signal: <span class="current-signal"></span> V
-    </p>
+    </div>
     <div class="log"></div>
     <form>
       &gt; <input name="mode-chain-json" autocomplete="off" />
       <input value="Set" type="submit">
     </form>
-    <svg class="approach graph"></svg>
-    <svg class="scan graph"></svg>
-    <svg class="retract graph"></svg>
+    <section class="approach">
+      <h1>Approach</h1>
+      <svg class="graph"></svg>
+    </section>
+    <section class="scan">
+      <h1>Scan</h1>
+      <svg class="graph"></svg>
+    </section>
+    <section class="retract">
+      <h1>Retract</h1>
+      <svg class="graph"></svg>
+    </section>
+
     <script src="vendor/d3/d3.js"></script>
     <script src="vendor/require.js"></script>
     <script src="config.js"></script>
