@@ -3,8 +3,8 @@
 /*global define, window, d3 */
 
 define([
-    "graph-constructor", "input-form"
-], function (graphConstructor, inputForm) {
+    "graph-constructor", "input-form", "log"
+], function (graphConstructor, inputForm, log) {
     "use strict";
 
     var hostname = window.location.hostname;
@@ -70,7 +70,7 @@ define([
             ));
             break;
         case "error":
-            window.console.log("STM error: " + data.value);
+            log.append("Error: " + data.value);
             break;
         }
     };

@@ -2,23 +2,17 @@
 
 /*global define, window */
 
-define(function () {
+define(["log"], function (log) {
     "use strict";
 
     var submitButtonEl = document.querySelector("form>input[type=\"submit\"]");
     var inputEl =
             document.querySelector("form>input[name=\"mode-chain-json\"]");
-    var logEl = document.querySelector("div.log");
     var client;
-
-    var appendToLog = function (modeChainJson) {
-        logEl.innerHTML += "<pre>&gt; </pre><pre>" + modeChainJson + "</pre>"; // todo: escape HTML
-        logEl.scrollTop = logEl.scrollHeight;
-    };
 
     var sendModeChainJson = function (modeChainJson) {
         client.send(modeChainJson);
-        appendToLog(modeChainJson);
+        log.append(modeChainJson);
     };
 
     var submit = function (e) {
