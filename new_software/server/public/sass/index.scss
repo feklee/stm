@@ -88,6 +88,8 @@ ul.log {
 
     li {
         padding-left: $indent-width;
+        word-break: initial;
+        word-wrap: break-word;
         overflow-wrap: break-word;
     }
 
