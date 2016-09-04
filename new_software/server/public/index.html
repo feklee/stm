@@ -17,33 +17,35 @@
       </fieldset>
       <input type="submit">
     </form>
-    <div>
-      Mode: <span class="mode-name">N/A</span>,
-      Bias voltage: <span class="bias-voltage"></span> mV,
-      Current signal: <span class="current-signal"></span> V
-    </div>
-    <section class="approach">
-      <h1>Approach</h1>
-      <svg class="graph"></svg>
-      <p>
-        Peak coarse approach signal:
-        <span class="peak-coarse-approach-signal">0</span> V
-      </p>
-      <p>
-        Peak fine approach signal:
-        <span class="peak-fine-approach-signal">0</span> V
-      </p>
-    </section>
-    <section class="scan">
-      <h1>Scan</h1>
-      <svg class="graph"></svg>
-      <p>
-        Scan duration: <span class="scan-duration">0</span> s
-      </p>
-    </section>
-    <section class="retract">
-      <h1>Retract</h1>
-      <svg class="graph"></svg>
+    <section>
+      <div>
+        Mode: <span class="mode-name">N/A</span>,
+        Bias voltage: <span class="bias-voltage"></span> mV,
+        Current signal: <span class="current-signal"></span> V
+      </div>
+      <section class="approach">
+        <h1>Approach</h1>
+        <svg class="graph"></svg>
+        <p>
+          Peak coarse approach signal:
+          <span class="peak-coarse-approach-signal">0</span> V
+        </p>
+        <p>
+          Peak fine approach signal:
+          <span class="peak-fine-approach-signal">0</span> V
+        </p>
+      </section>
+      <section class="scan">
+        <h1>Scan</h1>
+        <svg class="graph"></svg>
+        <p>
+          Scan duration: <span class="scan-duration">0</span> s
+        </p>
+      </section>
+      <section class="retract">
+        <h1>Retract</h1>
+        <svg class="graph"></svg>
+      </section>
     </section>
 
     <script src="vendor/d3/d3.js"></script>
