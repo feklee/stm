@@ -49,14 +49,16 @@ define(function () {
                 return yScale(d[3]);
             });
 
-
-        var render = function () {
+        var updateScaling = function () {
+            width = d3.select("svg").node().getBoundingClientRect().width;
+            zoomBehavior.translateExtent([[0, 0], [width - 1, height - 1]]);
             xScale = d3.scaleLinear()
                 .domain([0, data.length - 1])
                 .range([0, width]);
+        };
 
-            console.log("fixme", width, xScale(10));
-
+        var render = function () {
+            updateScaling();
             graphGroup.selectAll("path").remove();
             graphGroup.append("path")
                 .datum(data)
@@ -68,13 +70,7 @@ define(function () {
                 .attr("d", currentSignalLine);
         };
 
-        var resize = function () {
-            width = d3.select("svg").node().getBoundingClientRect().width;
-            zoomBehavior.translateExtent([[0, 0], [width - 1, height - 1]]);
-            render();
-        };
-
-        d3.select(window).on("resize", resize);
+        d3.select(window).on("resize." + modeName, render);
 
         return {
             set data(newData) {
