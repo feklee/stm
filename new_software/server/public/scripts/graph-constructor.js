@@ -18,7 +18,10 @@ define(function () {
         var graphGroup = svg.append("g");
 
         var onZoom = function () {
-            graphGroup.attr("transform", d3.event.transform);
+            var transform = d3.event.transform;
+            var transformString = "translate(" + transform.x + "," +
+                    "0) scale(" + transform.k + ",1)";
+            graphGroup.attr("transform", transformString);
         };
 
         var zoomBehavior = d3.zoom()
