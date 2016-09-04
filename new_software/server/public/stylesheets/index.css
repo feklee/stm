@@ -25,6 +25,9 @@ ul.log {
     height: 100px;
     overflow-x: hidden;
     overflow-y: scroll;
+}
+
+ul.log li {
     padding-left: 20px;
 }
 
@@ -40,7 +43,7 @@ ul.log li.error {
 }
 
 ul.log li.error::before {
-    content: "\2022";
+    content: "⦻";
     color: red;
     background: #fff0f0;
 }
@@ -70,21 +73,26 @@ svg.graph {
 }
 
 path.z {
-  fill: none;
-  stroke: steelblue;
-  stroke-width: 0.5px;
+    fill: none;
+    stroke: steelblue;
+    stroke-width: 0.5px;
 }
 
 path.current-signal {
-  fill: none;
-  stroke: red;
-  stroke-width: 0.5px;
+    fill: none;
+    stroke: red;
+    stroke-width: 0.5px;
 }
 
 input[name="mode-chain-json"] {
     width: 1000px;
+    border: none;
+}
+
+label {
+    color: #367cf1;
 }
 
 input[type="submit"] {
-    top: 50px;
+    display: none;
 }

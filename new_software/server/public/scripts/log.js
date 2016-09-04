@@ -9,6 +9,7 @@ define(function () {
 
     var append = function (type, text) {
         logEl.append("li").attr("class", type).text(text);
+        logEl.node().scrollTop = logEl.node().scrollHeight;
     };
 
     return {

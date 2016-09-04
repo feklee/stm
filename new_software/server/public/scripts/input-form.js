@@ -5,9 +5,9 @@
 define(["log"], function (log) {
     "use strict";
 
-    var submitButtonEl = document.querySelector("form>input[type=\"submit\"]");
+    var submitButtonEl = document.querySelector("input[type=\"submit\"]");
     var inputEl =
-            document.querySelector("form>input[name=\"mode-chain-json\"]");
+            document.querySelector("input[name=\"mode-chain-json\"]");
     var client;
 
     var sendModeChainJson = function (modeChainJson) {
