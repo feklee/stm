@@ -20,49 +20,53 @@ body {
     >* {
         border: 1px solid black;
         overflow: auto;
+        padding: 5px;
     }
 
     >section {
         flex: 1;
-    }
-
-    >form {
-        border: 1px solid lightgray;
-        padding: 5px;
-        width: 20%;
-        resize: horizontal;
-        padding: 5px;
     }
 }
 
 form {
     display: flex;
     flex-direction: column;
-}
+    border: 1px solid lightgray;
+    width: 20%;
+    resize: horizontal;
+    padding: 5px;
 
-fieldset {
-    width: 100%;
-    $label-width: 15px;
-
-    label {
-        display: inline-block;
-        width: $label-width;
-        margin-right: -$label-width;
-        color: #367cf1;
+    div {
+        flex: 1;
+        display: flex;
+        overflow-x: hidden;
+        overflow-y: auto;
     }
 
-    >input[name="mode-chain-json"] {
-        box-sizing: border-box;
-        padding-left: $label-width;
+    fieldset {
         width: 100%;
-        border: none;
-        outline: none;
-        background: transparent;
-    }
-}
+        $label-width: 15px;
 
-input[type="submit"] {
-    display: none;
+        label {
+            display: inline-block;
+            width: $label-width;
+            margin-right: -$label-width;
+            color: #367cf1;
+        }
+
+        >input[name="mode-chain-json"] {
+            box-sizing: border-box;
+            padding-left: $label-width;
+            width: 100%;
+            border: none;
+            outline: none;
+            background: transparent;
+        }
+    }
+
+    input[type="submit"] {
+        display: none;
+    }
 }
 
 .bias-voltage, .current-signal {
@@ -80,16 +84,11 @@ input[type="submit"] {
 
 ul.log {
     $indent-width: 15px;
-
-    justify-content: flex-end;
-    flex-direction: column;
-    display: flex;
-    flex: 1;
-    overflow-x: hidden;
-    overflow-y: scroll;
+    margin-top: auto;
 
     li {
         padding-left: $indent-width;
+        overflow-wrap: break-word;
     }
 
     li::before {
