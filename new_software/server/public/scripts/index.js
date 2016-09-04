@@ -41,7 +41,7 @@ define([
         switch (data.type) {
         case "tipPositionLog":
             if (graphs[modeName] !== undefined) {
-                graphs[modeName].render(data.positions);
+                graphs[modeName].data = data.positions;
             }
             break;
         case "scanDuration":

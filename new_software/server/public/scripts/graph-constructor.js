@@ -8,7 +8,9 @@ define(function () {
     function constructor(modeName) {
         var width = d3.select("svg").node().getBoundingClientRect().width;
         var height = d3.select("svg").node().getBoundingClientRect().height;
+        var data = [];
 
+        var xScale;
         var yScale = d3.scaleLinear()
             .domain([-0.5, 3.5])
             .range([height, 0]);
@@ -31,8 +33,6 @@ define(function () {
 
         svg.call(zoomBehavior);
 
-        var xScale;
-
         var zLine = d3.line()
             .x(function (ignore, i) {
                 return xScale(i);
@@ -49,10 +49,13 @@ define(function () {
                 return yScale(d[3]);
             });
 
-        var render = function (data) {
+
+        var render = function () {
             xScale = d3.scaleLinear()
                 .domain([0, data.length - 1])
                 .range([0, width]);
+
+            console.log("fixme", width, xScale(10));
 
             graphGroup.selectAll("path").remove();
             graphGroup.append("path")
@@ -65,8 +68,19 @@ define(function () {
                 .attr("d", currentSignalLine);
         };
 
+        var resize = function () {
+            width = d3.select("svg").node().getBoundingClientRect().width;
+            zoomBehavior.translateExtent([[0, 0], [width - 1, height - 1]]);
+            render();
+        };
+
+        d3.select(window).on("resize", resize);
+
         return {
-            render: render
+            set data(newData) {
+                data = newData;
+                render();
+            }
         };
     }
 
