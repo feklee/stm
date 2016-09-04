@@ -84,9 +84,15 @@ path.current-signal {
     stroke-width: 0.5px;
 }
 
+form {
+    border: 1px solid lightgray;
+    padding: 5px;
+}
+
 input[name="mode-chain-json"] {
     width: 1000px;
     border: none;
+    outline: none;
 }
 
 label {
