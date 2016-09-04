@@ -18,7 +18,6 @@ body {
     flex: 1;
 
     >* {
-        border: 1px solid black;
         overflow: auto;
         padding: 5px;
     }
@@ -31,7 +30,7 @@ body {
 form {
     display: flex;
     flex-direction: column;
-    border: 1px solid lightgray;
+    border-right: 1px solid lightgray;
     width: 20%;
     resize: horizontal;
     padding: 5px;
