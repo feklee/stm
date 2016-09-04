@@ -35,18 +35,30 @@ body {
     }
 }
 
-label {
-    width: 10px;
-    color: #367cf1;
+form {
+    display: flex;
+    flex-direction: column;
 }
 
-input[name="mode-chain-json"] {
+fieldset {
     width: 100%;
-    border: none;
-    outline: none;
-    padding: 10px;
-    position: relative;
-    left: -20px;
+    $label-width: 15px;
+
+    label {
+        display: inline-block;
+        width: $label-width;
+        margin-right: -$label-width;
+        color: #367cf1;
+    }
+
+    >input[name="mode-chain-json"] {
+        box-sizing: border-box;
+        padding-left: $label-width;
+        width: 100%;
+        border: none;
+        outline: none;
+        background: transparent;
+    }
 }
 
 input[type="submit"] {
@@ -67,42 +79,47 @@ input[type="submit"] {
 }
 
 ul.log {
-    height: 100px;
+    $indent-width: 15px;
+
+    justify-content: flex-end;
+    flex-direction: column;
+    display: flex;
+    flex: 1;
     overflow-x: hidden;
     overflow-y: scroll;
-}
 
-ul.log li {
-    padding-left: 20px;
-}
+    li {
+        padding-left: $indent-width;
+    }
 
-ul.log li::before {
-    display: inline-block;
-    margin-left: -20px;
-    width: 20px;
-}
+    li::before {
+        display: inline-block;
+        margin-left: -$indent-width;
+        width: $indent-width;
+    }
 
-ul.log li.error {
-    background: #fff0f0;
-    color: red;
-}
+    li.error {
+        background: #fff0f0;
+        color: red;
+    }
 
-ul.log li.error::before {
-    content: "⦻";
-    color: red;
-    background: #fff0f0;
-}
+    li.error::before {
+        content: "⦻";
+        color: red;
+        background: #fff0f0;
+    }
 
-ul.log li.input::before {
-    content: ">";
-}
+    li.input::before {
+        content: ">";
+    }
 
-ul.log li.input span {
-    background: lightgreen;
-}
+    li.input span {
+        background: lightgreen;
+    }
 
-ul.log li.error span {
-    background: red;
+    li.error span {
+        background: red;
+    }
 }
 
 section>section {
@@ -112,7 +129,7 @@ section>section {
 
 svg.graph {
     display: block;
-    width: 400px;
+    width: 100%;
     height: 300px;
     background: lightgray;
 }
