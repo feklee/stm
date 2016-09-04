@@ -7,18 +7,16 @@ define(function () {
 
     var logEl = d3.select("ul.log");
 
-    var append = function (type, icon, text) {
-        var html = "<li class=\"" + type + "\"><span>" + icon + "</span> " +
-                text + "</li>"; // todo: escape HTML
-        logEl.html(logEl.html() + html);
+    var append = function (type, text) {
+        logEl.append("li").attr("class", type).text(text);
     };
 
     return {
         appendInput(text) {
-            append("input", "&gt;", text);
+            append("input", text);
         },
         appendError(text) {
-            append("error", "×", text);
+            append("error", text);
         }
     };
 });

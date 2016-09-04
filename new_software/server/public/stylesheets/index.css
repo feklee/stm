@@ -25,11 +25,28 @@ ul.log {
     height: 100px;
     overflow-x: hidden;
     overflow-y: scroll;
+    padding-left: 20px;
 }
 
-ul.log li span {
+ul.log li::before {
     display: inline-block;
-    width: 15px;
+    margin-left: -20px;
+    width: 20px;
+}
+
+ul.log li.error {
+    background: #fff0f0;
+    color: red;
+}
+
+ul.log li.error::before {
+    content: "\2022";
+    color: red;
+    background: #fff0f0;
+}
+
+ul.log li.input::before {
+    content: ">";
 }
 
 ul.log li.input span {
