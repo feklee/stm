@@ -1,13 +1,10 @@
 /*jslint browser: true, es6: true, maxlen: 80 */
 
-/*global define, window */
+/*global define, window, d3 */
 
 define(["log"], function (log) {
     "use strict";
 
-    var submitButtonEl = document.querySelector("input[type=\"submit\"]");
-    var inputEl =
-            document.querySelector("input[name=\"mode-chain-json\"]");
     var client;
 
     var sendModeChainJson = function (modeChainJson) {
@@ -15,15 +12,17 @@ define(["log"], function (log) {
         log.appendInput(modeChainJson);
     };
 
-    var submit = function (e) {
+    var submit = function () {
+        d3.event.preventDefault();
         if (client !== undefined) {
-            sendModeChainJson(inputEl.value);
+            var inputNode = d3.select("input[name='mode-chain-json']").node();
+            sendModeChainJson(inputNode.value);
         }
-        e.preventDefault();
         document.querySelector("form").reset();
+        return false;
     };
 
-    submitButtonEl.addEventListener("click", submit, false);
+    d3.select("input[type='submit']").on("click", submit);
 
     return {
         set client(newClient) {

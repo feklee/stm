@@ -19,7 +19,6 @@ define(function () {
         logEl.append("li").attr("class", type).append("pre").text(
             prettyPrinted(text)
         );
-        console.log(prettyPrinted(text));
         var parentNode = logEl.node().parentNode;
         parentNode.scrollTop = parentNode.scrollHeight;
     };
