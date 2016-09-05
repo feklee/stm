@@ -8,7 +8,7 @@ define(function () {
     var logEl = d3.select("ul.log");
 
     var append = function (type, text) {
-        logEl.append("li").attr("class", type).text(text);
+        logEl.append("li").attr("class", type).append("span").text(text);
         var parentNode = logEl.node().parentNode;
         parentNode.scrollTop = parentNode.scrollHeight;
     };

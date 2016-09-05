@@ -70,7 +70,8 @@ define(function () {
                 .attr("d", currentSignalLine);
         };
 
-        d3.select(window).on("resize." + modeName, render);
+        d3.select("body section." + modeName +
+                " svg").on("resize." + modeName, render);
 
         return {
             set data(newData) {

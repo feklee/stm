@@ -87,39 +87,36 @@ ul.log {
     width: 100%;
 
     li {
+        white-space: nowrap;
         padding-left: $indent-width;
-        word-break: initial;
-        word-wrap: break-word;
-        overflow-wrap: break-word;
-    }
 
-    li::before {
-        display: inline-block;
-        margin-left: -$indent-width;
-        width: $indent-width;
-    }
+        &::before {
+            display: inline-block;
+            margin-left: -$indent-width;
+            width: $indent-width;
+        }
 
-    li.error {
-        background: #fff0f0;
-        color: red;
-    }
+        &.error {
+            background: #fff0f0;
+            color: red;
 
-    li.error::before {
-        content: "⦻";
-        color: red;
-        background: #fff0f0;
-    }
+            &::before {
+                content: "⦻";
+                color: red;
+                background: #fff0f0;
+            }
+        }
 
-    li.input::before {
-        content: ">";
-    }
+        &.input::before {
+            content: ">";
+        }
 
-    li.input span {
-        background: lightgreen;
-    }
-
-    li.error span {
-        background: red;
+        &>span {
+            white-space: normal;
+            word-break: initial;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
     }
 }
 
