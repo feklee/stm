@@ -1,19 +1,20 @@
 {
-    "name": "stm",
-    "description": "",
-    "main": "index.html",
-    "license": "WTFPL",
-    "homepage": "",
-    "ignore": [
-        "**/.*",
-        "node_modules",
-        "bower_components",
-        "test",
-        "tests"
-    ],
-    "dependencies": {
-        "source-sans-pro": "git://github.com/adobe-fonts/source-sans-pro.git#2.020R-ro/1.075R-it",
-        "d3": "4.x",
-        "requirejs": "2.x"
-    }
+  "name": "stm",
+  "description": "",
+  "main": "index.html",
+  "license": "WTFPL",
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "source-sans-pro": "git://github.com/adobe-fonts/source-sans-pro.git#2.020R-ro/1.075R-it",
+    "d3": "4.x",
+    "requirejs": "2.x",
+    "source-code-pro": "git://github.com/adobe-fonts/source-code-pro.git#2.030R-ro/1.050R-it"
+  }
 }

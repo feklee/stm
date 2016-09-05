@@ -9,7 +9,7 @@ html, body {
 html {
     display: flex;
     flex-direction: column;
-    font-size: 14px;
+    font: 14px "Source Sans Pro";
     line-height: 16px;
 }
 
@@ -31,6 +31,7 @@ form {
     width: 200px;
     resize: horizontal;
     padding: 5px;
+    font: 14px "Source Code Pro";
 
     div {
         flex: 1;
@@ -42,12 +43,14 @@ form {
     fieldset {
         width: 100%;
         $label-width: 15px;
+        font: inherit;
 
         label {
             display: inline-block;
             width: $label-width;
             margin-right: -$label-width;
             color: #367cf1;
+            font-weight: 900;
         }
 
         >input[name="mode-chain-json"] {
@@ -57,6 +60,7 @@ form {
             border: none;
             outline: none;
             background: transparent;
+            font: inherit;
         }
     }
 
