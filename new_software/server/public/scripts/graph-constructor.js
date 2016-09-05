@@ -70,8 +70,9 @@ define(function () {
                 .attr("d", currentSignalLine);
         };
 
-        d3.select("body section." + modeName +
-                " svg").on("resize." + modeName, render);
+        var iframeWindowEl = d3.select(d3.select("main>iframe").node()
+            .contentWindow);
+        iframeWindowEl.on("resize." + modeName, render);
 
         return {
             set data(newData) {

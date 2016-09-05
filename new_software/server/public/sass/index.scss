@@ -10,6 +10,7 @@ html {
     display: flex;
     flex-direction: column;
     font-size: 14px;
+    line-height: 16px;
 }
 
 body {
@@ -20,10 +21,6 @@ body {
     >* {
         overflow: auto;
         padding: 5px;
-    }
-
-    >section {
-        flex: 1;
     }
 }
 
@@ -66,80 +63,91 @@ form {
     input[type="submit"] {
         display: none;
     }
-}
 
-.bias-voltage, .current-signal {
-    display: inline-block;
-    text-align: right;
-}
+    ul.log {
+        $indent-width: 15px;
+        margin-top: auto;
+        width: 100%;
 
-.bias-voltage {
-    width: 50px;
-}
-
-.current-signal {
-    width: 30px;
-}
-
-ul.log {
-    $indent-width: 15px;
-    margin-top: auto;
-    width: 100%;
-
-    li {
-        white-space: nowrap;
-        padding-left: $indent-width;
-
-        &::before {
-            display: inline-block;
-            margin-left: -$indent-width;
-            width: $indent-width;
-        }
-
-        &.error {
-            background: #fff0f0;
-            color: red;
+        li {
+            white-space: nowrap;
+            padding-left: $indent-width;
 
             &::before {
-                content: "⦻";
-                color: red;
-                background: #fff0f0;
+                display: inline-block;
+                margin-left: -$indent-width;
+                width: $indent-width;
             }
-        }
 
-        &.input::before {
-            content: ">";
-        }
+            &.error {
+                background: #fff0f0;
+                color: red;
 
-        &>span {
-            white-space: normal;
-            word-break: initial;
-            word-wrap: break-word;
-            overflow-wrap: break-word;
+                &::before {
+                    content: "⦻";
+                    color: red;
+                    background: #fff0f0;
+                }
+            }
+
+            &.input::before {
+                content: ">";
+            }
+
+            &>span {
+                white-space: normal;
+                word-break: initial;
+                word-wrap: break-word;
+                overflow-wrap: break-word;
+            }
         }
     }
 }
 
-section>section {
-    margin-top: 20px;
-    border-top: 1px solid lightgray;
-}
+main {
+    flex: 1;
 
-svg.graph {
-    display: block;
-    width: 100%;
-    height: 200px;
-    background: lightgray;
-}
+    >iframe {
+        width: 100%;
+        height: 0;
+        border: none;
+        background-color: transparent;
+    }
 
-path.z {
-    fill: none;
-    stroke: steelblue;
-    stroke-width: 0.5px;
-}
+    .bias-voltage, .current-signal {
+        display: inline-block;
+        text-align: right;
+    }
 
-path.current-signal {
-    fill: none;
-    stroke: red;
-    stroke-width: 0.5px;
+    .bias-voltage {
+        width: 50px;
+    }
+
+    .current-signal {
+        width: 30px;
+    }
+
+    >section {
+        margin-top: 20px;
+        border-top: 1px solid lightgray;
+    }
+
+    svg.graph {
+        display: block;
+        width: 100%;
+        height: 200px;
+        background: lightgray;
+    }
+
+    path.z {
+        fill: none;
+        stroke: steelblue;
+        stroke-width: 0.5px;
+    }
+
+    path.current-signal {
+        fill: none;
+        stroke: red;
+        stroke-width: 0.5px;
+    }
 }
