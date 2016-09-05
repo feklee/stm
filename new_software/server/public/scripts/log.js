@@ -7,8 +7,19 @@ define(function () {
 
     var logEl = d3.select("ul.log");
 
+    var prettyPrinted = function (text) {
+        try {
+            return JSON.stringify(JSON.parse(text), null, 2);
+        } catch (ignore) {
+            return text;
+        }
+    };
+
     var append = function (type, text) {
-        logEl.append("li").attr("class", type).append("span").text(text);
+        logEl.append("li").attr("class", type).append("pre").text(
+            prettyPrinted(text)
+        );
+        console.log(prettyPrinted(text));
         var parentNode = logEl.node().parentNode;
         parentNode.scrollTop = parentNode.scrollHeight;
     };

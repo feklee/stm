@@ -98,8 +98,10 @@ form {
                 content: ">";
             }
 
-            &>span {
-                white-space: normal;
+            &>pre {
+                display: inline-block;
+                vertical-align: top;
+                white-space: pre-wrap;
                 word-break: initial;
                 word-wrap: break-word;
                 overflow-wrap: break-word;
