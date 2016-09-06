@@ -1,0 +1,6 @@
+Layout for a board for controlling the STM.
+
+The source of Teensy 3.x component is an Eagle library linked from a post
+[Updated Teensy 3.x and LC Eagle libraries][1] in the PJRC forum.
+
+[1]: https://forum.pjrc.com/threads/24637-Updated-Teensy-3-1-and-Teensy-3-0-Eagle-libraries?p=38388&viewfull=1#post38388
