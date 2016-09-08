@@ -63,12 +63,12 @@ define([
             break;
         case "peakCoarseApproachSignal":
             d3.select(".peak-coarse-approach-signal").text(d3.format(".2f")(
-                data.value
+                data.value / (0xffff / 3.3)
             ));
             break;
         case "peakFineApproachSignal":
             d3.select(".peak-fine-approach-signal").text(d3.format(".2f")(
-                data.value
+                data.value / (0xffff / 3.3)
             ));
             break;
         case "error":
