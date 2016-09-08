@@ -351,17 +351,11 @@ UsedLibrary="C:/EAGLE-7.6.0/lbr/element14/Texas Instruments_By_element14_Batch_1
 UsedLibrary="C:/EAGLE-7.6.0/lbr/my components/Teensy_3_and_LC_Series_Boards_v1.1.lbr"
 
 [Win_1]
-Loc="-8 -30 795 503"
-State=2
-Number=3
-
-[Win_2]
 Type="Control Panel"
-Loc="418 196 1017 739"
-State=2
+Loc="0 0 1599 877"
+State=1
 Number=0
 
 [Desktop]
 Screen="1600 900"
 Window="Win_1"
-Window="Win_2"
