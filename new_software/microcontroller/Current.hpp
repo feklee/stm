@@ -6,10 +6,10 @@
 
 class Current {
   const uint8_t measurePin_ = A2;
-  float signal_ = 0; // V
+  uint16_t signal_ = 0; // 0xffff/3.3 V
 
 public:
   void measure();
   void print();
-  float signal();
+  uint16_t signal();
 };

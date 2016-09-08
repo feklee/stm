@@ -14,14 +14,14 @@ class RetractMode : public Mode {
   Current &current_;
   Piezo &piezo_;
   TipPositionLog &tipPositionLog_;
-  float targetSignal_ = 0.1;
-  bool rotateMotor(int, float);
-  bool retract(int, float);
+  uint16_t targetSignal_ = 0x1000;  // 0xffff/3.3 V
+  bool rotateMotor(int, uint16_t);
+  bool retract(int, uint16_t);
   void finish();
 
 public:
   RetractMode(Motor &, BiasVoltage &, Current &, Piezo &, TipPositionLog &);
   const char *name();
   bool step();
-  void setTargetSignal(float);
+  void setTargetSignal(uint16_t);
 };

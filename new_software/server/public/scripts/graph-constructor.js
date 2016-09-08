@@ -12,7 +12,7 @@ define(function () {
 
         var xScale;
         var yScale = d3.scaleLinear()
-            .domain([-0.5, 3.5])
+            .domain([-0x1000, 0xffff + 0x1000])
             .range([height, 0]);
 
         var svg = d3.select("body section." + modeName + " svg");

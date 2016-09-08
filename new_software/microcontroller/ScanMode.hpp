@@ -14,7 +14,7 @@ class ScanMode : public Mode {
   unsigned long startTime_; // µs
   int chunkSize_ = 250;
   Piezo &piezo_;
-  float targetSignal_ = 1; // V
+  uint16_t targetSignal_ = 0x5000; // 0xffff/3.3 V
   int maxAdjustmentSteps_ = 0;
   int adjustmentDelta_ = 0;
   unsigned long duration();
@@ -34,5 +34,5 @@ public:
   void setSideLen(int);
   void setMaxAdjustmentSteps(int);
   void setAdjustmentDelta(int);
-  void setTargetSignal(float);
+  void setTargetSignal(uint16_t);
 };

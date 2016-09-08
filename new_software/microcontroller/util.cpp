@@ -21,6 +21,7 @@ template <typename T> void printValue(const char *type, T value) {
 template void printValue<unsigned long>(const char *, unsigned long);
 template void printValue<long>(const char *, long);
 template void printValue<float>(const char *, float);
+template void printValue<uint16_t>(const char *, uint16_t);
 
 float readVoltage(uint8_t pin) {
   return 3.3 * float(analogRead(pin)) / 0xffff;

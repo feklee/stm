@@ -74,7 +74,7 @@ bool ApproachMode::step() {
   return true;
 }
 
-void ApproachMode::setTargetSignal(float targetSignal) {
+void ApproachMode::setTargetSignal(uint16_t targetSignal) {
   targetSignal_ = targetSignal;
 }
 

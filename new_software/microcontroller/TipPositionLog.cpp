@@ -31,7 +31,7 @@ void TipPositionLog::flush() {
 }
 
 void TipPositionLog::add(uint8_t x, uint8_t y, uint16_t z,
-                         float currentSignal) {
+                         uint16_t currentSignal) {
   entries_[head_] = {x, y, z, currentSignal};
   head_ ++;
   if (head_ >= size_) {

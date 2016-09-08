@@ -2,9 +2,10 @@
 #include "Current.hpp"
 
 void Current::measure() {
-  signal_ = readVoltage(measurePin_);
+  signal_ = analogRead(measurePin_);
 #if 0
-  signal_ = 2 * float(rand()) / RAND_MAX; // For simulation (debugging)
+  signal_ = long(0xffff * float(rand()) / RAND_MAX); // For simulation
+                                                     // (debugging)
 #endif
 }
 
@@ -12,6 +13,6 @@ void Current::print() {
   printValue("currentSignal", signal_);
 }
 
-float Current::signal() {
+uint16_t Current::signal() { // 0xffff/3.3 V
   return signal_;
 }

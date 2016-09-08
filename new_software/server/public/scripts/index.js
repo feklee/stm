@@ -57,7 +57,9 @@ define([
             d3.select(".bias-voltage").text(d3.format(".1f")(data.value));
             break;
         case "currentSignal":
-            d3.select(".current-signal").text(d3.format(".2f")(data.value));
+            d3.select(".current-signal").text(d3.format(".2f")(
+                data.value / (0xffff / 3.3)
+            ));
             break;
         case "peakCoarseApproachSignal":
             d3.select(".peak-coarse-approach-signal").text(d3.format(".2f")(

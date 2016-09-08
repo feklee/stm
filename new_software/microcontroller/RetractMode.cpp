@@ -11,7 +11,10 @@ const char *RetractMode::name() {
   return "retract";
 }
 
-bool RetractMode::rotateMotor(int steps, float targetSignal) {
+bool RetractMode::rotateMotor(
+  int steps,
+  uint16_t targetSignal // 0xffff/3.3 V
+) {
   for (int i = 0; i < steps; i ++) {
     motor_.stepUp();
     current_.measure();
@@ -25,7 +28,7 @@ bool RetractMode::rotateMotor(int steps, float targetSignal) {
 
 bool RetractMode::retract(
   int steps,
-  float targetSignal = -1 // V, outside bounds by default
+  uint16_t targetSignal = 0 // 0xffff/3.3 V (fixme/todo: negative value would be better to be never reached)
 ) {
   piezo_.displace(0);
   motor_.activate();
@@ -48,6 +51,6 @@ bool RetractMode::step() {
   return true;
 }
 
-void RetractMode::setTargetSignal(float targetSignal) {
+void RetractMode::setTargetSignal(uint16_t targetSignal /* 0xffff/3.3 V */) {
   targetSignal_ = targetSignal;
 }
