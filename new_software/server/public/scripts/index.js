@@ -69,8 +69,6 @@ define([
                 data.value
             ));
             break;
-        case "faderPosition":
-            break; // todo: eventually remove
         case "error":
             log.appendError(data.value);
             break;

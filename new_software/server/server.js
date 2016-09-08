@@ -11,7 +11,6 @@ var args = process.argv.slice(2);
 var browserConnection = null;
 var nodeStatic = require("node-static");
 var fileServer = new nodeStatic.Server("./public", {cache: 0});
-var mode = "";
 var onData;
 var debug = false;
 
@@ -87,62 +86,6 @@ function onConnectedToStm() {
     if (debug) {
         simulateData();
     }
-}
-
-function sendIfConnected(data) {
-    if (browserConnection === null) {
-        return;
-    }
-    browserConnection.sendUTF(JSON.stringify(data));
-}
-
-function sendAsGraphPoints(positions, graphIndex, index, scale) {
-    if (scale === undefined) {
-        scale = 1;
-    }
-    var points = positions.map(function (tipPosition) {
-        return scale * tipPosition[index];
-    });
-    sendIfConnected({
-        type: "graphPoints",
-        index: graphIndex,
-        points: points
-    });
-}
-
-function interpretScanPositions(positions) {
-    var scanPixels = positions.map(function (position) {
-        return [
-            position[0], // x
-            position[1], // y
-            position[3] / 3.3 // intensity
-        ];
-    });
-    sendAsGraphPoints(positions, 0, 2, 1 / 0xffff); // z
-    sendAsGraphPoints(positions, 1, 3, 1 / 3.3); // current signal
-}
-
-function interpretApproachRetractPositions(positions) {
-    sendAsGraphPoints(positions, 2, 2, 1 / 0xffff); // z
-    sendAsGraphPoints(positions, 3, 3, 1 / 3.3); // current signal
-}
-
-function interpretPositions(positions) {
-    switch (mode) {
-    case "scan":
-        interpretScanPositions(positions);
-        break;
-    case "approach":
-        interpretApproachRetractPositions(positions);
-        break;
-    case "retract":
-        interpretApproachRetractPositions(positions);
-        break;
-    }
-}
-
-function interpretNewMode(newMode) {
-    mode = newMode;
 }
 
 onData = function (data) {

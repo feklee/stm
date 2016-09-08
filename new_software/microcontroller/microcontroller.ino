@@ -1,6 +1,5 @@
 #include <SPI.h>
 #include <ArduinoJson.h>
-#include "Fader.hpp"
 #include "IdleMode.hpp"
 #include "ScanMode.hpp"
 #include "ApproachMode.hpp"
@@ -10,7 +9,6 @@
 #include "ModeChain.hpp"
 #include "util.hpp"
 
-static Fader fader;
 static Current current;
 static TipPositionLog tipPositionLog;
 static BiasVoltage biasVoltage;
@@ -106,7 +104,6 @@ void loop() {
   if (!continueStepping) {
     switchMode(modeChain.next());
   }
-  fader.print();
   biasVoltage.print();
   current.measure();
   current.print();
