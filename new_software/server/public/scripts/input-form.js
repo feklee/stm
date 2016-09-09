@@ -2,7 +2,7 @@
 
 /*global define, window, d3 */
 
-define(["log"], function (log) {
+define(["log", "toolbar"], function (log, toolbar) {
     "use strict";
 
     var client;
@@ -27,6 +27,7 @@ define(["log"], function (log) {
     return {
         set client(newClient) {
             client = newClient;
+            toolbar.client = client;
         }
     };
 });

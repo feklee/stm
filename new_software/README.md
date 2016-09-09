@@ -30,11 +30,11 @@ First enter the directory `server/public`, then:
 
  2. Compile CSS:
 
-        $ sass --update sass:stylesheets
+        $ sass -E utf-8 --update sass:stylesheets
 
     During development, you may use:
 
-        $ sass --watch sass:stylesheets
+        $ sass -E utf-8 --watch sass:stylesheets
 
 
 Coding conventions

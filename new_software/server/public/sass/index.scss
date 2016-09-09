@@ -30,11 +30,52 @@ form {
     padding: 5px;
     font: 13px "Source Code Pro";
 
-    div {
+    div.log {
         flex: 1;
         display: flex;
         overflow-x: hidden;
         overflow-y: auto;
+
+        ul {
+            $indent-width: 15px;
+            margin-top: auto;
+            width: 100%;
+
+            li {
+                white-space: nowrap;
+                padding-left: $indent-width;
+
+                &::before {
+                    display: inline-block;
+                    margin-left: -$indent-width;
+                    width: $indent-width;
+                }
+
+                &.error {
+                    background: #fff0f0;
+                    color: red;
+
+                    &::before {
+                        content: "⦻";
+                        color: red;
+                        background: #fff0f0;
+                    }
+                }
+
+                &.input::before {
+                    content: ">";
+                }
+
+                &>pre {
+                    display: inline-block;
+                    vertical-align: top;
+                    white-space: pre-wrap;
+                    word-break: initial;
+                    word-wrap: break-word;
+                    overflow-wrap: break-word;
+                }
+            }
+        }
     }
 
     fieldset {
@@ -63,47 +104,6 @@ form {
 
     input[type="submit"] {
         display: none;
-    }
-
-    ul.log {
-        $indent-width: 15px;
-        margin-top: auto;
-        width: 100%;
-
-        li {
-            white-space: nowrap;
-            padding-left: $indent-width;
-
-            &::before {
-                display: inline-block;
-                margin-left: -$indent-width;
-                width: $indent-width;
-            }
-
-            &.error {
-                background: #fff0f0;
-                color: red;
-
-                &::before {
-                    content: "⦻";
-                    color: red;
-                    background: #fff0f0;
-                }
-            }
-
-            &.input::before {
-                content: ">";
-            }
-
-            &>pre {
-                display: inline-block;
-                vertical-align: top;
-                white-space: pre-wrap;
-                word-break: initial;
-                word-wrap: break-word;
-                overflow-wrap: break-word;
-            }
-        }
     }
 }
 
