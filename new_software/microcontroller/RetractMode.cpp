@@ -65,5 +65,4 @@ void RetractMode::setTargetSignal(
   uint16_t targetSignal // 0xffff/3.3 V
 ) {
   targetSignal_ = targetSignal;
-  printValue("targetSignal", voltFromInteger(targetSignal_));
 }
