@@ -15,8 +15,9 @@ class RetractMode : public Mode {
   Piezo &piezo_;
   TipPositionLog &tipPositionLog_;
   uint16_t targetSignal_ = 0x1000;  // 0xffff/3.3 V
-  bool rotateMotor(int, uint16_t);
-  bool retract(int, uint16_t);
+  bool rotateMotor(int, uint16_t, bool);
+  void retract(int);
+  bool retractToTarget(int, uint16_t);
   void finish();
 
 public:

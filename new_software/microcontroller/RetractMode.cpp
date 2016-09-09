@@ -31,7 +31,7 @@ void RetractMode::retract(
   int steps
 ) {
   motor_.activate();
-  bool targetSignalReached = rotateMotor(steps);
+  rotateMotor(steps);
   motor_.deactivate();
 }
 
