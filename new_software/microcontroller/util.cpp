@@ -23,8 +23,16 @@ template void printValue<long>(const char *, long);
 template void printValue<float>(const char *, float);
 template void printValue<uint16_t>(const char *, uint16_t);
 
+float voltFromInteger(uint16_t x) {
+  return 3.3 * float(x) / 0xffff;
+}
+
+uint16_t integerFromVolt(float x) {
+  return 0xffff * x / 3.3;
+}
+
 float readVoltage(uint8_t pin) {
-  return 3.3 * float(analogRead(pin)) / 0xffff;
+  return voltFromInteger(analogRead(pin));
 }
 
 // Accounts for one overflow, but not for multiple ones!

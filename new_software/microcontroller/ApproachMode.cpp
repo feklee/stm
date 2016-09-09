@@ -76,6 +76,7 @@ bool ApproachMode::step() {
 
 void ApproachMode::setTargetSignal(uint16_t targetSignal) {
   targetSignal_ = targetSignal;
+  printValue("targetSignal", voltFromInteger(targetSignal_));
 }
 
 void ApproachMode::setFinePiezoStepSize(uint16_t finePiezoStepSize) {

@@ -3,8 +3,8 @@
 /*global define, window, d3 */
 
 define([
-    "graph-constructor", "input-form", "log"
-], function (graphConstructor, inputForm, log) {
+    "graph-constructor", "input-form", "log", "util"
+], function (graphConstructor, inputForm, log, util) {
     "use strict";
 
     var hostname = window.location.hostname;
@@ -58,18 +58,22 @@ define([
             break;
         case "currentSignal":
             d3.select(".current-signal").text(d3.format(".2f")(
-                data.value / (0xffff / 3.3)
+                util.voltFromInteger(data.value)
             ));
             break;
         case "peakCoarseApproachSignal":
             d3.select(".peak-coarse-approach-signal").text(d3.format(".2f")(
-                data.value / (0xffff / 3.3)
+                util.voltFromInteger(data.value)
             ));
             break;
         case "peakFineApproachSignal":
             d3.select(".peak-fine-approach-signal").text(d3.format(".2f")(
-                data.value / (0xffff / 3.3)
+                util.voltFromInteger(data.value)
             ));
+            break;
+        case "targetSignal":
+            d3.select("section." + modeName).select(".target-signal")
+                .text(d3.format(".2f")(data.value));
             break;
         case "error":
             log.appendError(data.value);

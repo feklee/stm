@@ -1,4 +1,5 @@
 #include <Arduino.h>
+#include "util.hpp"
 #include "RetractMode.hpp"
 
 RetractMode::RetractMode(Motor &motor, BiasVoltage &biasVoltage,
@@ -64,4 +65,5 @@ void RetractMode::setTargetSignal(
   uint16_t targetSignal // 0xffff/3.3 V
 ) {
   targetSignal_ = targetSignal;
+  printValue("targetSignal", voltFromInteger(targetSignal_));
 }
