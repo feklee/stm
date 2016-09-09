@@ -99,6 +99,8 @@ void ScanMode::setAdjustmentDelta(int adjustmentDelta) {
   adjustmentDelta_ = adjustmentDelta;
 }
 
-void ScanMode::setTargetSignal(uint16_t targetSignal) {
-  targetSignal_ = targetSignal;
+void ScanMode::setTargetSignal(
+  float targetSignal // V
+) {
+  targetSignal_ = integerFromVolt(targetSignal);
 }

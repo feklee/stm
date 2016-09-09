@@ -7,6 +7,7 @@
 #include "Piezo.hpp"
 #include "TipPositionLog.hpp"
 #include "Mode.hpp"
+#include "util.hpp"
 
 class ApproachMode : public Mode {
   Motor &motor_;
@@ -14,7 +15,7 @@ class ApproachMode : public Mode {
   Current &current_;
   Piezo &piezo_;
   TipPositionLog &tipPositionLog_;
-  uint16_t targetSignal_ = 0x5000; // 0xffff/3.3 V
+  uint16_t targetSignal_ = integerFromVolt(1); // 0xffff/3.3 V
   uint16_t finePiezoStepSize_ = 10;
   uint16_t coarsePiezoStepSize_ = 100;
   float lastSignal_;
@@ -29,7 +30,7 @@ public:
   const char *name();
   void reset();
   bool step();
-  void setTargetSignal(uint16_t);
+  void setTargetSignal(float);
   void setFinePiezoStepSize(uint16_t);
   void setCoarsePiezoStepSize(uint16_t);
 };

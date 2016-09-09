@@ -62,7 +62,7 @@ bool RetractMode::step() {
 }
 
 void RetractMode::setTargetSignal(
-  uint16_t targetSignal // 0xffff/3.3 V
+  float targetSignal // V
 ) {
-  targetSignal_ = targetSignal;
+  targetSignal_ = integerFromVolt(targetSignal);
 }

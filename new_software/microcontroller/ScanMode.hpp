@@ -5,6 +5,7 @@
 #include "Current.hpp"
 #include "Piezo.hpp"
 #include "Mode.hpp"
+#include "util.hpp"
 
 class ScanMode : public Mode {
   TipPositionLog &tipPositionLog_;
@@ -14,7 +15,7 @@ class ScanMode : public Mode {
   unsigned long startTime_; // µs
   int chunkSize_ = 250;
   Piezo &piezo_;
-  uint16_t targetSignal_ = 0x5000; // 0xffff/3.3 V
+  uint16_t targetSignal_ = integerFromVolt(1); // 0xffff/3.3 V
   int maxAdjustmentSteps_ = 0;
   int adjustmentDelta_ = 0;
   unsigned long duration();
@@ -34,5 +35,5 @@ public:
   void setSideLen(int);
   void setMaxAdjustmentSteps(int);
   void setAdjustmentDelta(int);
-  void setTargetSignal(uint16_t);
+  void setTargetSignal(float);
 };
