@@ -30,11 +30,11 @@ First enter the directory `server/public`, then:
 
  2. Compile CSS:
 
-        $ compass compile -e production --force
+        $ sass --update sass:stylesheets
 
-    During development, you may just use:
+    During development, you may use:
 
-        $ compass watch
+        $ sass --watch sass:stylesheets
 
 
 Coding conventions
