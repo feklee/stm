@@ -22,7 +22,9 @@ Thanks for donations
 
   * [hackerspaceshop][1]: Teensy bluetooth serial module
 
-  * HU Berlin: used graphite, platinum-iridium tips
+  * HU Berlin: graphite, platinum-iridium tips
+
+  * [SparkMaker][2]: funding for parts
 
 
 Legal
@@ -32,3 +34,4 @@ Unless mentioned otherwise, stuff is licensed under the WTFPL version 2:
 <http://www.wtfpl.net/>
 
 [1]: https://hackerspaceshop.com/
+[2]: http://sparkmaker.io/
