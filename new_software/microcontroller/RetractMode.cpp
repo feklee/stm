@@ -13,26 +13,34 @@ const char *RetractMode::name() {
 
 bool RetractMode::rotateMotor(
   int steps,
-  uint16_t targetSignal // 0xffff/3.3 V
+  uint16_t targetSignal = 0, // 0xffff/3.3 V
+  bool stopAtTarget = false
 ) {
   for (int i = 0; i < steps; i ++) {
     motor_.stepUp();
     current_.measure();
     tipPositionLog_.add(0, 0, 0, current_.signal());
-    if (current_.signal() <= targetSignal) {
+    if (stopAtTarget && current_.signal() <= targetSignal) {
       return true;
     }
   }
   return false;
 }
 
-bool RetractMode::retract(
-  int steps,
-  uint16_t targetSignal = 0 // 0xffff/3.3 V (fixme/todo: negative value would be better to be never reached)
+void RetractMode::retract(
+  int steps
 ) {
-  piezo_.displace(0);
   motor_.activate();
-  bool targetSignalReached = rotateMotor(steps, targetSignal);
+  bool targetSignalReached = rotateMotor(steps);
+  motor_.deactivate();
+}
+
+bool RetractMode::retractToTarget(
+  int steps,
+  uint16_t targetSignal // 0xffff/3.3 V
+) {
+  motor_.activate();
+  bool targetSignalReached = rotateMotor(steps, targetSignal, true);
   motor_.deactivate();
   return targetSignalReached;
 }
@@ -43,7 +51,8 @@ void RetractMode::finish() {
 }
 
 bool RetractMode::step() {
-  bool targetSignalReached = retract(500, targetSignal_);
+  piezo_.displace(0);
+  bool targetSignalReached = retractToTarget(500, targetSignal_);
   if (targetSignalReached) {
     finish();
     return false;
@@ -51,6 +60,8 @@ bool RetractMode::step() {
   return true;
 }
 
-void RetractMode::setTargetSignal(uint16_t targetSignal /* 0xffff/3.3 V */) {
+void RetractMode::setTargetSignal(
+  uint16_t targetSignal // 0xffff/3.3 V
+) {
   targetSignal_ = targetSignal;
 }
