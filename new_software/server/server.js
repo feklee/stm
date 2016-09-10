@@ -11,6 +11,7 @@ var args = process.argv.slice(2);
 var browserConnection = null;
 var nodeStatic = require("node-static");
 var fileServer = new nodeStatic.Server("./public", {cache: 0});
+var log = require("./log");
 var onData;
 
 if (process.platform === "win32") {
@@ -44,6 +45,7 @@ function onConnectedToMicrocontroller() {
     wsServer.on("request", function (request) {
         browserConnection = request.accept(null, request.origin);
         console.log("Connection from browser accepted");
+        log.browserConnection = browserConnection;
 
         browserConnection.on("message", function (message) {
             if (message.type === "utf8") {

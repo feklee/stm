@@ -1,5 +1,4 @@
-// Interfaces with the microcontroller, for measuring and controlling the
-// hardware.
+// Interface to microcontroller, for measuring and controlling the hardware
 
 /*jslint node: true, es6: true, maxlen: 80 */
 
@@ -7,6 +6,7 @@
 
 var serialport = require("serialport");
 var SerialPort = serialport.SerialPort;
+var log = require("./log");
 var port;
 
 function listSerialPorts(callback) {
@@ -21,17 +21,17 @@ function connect(settings) {
         parser: serialport.parsers.readline("\n")
     });
     port.on("open", function () {
-        console.log("Serial port opened");
+        log.sendInfo("Serial port opened");
         settings.onConnected();
     });
     port.on("close", function () {
-        console.log("Serial port closed");
+        log.sendError("Serial port closed");
     });
     port.on("error", function () {
-        console.log("Serial port error");
+        log.sendError("Serial port error");
     });
     port.on("disconnected", function () {
-        console.log("Serial port disconnected");
+        log.sendError("Serial port disconnected");
     });
     port.on("data", function (json) {
         var data;
