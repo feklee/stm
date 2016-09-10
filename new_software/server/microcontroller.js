@@ -21,17 +21,17 @@ function connect(settings) {
         parser: serialport.parsers.readline("\n")
     });
     port.on("open", function () {
-        log.sendInfo("Serial port opened");
+        log.appendInfo("Serial port opened");
         settings.onConnected();
     });
     port.on("close", function () {
-        log.sendWarn("Serial port closed");
+        log.appendWarn("Serial port closed");
     });
     port.on("error", function () {
-        log.sendError("Serial port error");
+        log.appendError("Serial port error");
     });
     port.on("disconnected", function () {
-        log.sendWarn("Serial port disconnected");
+        log.appendWarn("Serial port disconnected");
     });
     port.on("data", function (json) {
         var data;
@@ -39,7 +39,8 @@ function connect(settings) {
             data = JSON.parse(json);
         } catch (e) {
             if (e.name === "SyntaxError") {
-                console.log("Data is not valid JSON: " + json);
+                log.appendError("Data from microcontroller is not valid JSON");
+                console.log(json);
                 return;
             }
         }

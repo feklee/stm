@@ -6,7 +6,7 @@
 
 var browserConnection;
 
-var send = function (type, text) {
+var append = function (type, text) {
     if (type === "error" || type === "warn") {
         console.error(text);
     } else {
@@ -28,13 +28,13 @@ module.exports = {
     set browserConnection(newBrowserConnection) {
         browserConnection = newBrowserConnection;
     },
-    sendInfo: function (text) {
-        send("info", text);
+    appendInfo: function (text) {
+        append("info", text);
     },
-    sendWarn: function (text) {
-        send("warn", text);
+    appendWarn: function (text) {
+        append("warn", text);
     },
-    sendError: function (text) {
-        send("error", text);
+    appendError: function (text) {
+        append("error", text);
     }
 };
