@@ -25,7 +25,7 @@ define([
     };
 
     client.onclose = function () {
-        log.appendError("WebSocket closed");
+        log.appendWarn("WebSocket closed");
     };
 
     client.onmessage = function (e) {

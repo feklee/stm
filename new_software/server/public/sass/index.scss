@@ -59,8 +59,6 @@ form {
 
                     &::before {
                         content: "⦻";
-                        color: red;
-                        background: #fff0f0;
                     }
                 }
 
@@ -83,6 +81,15 @@ form {
 
                     &::before {
                         content: "ⓘ";
+                    }
+                }
+
+                &.warn {
+                    background: hsl(50, 100%, 95%);
+                    color: hsl(39, 100%, 18%);
+
+                    &::before {
+                        content: "⚠";
                     }
                 }
             }

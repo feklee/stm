@@ -30,6 +30,9 @@ define(function () {
         appendError(text) {
             append("error", text);
         },
+        appendWarn(text) {
+            append("warn", text);
+        },
         appendInfo(text) {
             append("info", text);
         }
