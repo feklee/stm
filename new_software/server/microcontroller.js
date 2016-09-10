@@ -1,4 +1,5 @@
-// Interfaces with the STM, the scanning tunneling microscope.
+// Interfaces with the microcontroller, for measuring and controlling the
+// hardware.
 
 /*jslint node: true, es6: true, maxlen: 80 */
 

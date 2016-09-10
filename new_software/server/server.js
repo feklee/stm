@@ -6,7 +6,7 @@
 
 var WebSocketServer = require("websocket").server;
 var http = require("http");
-var stm = require("./stm");
+var microcontroller = require("./microcontroller");
 var args = process.argv.slice(2);
 var browserConnection = null;
 var nodeStatic = require("node-static");
@@ -55,7 +55,7 @@ function simulateData() {
     }, 20);
 }
 
-function onConnectedToStm() {
+function onConnectedToMicrocontroller() {
     var port = 8080;
     var server = http.createServer(function (request, response) {
         request.addListener("end", function () {
@@ -78,7 +78,7 @@ function onConnectedToStm() {
 
         browserConnection.on("message", function (message) {
             if (message.type === "utf8") {
-                stm.sendJson(message.utf8Data);
+                microcontroller.sendJson(message.utf8Data);
             }
         });
     });
@@ -95,7 +95,7 @@ onData = function (data) {
 };
 
 if (args.length === 0) {
-    stm.listSerialPorts(
+    microcontroller.listSerialPorts(
         function (ports) {
             console.log("Specify com port name as first argument");
             console.log("");
@@ -107,13 +107,13 @@ if (args.length === 0) {
         }
     );
 } else {
-    stm.connect({
+    microcontroller.connect({
         comName: args[0],
-        onConnected: onConnectedToStm,
+        onConnected: onConnectedToMicrocontroller,
         onData: onData
     });
 }
 
 if (debug) {
-    onConnectedToStm();
+    onConnectedToMicrocontroller();
 }
