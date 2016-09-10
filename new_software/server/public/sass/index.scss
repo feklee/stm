@@ -152,15 +152,17 @@ main {
         background: #f4f4f4;
     }
 
-    path.z {
+    path {
         fill: none;
-        stroke: steelblue;
+        vector-effect: non-scaling-stroke;
         stroke-width: 0.5px;
-    }
 
-    path.current-signal {
-        fill: none;
-        stroke: red;
-        stroke-width: 0.5px;
+        &.z {
+            stroke: steelblue;
+        }
+
+        &.current-signal {
+            stroke: red;
+        }
     }
 }
