@@ -39,7 +39,7 @@ function connect(settings) {
             data = JSON.parse(json);
         } catch (e) {
             if (e.name === "SyntaxError") {
-                log.appendError("Data from microcontroller is not valid JSON");
+                log.appendError("Non JSON data from microcontroller");
                 console.log(json);
                 return;
             }
