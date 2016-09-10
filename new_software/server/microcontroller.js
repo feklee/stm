@@ -25,13 +25,13 @@ function connect(settings) {
         settings.onConnected();
     });
     port.on("close", function () {
-        log.sendError("Serial port closed");
+        log.sendWarn("Serial port closed");
     });
     port.on("error", function () {
         log.sendError("Serial port error");
     });
     port.on("disconnected", function () {
-        log.sendError("Serial port disconnected");
+        log.sendWarn("Serial port disconnected");
     });
     port.on("data", function (json) {
         var data;
