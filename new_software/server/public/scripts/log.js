@@ -29,6 +29,9 @@ define(function () {
         },
         appendError(text) {
             append("error", text);
+        },
+        appendInfo(text) {
+            append("info", text);
         }
     };
 });

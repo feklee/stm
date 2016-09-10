@@ -52,7 +52,7 @@ form {
                 }
 
                 &.error {
-                    background: #fff0f0;
+                    background: hsl(0, 100%, 97%);
                     color: red;
 
                     &::before {
@@ -73,6 +73,15 @@ form {
                     word-break: initial;
                     word-wrap: break-word;
                     overflow-wrap: break-word;
+                }
+
+                &.info {
+                    background: hsl(240, 100%, 97%);
+                    color: blue;
+
+                    &::before {
+                        content: "i";
+                    }
                 }
             }
         }

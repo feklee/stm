@@ -12,7 +12,6 @@ var browserConnection = null;
 var nodeStatic = require("node-static");
 var fileServer = new nodeStatic.Server("./public", {cache: 0});
 var onData;
-var debug = false;
 
 if (process.platform === "win32") {
     var rl = require("readline").createInterface({
@@ -23,36 +22,6 @@ if (process.platform === "win32") {
     rl.on("SIGINT", function () {
         process.emit("SIGINT");
     });
-}
-
-var i = 0;
-function simulatedData() {
-    var j = 100;
-    var positions = [];
-    var x;
-    var y;
-    while (j > 0) {
-        x = i % 128;
-        y = Math.floor(i / 128);
-        positions.push([x, y, 0, 3.3 * Math.random()]);
-        j -= 1;
-        i += 1;
-        if (i >= 128 * 128) {
-            i = 0;
-        }
-    }
-
-    return {
-        type: "tipPositionLog",
-        positions: positions
-    };
-}
-
-function simulateData() {
-    mode = "scan";
-    setInterval(function () {
-        onData(JSON.stringify(simulatedData()));
-    }, 20);
 }
 
 function onConnectedToMicrocontroller() {
@@ -82,10 +51,6 @@ function onConnectedToMicrocontroller() {
             }
         });
     });
-
-    if (debug) {
-        simulateData();
-    }
 }
 
 onData = function (data) {
@@ -112,8 +77,4 @@ if (args.length === 0) {
         onConnected: onConnectedToMicrocontroller,
         onData: onData
     });
-}
-
-if (debug) {
-    onConnectedToMicrocontroller();
 }

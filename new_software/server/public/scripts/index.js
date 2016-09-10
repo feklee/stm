@@ -17,15 +17,15 @@ define([
     var modeName = "";
 
     client.onerror = function () {
-        window.console.log("Connection error");
+        log.appendError("WebSocket connection error");
     };
 
     client.onopen = function () {
-        window.console.log("Client connected");
+        log.appendInfo("WebSocket connection opened");
     };
 
     client.onclose = function () {
-        window.console.log("Client closed");
+        log.appendError("WebSocket connection closed");
     };
 
     client.onmessage = function (e) {
