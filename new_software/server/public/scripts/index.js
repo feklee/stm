@@ -10,9 +10,9 @@ define([
     var hostname = window.location.hostname;
     var client = new window.WebSocket("ws://" + hostname + ":8080/");
     var graphs = {
-        "scan": graphConstructor("scan"),
-        "approach": graphConstructor("approach"),
-        "retract": graphConstructor("retract")
+        "scan": graphConstructor({modeName: "scan"}),
+        "approach": graphConstructor({modeName: "approach", maxLength: 1000}),
+        "retract": graphConstructor({modeName: "retract", maxLength: 1000})
     };
     var modeName = "";
 
@@ -41,7 +41,7 @@ define([
         switch (data.type) {
         case "tipPositionLog":
             if (graphs[modeName] !== undefined) {
-                graphs[modeName].data = data.positions;
+                graphs[modeName].appendPositions(data.positions);
             }
             break;
         case "scanDuration":
@@ -52,6 +52,9 @@ define([
         case "newMode":
             d3.select(".mode-name").text(data.value);
             modeName = data.value;
+            if (graphs[modeName] !== undefined) {
+                graphs[modeName].clear();
+            }
             break;
         case "biasVoltage":
             d3.select(".bias-voltage").text(d3.format(".1f")(data.value));

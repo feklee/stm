@@ -5,17 +5,17 @@
 define(function () {
     "use strict";
 
-    function constructor(modeName) {
+    return function (spec) {
         var width = d3.select("svg").node().getBoundingClientRect().width;
         var height = d3.select("svg").node().getBoundingClientRect().height;
-        var data = [];
+        var positions = [];
 
         var xScale;
         var yScale = d3.scaleLinear()
             .domain([-0x1000, 0xffff + 0x1000])
             .range([height, 0]);
 
-        var svg = d3.select("body section." + modeName + " svg");
+        var svg = d3.select("body section." + spec.modeName + " svg");
 
         var graphGroup = svg.append("g");
 
@@ -53,7 +53,7 @@ define(function () {
             width = d3.select("svg").node().getBoundingClientRect().width;
             zoomBehavior.translateExtent([[0, 0], [width - 1, height - 1]]);
             xScale = d3.scaleLinear()
-                .domain([0, data.length - 1])
+                .domain([0, positions.length - 1])
                 .range([0, width]);
         };
 
@@ -61,26 +61,36 @@ define(function () {
             updateScaling();
             graphGroup.selectAll("path").remove();
             graphGroup.append("path")
-                .datum(data)
+                .datum(positions)
                 .attr("class", "z")
                 .attr("d", zLine);
             graphGroup.append("path")
-                .datum(data)
+                .datum(positions)
                 .attr("class", "current-signal")
                 .attr("d", currentSignalLine);
         };
 
+        var appendPositions = function (newPositions) {
+            positions.push(...newPositions);
+            if (spec.maxLength !== undefined) {
+                while (positions.length > spec.maxLength) {
+                    positions.shift();
+                }
+            }
+            render();
+        };
+
+        var clear = function () {
+            positions = [];
+        };
+
         var iframeWindowEl = d3.select(d3.select("main>iframe").node()
             .contentWindow);
-        iframeWindowEl.on("resize." + modeName, render);
+        iframeWindowEl.on("resize." + spec.modeName, render);
 
         return {
-            set data(newData) {
-                data = newData;
-                render();
-            }
+            clear: clear,
+            appendPositions: appendPositions
         };
-    }
-
-    return constructor;
+    };
 });
