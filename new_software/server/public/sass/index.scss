@@ -3,6 +3,7 @@ $finegray: #f4f4f4;
 html, body {
     width: 100%;
     height: 100%;
+    overflow: hidden;
 }
 
 html {
@@ -18,7 +19,9 @@ body {
 
     >* {
         overflow: auto;
+        height: 100%;
         padding: 5px;
+        box-sizing: border-box;
     }
 }
 
@@ -126,6 +129,7 @@ form {
 
 main {
     flex: 1;
+    overflow-y: auto;
 
     ul {
         overflow: hidden;
