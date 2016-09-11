@@ -128,6 +128,11 @@ form {
 main {
     flex: 1;
 
+    ul {
+        overflow: hidden;
+        height: auto;
+    }
+
     li {
         float: left;
         margin-right: 40px;
@@ -139,6 +144,7 @@ main {
 
     >iframe {
         width: 100%;
+        display: block;
         height: 0;
         border: none;
         background-color: transparent;
@@ -150,17 +156,16 @@ main {
     }
 
     .bias-voltage {
-        width: 50px;
+        min-width: 40px;
     }
 
     .current-signal {
-        width: 30px;
+        min-width: 30px;
     }
 
     >section {
-        margin-top: 20px;
+        margin-top: 30px;
         border-top: 1px solid lightgray;
-        clear: both;
     }
 
     svg.graph {
