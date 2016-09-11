@@ -11,8 +11,8 @@ define([
     var client = new window.WebSocket("ws://" + hostname + ":8080/");
     var graphs = {
         "scan": graphConstructor({modeName: "scan"}),
-        "approach": graphConstructor({modeName: "approach", maxLength: 1000}),
-        "retract": graphConstructor({modeName: "retract", maxLength: 1000})
+        "approach": graphConstructor({modeName: "approach", maxLength: 500}),
+        "retract": graphConstructor({modeName: "retract", maxLength: 500})
     };
     var modeName = "";
 

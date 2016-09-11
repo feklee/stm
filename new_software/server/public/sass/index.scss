@@ -180,21 +180,28 @@ main {
         display: block;
         width: 100%;
         height: 200px;
-        background: $finegray;
         margin: 5px 0;
-    }
 
-    path {
-        fill: none;
-        vector-effect: non-scaling-stroke;
-        stroke-width: 0.5px;
-
-        &.z {
-            stroke: steelblue;
+        g.main rect {
+            fill: $finegray;
         }
 
-        &.current-signal {
-            stroke: red;
+        path {
+            fill: none;
+            vector-effect: non-scaling-stroke;
+            stroke-width: 0.5px;
+
+            &.z {
+                stroke: steelblue;
+            }
+
+            &.current-signal {
+                stroke: red;
+            }
+        }
+
+        text {
+            font: 10px "Source Sans Pro";
         }
     }
 }
