@@ -112,7 +112,10 @@ define(["util"], function (util) {
             xScale
                 .domain([0, spec.maxNoOfPositions - 1])
                 .range([0, mainWidth]);
-            svg.select(".x.axis").call(xAxis);
+            svg.select("g.x.axis").call(xAxis);
+            svg.select("g.z.axis").attr("transform",
+                    "translate(" + (margin.left + mainWidth + axisPadding) +
+                    "," + margin.top + ")");
             render();
         };
 
