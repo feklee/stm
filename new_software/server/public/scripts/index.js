@@ -10,9 +10,18 @@ define([
     var hostname = window.location.hostname;
     var client = new window.WebSocket("ws://" + hostname + ":8080/");
     var graphs = {
-        "scan": graphConstructor({modeName: "scan"}),
-        "approach": graphConstructor({modeName: "approach", maxLength: 500}),
-        "retract": graphConstructor({modeName: "retract", maxLength: 500})
+        "scan": graphConstructor({
+            modeName: "scan",
+            maxNoOfPositions: 100
+        }),
+        "approach": graphConstructor({
+            modeName: "approach",
+            maxNoOfPositions: 500
+        }),
+        "retract": graphConstructor({
+            modeName: "retract",
+            maxNoOfPositions: 500
+        })
     };
     var modeName = "";
 
@@ -55,6 +64,9 @@ define([
             if (graphs[modeName] !== undefined) {
                 graphs[modeName].clear();
             }
+            break;
+        case "sideLen":
+            graphs.scan.maxNoOfPositions = data.value * data.value;
             break;
         case "biasVoltage":
             d3.select(".bias-voltage").text(d3.format(".1f")(data.value));

@@ -11,13 +11,9 @@ define(function () {
         var positions = [];
         var padding = 50; // px
 
-        if (spec.maxLength === undefined) {
-            spec.maxLength = 100; // todo: remove
-        }
-
         var xScale = d3.scaleLinear()
-            .domain([0, spec.maxLength - 1])
             .range([0, boundingBox.width - 2 * padding]);
+
         var yScale = d3.scaleLinear()
             .domain([-0x1000, 0xffff + 0x1000])
             .range([boundingBox.height - 2 * padding, 0]);
@@ -69,7 +65,7 @@ define(function () {
             backgroundRect.attr("width", boundingBox.width - 2 * padding);
 
             xScale
-                .domain([0, spec.maxLength - 1])
+                .domain([0, spec.maxNoOfPositions - 1])
                 .range([0, boundingBox.width - 2 * padding]);
             xAxisGroup.call(xAxis);
         };
@@ -89,10 +85,8 @@ define(function () {
 
         var appendPositions = function (newPositions) {
             positions.push(...newPositions);
-            if (spec.maxLength !== undefined) {
-                while (positions.length > spec.maxLength) {
-                    positions.shift();
-                }
+            while (positions.length > spec.maxNoOfPositions) {
+                positions.shift();
             }
             render();
         };
@@ -105,9 +99,15 @@ define(function () {
             .contentWindow);
         iframeWindowEl.on("resize." + spec.modeName, render);
 
+        render();
+
         return {
             clear: clear,
-            appendPositions: appendPositions
+            appendPositions: appendPositions,
+            set maxNoOfPositions(newMaxNoOfPositions) {
+                spec.maxNoOfPositions = newMaxNoOfPositions;
+                render();
+            }
         };
     };
 });
