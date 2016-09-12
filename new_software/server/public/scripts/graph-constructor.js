@@ -6,7 +6,8 @@ define(function () {
     "use strict";
 
     return function (spec) {
-        var boundingBox = d3.select("svg").node().getBoundingClientRect();
+        var svg = d3.select("body section." + spec.modeName + " svg");
+        var boundingBox = svg.node().getBoundingClientRect();
         var positions = [];
         var padding = 50; // px
 
@@ -20,8 +21,6 @@ define(function () {
         var yScale = d3.scaleLinear()
             .domain([-0x1000, 0xffff + 0x1000])
             .range([boundingBox.height - 2 * padding, 0]);
-
-        var svg = d3.select("body section." + spec.modeName + " svg");
 
         var xAxis = d3.axisBottom(xScale);
         var yAxis = d3.axisLeft(yScale).ticks(5);
@@ -49,26 +48,6 @@ define(function () {
             .attr("width", boundingBox.width - 2 * padding)
             .attr("height", boundingBox.height - 2 * padding);
 
-        var onZoom = function () {
-            var transform = d3.event.transform;
-            var transformString = "translate(" +
-                    (padding + transform.x) + "," +
-                    "0) scale(" + transform.k + ",1)";
-            mainGroup.attr("transform", transformString);
-            updateScaling();
-        };
-
-        var zoomBehavior = d3.zoom()
-            .scaleExtent([1, 10])
-            .translateExtent([
-                [padding - 1, padding - 1],
-                [boundingBox.width - 1 - padding,
-                        boundingBox.height - 1 - padding]
-            ])
-            .on("zoom", onZoom);
-
-        svg.call(zoomBehavior);
-
         var zLine = d3.line()
             .x(function (ignore, i) {
                 return xScale(i);
@@ -86,11 +65,7 @@ define(function () {
             });
 
         var updateScaling = function () {
-            boundingBox = d3.select("svg").node().getBoundingClientRect();
-            zoomBehavior.translateExtent([
-                [0, 0],
-                [boundingBox.width - 1, boundingBox.height - 1]
-            ]);
+            boundingBox = svg.node().getBoundingClientRect();
             backgroundRect.attr("width", boundingBox.width - 2 * padding);
 
             xScale
