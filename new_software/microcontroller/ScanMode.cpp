@@ -89,6 +89,7 @@ bool ScanMode::step() {
 
 void ScanMode::setSideLen(int sideLen) {
   sideLen_ = sideLen;
+  printValue("sideLen", sideLen);
 }
 
 void ScanMode::setMaxAdjustmentSteps(int maxAdjustmentSteps) {

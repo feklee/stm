@@ -20,6 +20,7 @@ template <typename T> void printValue(const char *type, T value) {
 
 template void printValue<unsigned long>(const char *, unsigned long);
 template void printValue<long>(const char *, long);
+template void printValue<int>(const char *, int);
 template void printValue<float>(const char *, float);
 template void printValue<uint16_t>(const char *, uint16_t);
 
