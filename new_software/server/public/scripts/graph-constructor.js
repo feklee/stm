@@ -2,54 +2,87 @@
 
 /*global define, window, d3 */
 
-define(function () {
+define(["util"], function (util) {
     "use strict";
 
     return function (spec) {
+        var positions = [];
+        var margin = {
+            top: 0, // px
+            left: 30, // px
+            bottom: 30, // px
+            right: 50 // px
+        };
         var svg = d3.select("body section." + spec.modeName + " svg");
         var boundingBox = svg.node().getBoundingClientRect();
-        var positions = [];
-        var padding = 50; // px
-
-        var xScale = d3.scaleLinear()
-            .range([0, boundingBox.width - 2 * padding]);
-
-        var yScale = d3.scaleLinear()
-            .domain([-0x1000, 0xffff + 0x1000])
-            .range([boundingBox.height - 2 * padding, 0]);
-
-        var xAxis = d3.axisBottom(xScale);
-        var yAxis = d3.axisLeft(yScale).ticks(5);
-
-        var yAxisGroup = svg
-            .append("g")
-            .attr("transform",
-                    "translate(" + (padding - 5 - 1) + "," + padding + ")");
-        yAxisGroup.call(yAxis);
-
-        var xAxisGroup = svg
-            .append("g")
-            .attr("transform",
-                    "translate(" + padding + "," +
-                    (boundingBox.height - padding + 5) + ")");
-        xAxisGroup.call(xAxis);
+        var getMainWidth = function () {
+            return boundingBox.width - margin.left - margin.right;
+        };
+        var mainHeight = boundingBox.height - margin.top - margin.bottom;
+        var mainWidth = getMainWidth();
+        var axisPadding = 5; // px
 
         var mainGroup = svg
             .append("g")
-            .attr("transform", "translate(" + padding + "," + padding + ")")
+            .attr("transform",
+                    "translate(" + margin.left + "," + margin.top + ")")
             .attr("class", "main");
 
         var backgroundRect = mainGroup
             .append("rect")
-            .attr("width", boundingBox.width - 2 * padding)
-            .attr("height", boundingBox.height - 2 * padding);
+            .attr("width", mainWidth)
+            .attr("height", mainHeight);
+
+        var addAxis = function (spec) {
+            var axisName = "axis" + util.ucfirst(spec.orientation);
+            var axis = d3[axisName](spec.scale).ticks(5);
+            var group = svg
+                .append("g")
+                .attr("class", spec.class + " axis")
+                .attr("transform",
+                        "translate(" + spec.left + "," + spec.top + ")");
+            group.call(axis);
+            return axis;
+        };
+
+        var xScale = d3.scaleLinear()
+            .range([0, mainWidth]);
+        var xAxis = addAxis({
+            scale: xScale,
+            top: margin.top + mainHeight + axisPadding,
+            left: margin.left,
+            orientation: "bottom",
+            "class": "x"
+        });
+
+        var currentSignalScale = d3.scaleLinear()
+            .domain([-0.5, 3.5])
+            .range([mainHeight, 0]);
+        addAxis({
+            scale: currentSignalScale,
+            top: margin.top,
+            left: margin.left - axisPadding - 1,
+            orientation: "left",
+            "class": "current-signal"
+        });
+
+        var zScale = d3.scaleLinear()
+            .domain([-0x1000, 0xffff + 0x1000])
+            .range([mainHeight, 0]);
+        addAxis({
+            scale: zScale,
+            top: margin.top,
+            left: margin.left + mainWidth + axisPadding,
+            orientation: "right",
+            "class": "z"
+        });
 
         var zLine = d3.line()
             .x(function (ignore, i) {
                 return xScale(i);
             })
             .y(function (d) {
-                return yScale(d[2]);
+                return zScale(d[2]);
             });
 
         var currentSignalLine = d3.line()
@@ -57,21 +90,10 @@ define(function () {
                 return xScale(i);
             })
             .y(function (d) {
-                return yScale(d[3]);
+                return currentSignalScale(util.voltFromInteger(d[3]));
             });
 
-        var updateScaling = function () {
-            boundingBox = svg.node().getBoundingClientRect();
-            backgroundRect.attr("width", boundingBox.width - 2 * padding);
-
-            xScale
-                .domain([0, spec.maxNoOfPositions - 1])
-                .range([0, boundingBox.width - 2 * padding]);
-            xAxisGroup.call(xAxis);
-        };
-
         var render = function () {
-            updateScaling();
             mainGroup.selectAll("path").remove();
             mainGroup.append("path")
                 .datum(positions)
@@ -81,6 +103,17 @@ define(function () {
                 .datum(positions)
                 .attr("class", "current-signal")
                 .attr("d", currentSignalLine);
+        };
+
+        var updateXScale = function () {
+            boundingBox = svg.node().getBoundingClientRect();
+            mainWidth = getMainWidth();
+            backgroundRect.attr("width", mainWidth);
+            xScale
+                .domain([0, spec.maxNoOfPositions - 1])
+                .range([0, mainWidth]);
+            svg.select(".x.axis").call(xAxis);
+            render();
         };
 
         var appendPositions = function (newPositions) {
@@ -97,16 +130,16 @@ define(function () {
 
         var iframeWindowEl = d3.select(d3.select("main>iframe").node()
             .contentWindow);
-        iframeWindowEl.on("resize." + spec.modeName, render);
+        iframeWindowEl.on("resize." + spec.modeName, updateXScale);
 
-        render();
+        updateXScale();
 
         return {
             clear: clear,
             appendPositions: appendPositions,
             set maxNoOfPositions(newMaxNoOfPositions) {
                 spec.maxNoOfPositions = newMaxNoOfPositions;
-                render();
+                updateXScale();
             }
         };
     };

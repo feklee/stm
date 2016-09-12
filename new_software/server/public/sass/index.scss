@@ -181,6 +181,8 @@ main {
         width: 100%;
         height: 200px;
         margin: 5px 0;
+        $z-color: blue;
+        $current-signal-color: red;
 
         g.main rect {
             fill: $finegray;
@@ -192,16 +194,34 @@ main {
             stroke-width: 0.5px;
 
             &.z {
-                stroke: steelblue;
+                stroke: $z-color;
             }
 
             &.current-signal {
-                stroke: red;
+                stroke: $current-signal-color;
             }
         }
 
         text {
             font: 10px "Source Sans Pro";
+        }
+
+        .z.axis {
+            path, line {
+                stroke: $z-color;
+            }
+            text {
+                fill: $z-color;
+            }
+        }
+
+        .current-signal.axis {
+            path, line {
+                stroke: $current-signal-color;
+            }
+            text {
+                fill: $current-signal-color;
+            }
         }
     }
 }

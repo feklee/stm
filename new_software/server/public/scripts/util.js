@@ -10,6 +10,11 @@ define(function () {
         // 0xffff/3.3 V
         voltFromInteger(x) {
             return x / (0xffff / 3.3);
+        },
+
+        ucfirst(s) {
+            var firstLetter = s.substr(0, 1);
+            return firstLetter.toUpperCase() + s.substr(1);
         }
     };
 });
