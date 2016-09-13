@@ -18,6 +18,8 @@ void TipPositionLog::print() {
     Serial.print(entry.z);
     Serial.print(",");
     Serial.print(entry.currentSignal);
+    Serial.print(",");
+    Serial.print(entry.time);
     Serial.print("]");
   }
   Serial.println("]}");
@@ -32,7 +34,7 @@ void TipPositionLog::flush() {
 
 void TipPositionLog::add(uint8_t x, uint8_t y, uint16_t z,
                          uint16_t currentSignal) {
-  entries_[head_] = {x, y, z, currentSignal};
+  entries_[head_] = {x, y, z, currentSignal, micros()};
   head_ ++;
   if (head_ >= size_) {
     flush();

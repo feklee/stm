@@ -6,6 +6,7 @@ class TipPositionLog {
     uint8_t y;
     uint16_t z; // piezo position
     uint16_t currentSignal; // 0xffff/3.3 V
+    uint32_t time; // µs since program start
   };
 
   static const int size_ = 100;
