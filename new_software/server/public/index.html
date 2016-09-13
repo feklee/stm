@@ -34,7 +34,20 @@
       </ul>
       <section class="approach">
         <h1>Approach</h1>
-        <svg class="graph"></svg>
+        <svg class="graph">
+          <defs>
+            <clipPath id="approach-clip-area">
+              <rect x="0" y="0" width="2000" height="100" />
+            </clipPath>
+          </defs>
+          <g class="x axis"></g>
+          <g class="z axis"></g>
+          <g class="current-signal axis"></g>
+          <g class="main" clip-path="url(#approach-clip-area)">
+            <rect />
+            <g class="zoomable"></g>
+          </g>
+        </svg>
         <ul>
           <li>
             Peak coarse approach signal:
@@ -48,7 +61,20 @@
       </section>
       <section class="scan">
         <h1>Scan</h1>
-        <svg class="graph"></svg>
+        <svg class="graph">
+          <defs>
+            <clipPath id="scan-clip-area">
+              <rect x="0" y="0" width="2000" height="140" />
+            </clipPath>
+          </defs>
+          <g class="x axis"></g>
+          <g class="z axis"></g>
+          <g class="current-signal axis"></g>
+          <g class="main" clip-path="url(#scan-clip-area)">
+            <rect />
+            <g class="zoomable"></g>
+          </g>
+        </svg>
         <ul>
           <li>
             Scan duration: <span class="scan-duration">0</span> s
@@ -57,7 +83,20 @@
       </section>
       <section class="retract">
         <h1>Retract</h1>
-        <svg class="graph"></svg>
+        <svg class="graph">
+          <defs>
+            <clipPath id="retract-clip-area">
+              <rect x="0" y="0" width="2000" height="140" />
+            </clipPath>
+          </defs>
+          <g class="x axis"></g>
+          <g class="z axis"></g>
+          <g class="current-signal axis"></g>
+          <g class="main" clip-path="url(#retract-clip-area)">
+            <rect />
+            <g class="zoomable"></g>
+          </g>
+        </svg>
       </section>
     </main>
 
