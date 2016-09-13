@@ -6,11 +6,7 @@ define(["util"], function (util) {
     "use strict";
 
     return function (spec) {
-        var positions = [
-            [0, 0, 0, 6649], [0, 0, 0, 13115], [0, 0, 0, -21058],
-            [0, 0, 0, 16754], [0, 0, 0, 15260], [0, 0, 0, 18709],
-            [0, 0, 0, 24235]
-        ]; // todo: reset
+        var positions = [];
         var margin = {
             top: 0, // px
             left: 30, // px
