@@ -176,11 +176,14 @@ main {
         }
     }
 
-    svg.graph {
+    figure {
+        margin: 5px 0;
+    }
+
+    svg {
         display: block;
         width: 100%;
         height: 200px;
-        margin: 5px 0;
         $z-color: blue;
         $current-signal-color: red;
 

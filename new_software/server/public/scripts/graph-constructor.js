@@ -14,10 +14,11 @@ define(["util"], function (util) {
         var margin = {
             top: 0, // px
             left: 30, // px
-            bottom: 30, // px
+            bottom: 20, // px
             right: 50 // px
         };
-        var svg = d3.select("body section." + spec.modeName + " svg");
+        var figure = d3.select("body section." + spec.modeName + " figure");
+        var svg = figure.select("svg");
         var boundingBox = function () {
             return svg.node().getBoundingClientRect();
         };
@@ -27,7 +28,7 @@ define(["util"], function (util) {
         var mainHeight = function () {
             return boundingBox().height - margin.top - margin.bottom;
         };
-        var axisPadding = 1; // px
+        var axisPadding = 2; // px
         var stretchFactor = 1;
 
         var mainGroup = svg
@@ -166,6 +167,12 @@ define(["util"], function (util) {
         var iframeWindowEl = d3.select(d3.select("main>iframe").node()
             .contentWindow);
         iframeWindowEl.on("resize." + spec.modeName, updateXScale);
+
+        var stretchFactorInputEl = figure.select("input.stretch-factor");
+        stretchFactorInputEl.on("change", function () {
+            stretchFactor = stretchFactorInputEl.node().value;
+            updateXScale();
+        });
 
         updateXScale();
 
