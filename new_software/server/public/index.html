@@ -38,20 +38,30 @@
           <svg>
             <defs>
               <clipPath id="approach-clip-area">
-                <rect x="0" y="0" width="2000" height="100" />
+                <rect />
               </clipPath>
             </defs>
             <g class="x axis"></g>
             <g class="z axis"></g>
             <g class="current-signal axis"></g>
             <g class="main" clip-path="url(#approach-clip-area)">
-              <rect />
+              <rect width="100%" height="100%" />
               <g class="zoomable"></g>
             </g>
           </svg>
           <figcaption>
-            <input class="stretch-factor" type="range"
-                   min="0.5" max="10" step="0.5" value="1"></input>
+            <ul>
+              <li>
+                Stretch factor: <input class="stretch-factor" type="range"
+                       min="0.5" max="10" step="0.5" value="1"></input>
+              </li>
+              <li class="current-signal">
+                Current signal (V)
+              </li>
+              <li class="z">
+                Piezo position (0–0xffff)
+              </li>
+            </ul>
           </figcaption>
         </figure>
         <ul>
@@ -71,20 +81,30 @@
           <svg>
             <defs>
               <clipPath id="scan-clip-area">
-                <rect x="0" y="0" width="2000" height="140" />
+                <rect />
               </clipPath>
             </defs>
             <g class="x axis"></g>
             <g class="z axis"></g>
             <g class="current-signal axis"></g>
             <g class="main" clip-path="url(#scan-clip-area)">
-              <rect />
+              <rect width="100%" height="100%" />
               <g class="zoomable"></g>
             </g>
           </svg>
           <figcaption>
-            <input class="stretch-factor" type="range"
-                   min="0.5" max="10" step="0.5" value="1"></input>
+            <ul>
+              <li>
+                Stretch factor: <input class="stretch-factor" type="range"
+                       min="0.5" max="10" step="0.5" value="1"></input>
+              </li>
+              <li class="current-signal">
+                Current signal (V)
+              </li>
+              <li class="z">
+                Piezo position (0–0xffff)
+              </li>
+            </ul>
           </figcaption>
         </figure>
         <ul>
@@ -99,20 +119,30 @@
           <svg>
             <defs>
               <clipPath id="retract-clip-area">
-                <rect x="0" y="0" width="2000" height="140" />
+                <rect x="0" y="0" width="200" height="100" />
               </clipPath>
             </defs>
             <g class="x axis"></g>
             <g class="z axis"></g>
             <g class="current-signal axis"></g>
             <g class="main" clip-path="url(#retract-clip-area)">
-              <rect />
+              <rect width="100%" height="100%" />
               <g class="zoomable"></g>
             </g>
           </svg>
           <figcaption>
-            <input class="stretch-factor" type="range"
-                   min="0.5" max="10" step="0.5" value="1"></input>
+            <ul>
+              <li>
+                Stretch factor: <input class="stretch-factor" type="range"
+                       min="0.5" max="10" step="0.5" value="1"></input>
+              </li>
+              <li class="current-signal">
+                Current signal (V)
+              </li>
+              <li class="z">
+                Piezo position (0–0xffff)
+              </li>
+            </ul>
           </figcaption>
         </figure>
       </section>
