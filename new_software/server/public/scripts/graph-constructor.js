@@ -7,6 +7,21 @@ define(["util"], function (util) {
 
     return function (spec) {
         var positions = [];
+        var startTime = function () {
+            if (positions.length === 0) {
+                return 0;
+            }
+            return positions[0][4];
+        };
+        var endTime = function () {
+            if (positions.length === 0) {
+                return 0;
+            }
+            return positions[positions.length - 1][4];
+        };
+        var timeSpan = function () {
+            return endTime() - startTime();
+        };
         var margin = {
             top: 0, // px
             left: 30, // px
@@ -94,16 +109,16 @@ define(["util"], function (util) {
         svg.call(zoom);
 
         var zLine = d3.line()
-            .x(function (ignore, i) {
-                return xScale(i);
+            .x(function (d) {
+                return xScale(d[4] - startTime());
             })
             .y(function (d) {
                 return zScale(d[2]);
             });
 
         var currentSignalLine = d3.line()
-            .x(function (ignore, i) {
-                return xScale(i);
+            .x(function (d) {
+                return xScale(d[4] - startTime());
             })
             .y(function (d) {
                 return currentSignalScale(util.voltFromInteger(d[3]));
@@ -133,12 +148,12 @@ define(["util"], function (util) {
             var oldWidth = xScale.range()[1];
             var newWidth = mainWidth();
             var resizeFactor = newWidth / oldWidth;
-            var oldStretchFactor = spec.maxNoOfPositions / xScale.domain()[1];
-            var stretchFactorChange = stretchFactor / oldStretchFactor;
+//todo:            var oldStretchFactor = spec.maxNoOfPositions / xScale.domain()[1];
+//todo:            var stretchFactorChange = stretchFactor / oldStretchFactor;
             xScale
-                .domain([0, spec.maxNoOfPositions / stretchFactor])
+                .domain([0, timeSpan() / stretchFactor])
                 .range([0, newWidth]);
-            transform.x = transform.x * resizeFactor * stretchFactorChange;
+            transform.x = transform.x * resizeFactor; // todo: * stretchFactorChange;
             svg.call(zoom.transform, transform);
             xAxis.scale(transform.rescaleX(xScale));
             xAxisGroup.call(xAxis);
@@ -153,7 +168,7 @@ define(["util"], function (util) {
             while (positions.length > spec.maxNoOfPositions) {
                 positions.shift();
             }
-            render();
+            updateXScale();
         };
 
         var clear = function () {
