@@ -23,8 +23,8 @@ define([
             maxNoOfPositions: 100
         }),
         "retract": graphConstructor({
-            indexDomainEnd: 20000,
-            timeDomainEnd: 200000,
+            indexDomainEnd: 2000,
+            timeDomainEnd: 20000,
             modeName: "retract",
             maxNoOfPositions: 500
         })
