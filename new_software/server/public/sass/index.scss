@@ -203,6 +203,10 @@ main {
             vertical-align: middle;
         }
 
+        button {
+            font: $font;
+        }
+
         svg {
             display: block;
             width: 100%;

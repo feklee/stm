@@ -39,6 +39,8 @@ define(["util"], function (util) {
         var axisPadding = 2; // px
         var stretchFactor = 1;
         var stretchFactorInputEl = figure.select("input.stretch-factor");
+        var timeDomainIsSelected;
+        var horizontalDomainEnd;
 
         var mainGroup = svgEl
             .select("g.main")
@@ -57,9 +59,7 @@ define(["util"], function (util) {
             return group;
         };
 
-        var horizontalScale = d3.scaleLinear()
-            .domain([0, spec.timeDomainEnd])
-            .range([0, mainWidth]);
+        var horizontalScale = d3.scaleLinear();
         var horizontalAxis = d3.axisBottom(horizontalScale).ticks(5);
         var horizontalAxisGroup = addAxisGroup({
             "class": "horizontal",
@@ -109,18 +109,22 @@ define(["util"], function (util) {
         var zoom = d3.zoom().on("zoom", zoomed);
         svgEl.call(zoom);
 
+        var x = function (d, i) {
+            return horizontalScale(
+                timeDomainIsSelected
+                    ? d[4] - startTime()
+                    : i
+            );
+        };
+
         var zLine = d3.line()
-            .x(function (d) {
-                return horizontalScale(d[4] - startTime());
-            })
+            .x(x)
             .y(function (d) {
                 return zScale(d[2]);
             });
 
         var currentSignalLine = d3.line()
-            .x(function (d) {
-                return horizontalScale(d[4] - startTime());
-            })
+            .x(x)
             .y(function (d) {
                 return currentSignalScale(util.voltFromInteger(d[3]));
             });
@@ -145,7 +149,7 @@ define(["util"], function (util) {
 
         var updateHorizontalScale = function () {
             horizontalScale
-                .domain([0, spec.timeDomainEnd / stretchFactor])
+                .domain([0, horizontalDomainEnd / stretchFactor])
                 .range([0, mainWidth]);
             svgEl.call(zoom.transform, transform);
             horizontalAxis.scale(transform.rescaleX(horizontalScale));
@@ -191,11 +195,51 @@ define(["util"], function (util) {
             positions = [];
         };
 
-        var fitWidth = function () {
+        var resetStretchFactor = function () {
             stretchFactor = 1;
-            svgEl.call(zoom.transform, d3.zoomIdentity);
-            spec.timeDomainEnd = timeSpan();
             stretchFactorInputEl.node().value = stretchFactor;
+        };
+
+        var resetZoom = function () {
+            svgEl.call(zoom.transform, d3.zoomIdentity);
+        };
+
+        var fitTimeSpan = function () {
+            if (timeSpan() > 0) {
+                horizontalDomainEnd = timeSpan();
+            }
+        };
+
+        var fitIndex = function () {
+            if (positions.length > 0) {
+                horizontalDomainEnd = positions.length - 1;
+            }
+        };
+
+        var fitWidth = function () {
+            resetStretchFactor();
+            resetZoom();
+            if (timeDomainIsSelected) {
+                fitTimeSpan();
+            } else {
+                fitIndex();
+            }
+            updateHorizontalScale();
+        };
+
+        var selectTimeDomain = function () {
+            horizontalDomainEnd = spec.timeDomainEnd;
+            timeDomainIsSelected = true;
+            resetStretchFactor();
+            resetZoom();
+            updateHorizontalScale();
+        };
+
+        var selectIndexDomain = function () {
+            horizontalDomainEnd = spec.indexDomainEnd;
+            timeDomainIsSelected = false;
+            resetStretchFactor();
+            resetZoom();
             updateHorizontalScale();
         };
 
@@ -216,6 +260,19 @@ define(["util"], function (util) {
             render();
         });
 
+        figure.select("#" + spec.modeName + "-horizontal-time")
+            .on("click", function () {
+                selectTimeDomain();
+                render();
+            });
+
+        figure.select("#" + spec.modeName + "-horizontal-index")
+            .on("click", function () {
+                selectIndexDomain();
+                render();
+            });
+
+        selectTimeDomain();
         setWidth(boundingBox().width);
         render();
 

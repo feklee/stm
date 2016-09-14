@@ -10,17 +10,20 @@ define([
     var hostname = window.location.hostname;
     var client = new window.WebSocket("ws://" + hostname + ":8080/");
     var graphs = {
-        "scan": graphConstructor({
-            timeDomainEnd: 200000,
-            modeName: "scan",
-            maxNoOfPositions: 100
-        }),
         "approach": graphConstructor({
+            indexDomainEnd: 20000,
             timeDomainEnd: 200000,
             modeName: "approach",
             maxNoOfPositions: 20000
         }),
+        "scan": graphConstructor({
+            indexDomainEnd: 20000,
+            timeDomainEnd: 200000,
+            modeName: "scan",
+            maxNoOfPositions: 100
+        }),
         "retract": graphConstructor({
+            indexDomainEnd: 20000,
             timeDomainEnd: 200000,
             modeName: "retract",
             maxNoOfPositions: 500
