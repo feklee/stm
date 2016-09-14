@@ -13,15 +13,6 @@ define(["util"], function (util) {
             }
             return positions[0][4];
         };
-        var endTime = function () {
-            if (positions.length === 0) {
-                return 0;
-            }
-            return positions[positions.length - 1][4];
-        };
-        var timeSpan = function () {
-            return endTime() - startTime();
-        };
         var margin = {
             top: 0, // px
             left: 30, // px
@@ -29,20 +20,17 @@ define(["util"], function (util) {
             right: 50 // px
         };
         var figure = d3.select("body section." + spec.modeName + " figure");
-        var svg = figure.select("svg");
+        var svgEl = figure.select("svg");
         var boundingBox = function () {
-            return svg.node().getBoundingClientRect();
+            return svgEl.node().getBoundingClientRect();
         };
-        var mainWidth = function () {
-            return boundingBox().width - margin.left - margin.right;
-        };
-        var mainHeight = function () {
-            return boundingBox().height - margin.top - margin.bottom;
-        };
+        var mainWidth = 100; // px
+        var mainHeight =
+                boundingBox().height - margin.top - margin.bottom; // px
         var axisPadding = 2; // px
         var stretchFactor = 1;
 
-        var mainGroup = svg
+        var mainGroup = svgEl
             .select("g.main")
             .attr("transform",
                     "translate(" + margin.left + "," + margin.top + ")")
@@ -51,7 +39,7 @@ define(["util"], function (util) {
         var zoomableGroup = mainGroup.select("g.zoomable");
 
         var addAxisGroup = function (spec) {
-            var group = svg
+            var group = svgEl
                 .select("g." + spec.class + ".axis")
                 .attr("transform",
                         "translate(" + spec.left + "," + spec.top + ")");
@@ -59,20 +47,21 @@ define(["util"], function (util) {
             return group;
         };
 
-        var xScale = d3.scaleLinear()
-            .range([0, mainWidth()]);
-        var xAxis = d3.axisBottom(xScale).ticks(5);
-        var xAxisGroup = addAxisGroup({
-            "class": "x",
-            top: margin.top + mainHeight() + axisPadding,
+        var horizontalScale = d3.scaleLinear()
+            .domain([0, spec.timeDomainEnd])
+            .range([0, mainWidth]);
+        var horizontalAxis = d3.axisBottom(horizontalScale).ticks(5);
+        var horizontalAxisGroup = addAxisGroup({
+            "class": "horizontal",
+            top: margin.top + mainHeight + axisPadding,
             left: margin.left,
-            axis: xAxis
+            axis: horizontalAxis
         });
 
         var currentSignalScale = d3.scaleLinear()
-            .domain([-0.5, 3.5])
-            .range([mainHeight(), 0]);
-        var currentSignalAxis = d3.axisLeft(currentSignalScale).ticks(5);
+            .domain([0, 3.5])
+            .range([mainHeight, 0]);
+        var currentSignalAxis = d3.axisLeft(currentSignalScale).ticks(3);
         var currentSignalAxisGroup = addAxisGroup({
             "class": "current-signal",
             top: margin.top,
@@ -81,13 +70,13 @@ define(["util"], function (util) {
         });
 
         var zScale = d3.scaleLinear()
-            .domain([-0x1000, 0xffff + 0x1000])
-            .range([mainHeight(), 0]);
-        var zAxis = d3.axisRight(zScale).ticks(5);
+            .domain([0, 0xffff + 0x1000])
+            .range([mainHeight, 0]);
+        var zAxis = d3.axisRight(zScale).ticks(3);
         var zAxisGroup = addAxisGroup({
             "class": "z",
             top: margin.top,
-            left: margin.left + mainWidth() + axisPadding,
+            left: margin.left + mainWidth + axisPadding,
             axis: zAxis
         });
 
@@ -95,7 +84,9 @@ define(["util"], function (util) {
         var zoomed = function () {
             zoomableGroup.attr("transform", d3.event.transform);
             transform = d3.event.transform;
-            xAxisGroup.call(xAxis.scale(transform.rescaleX(xScale)));
+            horizontalAxisGroup.call(
+                horizontalAxis.scale(transform.rescaleX(horizontalScale))
+            );
             currentSignalAxisGroup.call(
                 currentSignalAxis.scale(d3.event.transform.rescaleY(
                     currentSignalScale
@@ -106,11 +97,11 @@ define(["util"], function (util) {
             );
         };
         var zoom = d3.zoom().on("zoom", zoomed);
-        svg.call(zoom);
+        svgEl.call(zoom);
 
         var zLine = d3.line()
             .x(function (d) {
-                return xScale(d[4] - startTime());
+                return horizontalScale(d[4] - startTime());
             })
             .y(function (d) {
                 return zScale(d[2]);
@@ -118,7 +109,7 @@ define(["util"], function (util) {
 
         var currentSignalLine = d3.line()
             .x(function (d) {
-                return xScale(d[4] - startTime());
+                return horizontalScale(d[4] - startTime());
             })
             .y(function (d) {
                 return currentSignalScale(util.voltFromInteger(d[3]));
@@ -137,38 +128,53 @@ define(["util"], function (util) {
         };
 
         var updateClipPath = function () {
-            svg.select("clipPath rect")
-                .attr("width", mainWidth())
-                .attr("height", mainHeight());
+            svgEl.select("clipPath rect")
+                .attr("width", mainWidth)
+                .attr("height", mainHeight);
         };
 
-        var updateXScale = function () {
-            updateClipPath();
-
-            var oldWidth = xScale.range()[1];
-            var newWidth = mainWidth();
-            var resizeFactor = newWidth / oldWidth;
-//todo:            var oldStretchFactor = spec.maxNoOfPositions / xScale.domain()[1];
-//todo:            var stretchFactorChange = stretchFactor / oldStretchFactor;
-            xScale
-                .domain([0, timeSpan() / stretchFactor])
-                .range([0, newWidth]);
-            transform.x = transform.x * resizeFactor; // todo: * stretchFactorChange;
-            svg.call(zoom.transform, transform);
-            xAxis.scale(transform.rescaleX(xScale));
-            xAxisGroup.call(xAxis);
+        var updateHorizontalScale = function () {
+            horizontalScale
+                .domain([0, spec.timeDomainEnd / stretchFactor])
+                .range([0, mainWidth]);
+            svgEl.call(zoom.transform, transform);
+            horizontalAxis.scale(transform.rescaleX(horizontalScale));
+            horizontalAxisGroup.call(horizontalAxis);
             zAxisGroup.attr("transform",
-                    "translate(" + (margin.left + mainWidth() + axisPadding) +
+                    "translate(" + (margin.left + mainWidth + axisPadding) +
                     "," + margin.top + ")");
-            render();
+        };
+
+        var setStretchFactor = function (newStretchFactor) {
+            var stretchFactorChange = newStretchFactor / stretchFactor;
+            stretchFactor = newStretchFactor;
+            transform.x = transform.x * stretchFactorChange;
+            updateHorizontalScale();
+        };
+
+        var setWidth = function (newWidth) {
+            var newMainWidth = newWidth - margin.left - margin.right;
+            var resizeFactor = newMainWidth / mainWidth;
+            mainWidth = newMainWidth;
+            transform.x = transform.x * resizeFactor;
+            updateHorizontalScale();
+            updateClipPath();
+        };
+
+        var trimPositions = function () {
+            while (positions.length > spec.maxNoOfPositions) {
+                positions.shift();
+            }
         };
 
         var appendPositions = function (newPositions) {
             positions.push(...newPositions);
-            while (positions.length > spec.maxNoOfPositions) {
-                positions.shift();
-            }
-            updateXScale();
+            trimPositions();
+        };
+
+        var setMaxNoOfPositions = function (newMaxNoOfPositions) {
+            spec.maxNoOfPositions = newMaxNoOfPositions;
+            trimPositions();
         };
 
         var clear = function () {
@@ -177,22 +183,32 @@ define(["util"], function (util) {
 
         var iframeWindowEl = d3.select(d3.select("main>iframe").node()
             .contentWindow);
-        iframeWindowEl.on("resize." + spec.modeName, updateXScale);
+        iframeWindowEl.on("resize." + spec.modeName, function () {
+            setWidth(boundingBox().width);
+            render();
+        });
 
         var stretchFactorInputEl = figure.select("input.stretch-factor");
         stretchFactorInputEl.on("change", function () {
-            stretchFactor = stretchFactorInputEl.node().value;
-            updateXScale();
+            setStretchFactor(stretchFactorInputEl.node().value);
+            render();
         });
 
-        updateXScale();
+        setWidth(boundingBox().width);
+        render();
 
         return {
-            clear: clear,
-            appendPositions: appendPositions,
+            clear: function () {
+                clear();
+                render();
+            },
+            appendPositions: function (...a) {
+                appendPositions(...a);
+                render();
+            },
             set maxNoOfPositions(newMaxNoOfPositions) {
-                spec.maxNoOfPositions = newMaxNoOfPositions;
-                updateXScale();
+                setMaxNoOfPositions(newMaxNoOfPositions);
+                render();
             }
         };
     };

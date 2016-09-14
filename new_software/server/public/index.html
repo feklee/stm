@@ -41,7 +41,7 @@
                 <rect />
               </clipPath>
             </defs>
-            <g class="x axis"></g>
+            <g class="horizontal axis"></g>
             <g class="z axis"></g>
             <g class="current-signal axis"></g>
             <g class="main" clip-path="url(#approach-clip-area)">
@@ -53,7 +53,7 @@
             <ul>
               <li>
                 Stretch factor: <input class="stretch-factor" type="range"
-                       min="0.5" max="10" step="0.5" value="1"></input>
+                       min="0.5" max="25" step="0.5" value="1"></input>
               </li>
               <li class="current-signal">
                 Current signal (V)
@@ -84,7 +84,7 @@
                 <rect />
               </clipPath>
             </defs>
-            <g class="x axis"></g>
+            <g class="horizontal axis"></g>
             <g class="z axis"></g>
             <g class="current-signal axis"></g>
             <g class="main" clip-path="url(#scan-clip-area)">
@@ -96,7 +96,7 @@
             <ul>
               <li>
                 Stretch factor: <input class="stretch-factor" type="range"
-                       min="0.5" max="10" step="0.5" value="1"></input>
+                       min="0.5" max="25" step="0.5" value="1"></input>
               </li>
               <li class="current-signal">
                 Current signal (V)
@@ -122,7 +122,7 @@
                 <rect x="0" y="0" width="200" height="100" />
               </clipPath>
             </defs>
-            <g class="x axis"></g>
+            <g class="horizontal axis"></g>
             <g class="z axis"></g>
             <g class="current-signal axis"></g>
             <g class="main" clip-path="url(#retract-clip-area)">
@@ -132,15 +132,26 @@
           </svg>
           <figcaption>
             <ul>
-              <li>
-                Stretch factor: <input class="stretch-factor" type="range"
-                       min="0.5" max="10" step="0.5" value="1"></input>
-              </li>
               <li class="current-signal">
                 Current signal (V)
               </li>
               <li class="z">
                 Piezo position (0–0xffff)
+              </li>
+              <li>
+                Horizontal:
+                <input type="radio" name="current-signal-horizontal"
+                       id="current-signal-horizontal-time"
+                       value="time" checked />
+                <label for="current-signal-horizontal-time">Time (µs)</label>
+                <input type="radio" name="current-signal-horizontal"
+                       id="current-signal-horizontal-time"
+                       value="index" />
+                <label for="current-signal-horizontal-index">Index</label>
+              </li>
+              <li>
+                Stretch factor: <input class="stretch-factor" type="range"
+                       min="0.5" max="25" step="0.5" value="1"></input>
               </li>
             </ul>
           </figcaption>

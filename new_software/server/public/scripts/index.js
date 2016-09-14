@@ -11,14 +11,17 @@ define([
     var client = new window.WebSocket("ws://" + hostname + ":8080/");
     var graphs = {
         "scan": graphConstructor({
+            timeDomainEnd: 200000,
             modeName: "scan",
             maxNoOfPositions: 100
         }),
         "approach": graphConstructor({
+            timeDomainEnd: 200000,
             modeName: "approach",
-            maxNoOfPositions: 500
+            maxNoOfPositions: 20000
         }),
         "retract": graphConstructor({
+            timeDomainEnd: 200000,
             modeName: "retract",
             maxNoOfPositions: 500
         })
