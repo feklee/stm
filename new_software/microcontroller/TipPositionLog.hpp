@@ -9,7 +9,7 @@ class TipPositionLog {
     uint32_t time; // µs since program start
   };
 
-  static const int size_ = 100;
+  static const int size_ = 1000;
   Entry entries_[size_];
   int head_ = 0;
   void print();
