@@ -13,6 +13,15 @@ define(["util"], function (util) {
             }
             return positions[0][4];
         };
+        var endTime = function () {
+            if (positions.length === 0) {
+                return 0;
+            }
+            return positions[positions.length - 1][4];
+        };
+        var timeSpan = function () {
+            return endTime() - startTime();
+        };
         var margin = {
             top: 0, // px
             left: 30, // px
@@ -29,6 +38,7 @@ define(["util"], function (util) {
                 boundingBox().height - margin.top - margin.bottom; // px
         var axisPadding = 2; // px
         var stretchFactor = 1;
+        var stretchFactorInputEl = figure.select("input.stretch-factor");
 
         var mainGroup = svgEl
             .select("g.main")
@@ -181,6 +191,14 @@ define(["util"], function (util) {
             positions = [];
         };
 
+        var fitWidth = function () {
+            stretchFactor = 1;
+            svgEl.call(zoom.transform, d3.zoomIdentity);
+            spec.timeDomainEnd = timeSpan();
+            stretchFactorInputEl.node().value = stretchFactor;
+            updateHorizontalScale();
+        };
+
         var iframeWindowEl = d3.select(d3.select("main>iframe").node()
             .contentWindow);
         iframeWindowEl.on("resize." + spec.modeName, function () {
@@ -188,9 +206,13 @@ define(["util"], function (util) {
             render();
         });
 
-        var stretchFactorInputEl = figure.select("input.stretch-factor");
         stretchFactorInputEl.on("change", function () {
             setStretchFactor(stretchFactorInputEl.node().value);
+            render();
+        });
+
+        figure.select("button.fit-width").on("click", function () {
+            fitWidth();
             render();
         });
 
