@@ -41,6 +41,8 @@ define(["util"], function (util) {
         var stretchFactorInputEl = figure.select("input.stretch-factor");
         var timeDomainIsSelected;
         var horizontalDomainEnd;
+        var horizontalScaleNeedsUpdate = false;
+        var renderIsPending = false;
 
         var mainGroup = svgEl
             .select("g.main")
@@ -139,6 +141,7 @@ define(["util"], function (util) {
                 .datum(positions)
                 .attr("class", "current-signal")
                 .attr("d", currentSignalLine);
+            renderIsPending = false;
         };
 
         var updateClipPath = function () {
@@ -157,13 +160,15 @@ define(["util"], function (util) {
             zAxisGroup.attr("transform",
                     "translate(" + (margin.left + mainWidth + axisPadding) +
                     "," + margin.top + ")");
+            horizontalScaleNeedsUpdate = false;
+            renderIsPending = true;
         };
 
         var setStretchFactor = function (newStretchFactor) {
             var stretchFactorChange = newStretchFactor / stretchFactor;
             stretchFactor = newStretchFactor;
             transform.x = transform.x * stretchFactorChange;
-            updateHorizontalScale();
+            horizontalScaleNeedsUpdate = true;
         };
 
         var setWidth = function (newWidth) {
@@ -171,19 +176,21 @@ define(["util"], function (util) {
             var resizeFactor = newMainWidth / mainWidth;
             mainWidth = newMainWidth;
             transform.x = transform.x * resizeFactor;
-            updateHorizontalScale();
             updateClipPath();
+            horizontalScaleNeedsUpdate = true;
         };
 
         var trimPositions = function () {
             while (positions.length > spec.maxNoOfPositions) {
                 positions.shift();
             }
+            renderIsPending = true;
         };
 
         var appendPositions = function (newPositions) {
             positions.push(...newPositions);
             trimPositions();
+            renderIsPending = true;
         };
 
         var setMaxNoOfPositions = function (newMaxNoOfPositions) {
@@ -224,70 +231,88 @@ define(["util"], function (util) {
             } else {
                 fitIndex();
             }
-            updateHorizontalScale();
+            horizontalScaleNeedsUpdate = true;
         };
 
         var selectTimeDomain = function () {
+            if (timeDomainIsSelected === true) {
+                return;
+            }
             horizontalDomainEnd = spec.timeDomainEnd;
             timeDomainIsSelected = true;
             resetStretchFactor();
             resetZoom();
-            updateHorizontalScale();
+            horizontalScaleNeedsUpdate = true;
         };
 
         var selectIndexDomain = function () {
+            if (timeDomainIsSelected === false) {
+                return;
+            }
             horizontalDomainEnd = spec.indexDomainEnd;
             timeDomainIsSelected = false;
             resetStretchFactor();
             resetZoom();
-            updateHorizontalScale();
+            horizontalScaleNeedsUpdate = true;
         };
 
         var iframeWindowEl = d3.select(d3.select("main>iframe").node()
             .contentWindow);
         iframeWindowEl.on("resize." + spec.modeName, function () {
             setWidth(boundingBox().width);
-            render();
+            renderIsPending = true;
         });
 
         stretchFactorInputEl.on("change", function () {
             setStretchFactor(stretchFactorInputEl.node().value);
-            render();
+            renderIsPending = true;
         });
 
         figure.select("button.fit-width").on("click", function () {
             fitWidth();
-            render();
+            renderIsPending = true;
         });
 
         figure.select("#" + spec.modeName + "-horizontal-time")
             .on("click", function () {
                 selectTimeDomain();
-                render();
+                renderIsPending = true;
             });
 
         figure.select("#" + spec.modeName + "-horizontal-index")
             .on("click", function () {
                 selectIndexDomain();
-                render();
             });
 
         selectTimeDomain();
         setWidth(boundingBox().width);
-        render();
+        renderIsPending = true;
+
+        var animationFrame;
+        animationFrame = function () {
+            if (horizontalScaleNeedsUpdate) {
+                updateHorizontalScale();
+            }
+            if (renderIsPending) {
+                render();
+            }
+
+// todo:            console.log(d3.mouse(svgEl));
+            window.requestAnimationFrame(animationFrame);
+        };
+
+        window.requestAnimationFrame(animationFrame);
 
         return {
             clear: function () {
                 clear();
-                render();
+                renderIsPending = true;
             },
             appendPositions: function (...a) {
                 appendPositions(...a);
-                render();
             },
             set maxNoOfPositions(newMaxNoOfPositions) {
                 setMaxNoOfPositions(newMaxNoOfPositions);
-                render();
             }
         };
     };
