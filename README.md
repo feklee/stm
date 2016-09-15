@@ -17,12 +17,15 @@ Coding conventions
   * JavaScript passes JSLint.
 
 
-Thanks for donations
-====================
+Thanks
+======
 
-  * [hackerspaceshop][1]: Teensy bluetooth serial module
+  * [Dan Berard][4]: lots of suggestions by email, detailed documentation of
+    his STM project
 
-  * [HU Berlin][2]: graphite, platinum-iridium tips
+  * [hackerspaceshop][1]: donation of Teensy bluetooth serial module
+
+  * [HU Berlin][2]: donation of graphite, platinum-iridium tips
 
   * [SparkMaker][3]: funding for parts
 
@@ -36,3 +39,4 @@ Unless mentioned otherwise, stuff is licensed under the WTFPL version 2:
 [1]: https://hackerspaceshop.com/
 [2]: https://www.hu-berlin.de/
 [3]: http://sparkmaker.io/
+[4]: https://dberard.com/
