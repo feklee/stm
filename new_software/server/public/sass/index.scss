@@ -153,22 +153,25 @@ main {
         background-color: transparent;
     }
 
-    .bias-voltage, .current-signal {
-        display: inline-block;
-        text-align: right;
-    }
+    >ul {
+        .bias-voltage, .current-signal {
+            display: inline-block;
+            text-align: right;
+        }
 
-    .bias-voltage {
-        min-width: 40px;
-    }
+        .bias-voltage {
+            min-width: 40px;
+        }
 
-    .current-signal {
-        min-width: 30px;
+        .current-signal {
+            min-width: 30px;
+        }
     }
 
     >section {
         margin-top: 20px;
         border-top: 1px solid lightgray;
+        min-width: 350px;
 
         h1 {
             color: gray;
@@ -199,6 +202,16 @@ main {
             color: $z-color;
         }
 
+        li.position {
+            .current-signal {
+                color: $current-signal-color;
+            }
+
+            .z {
+                color: $z-color;
+            }
+        }
+
         input {
             vertical-align: middle;
         }
@@ -211,6 +224,10 @@ main {
             display: block;
             width: 100%;
             height: 200px;
+
+            g.main {
+                cursor: crosshair;
+            }
 
             g.main rect {
                 fill: $finegray;

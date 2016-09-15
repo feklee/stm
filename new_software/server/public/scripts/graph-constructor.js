@@ -28,8 +28,8 @@ define(["util"], function (util) {
             bottom: 20, // px
             right: 50 // px
         };
-        var figure = d3.select("body section." + spec.modeName + " figure");
-        var svgEl = figure.select("svg");
+        var figureEl = d3.select("body section." + spec.modeName + " figure");
+        var svgEl = figureEl.select("svg");
         var boundingBox = function () {
             return svgEl.node().getBoundingClientRect();
         };
@@ -38,7 +38,7 @@ define(["util"], function (util) {
                 boundingBox().height - margin.top - margin.bottom; // px
         var axisPadding = 2; // px
         var stretchFactor = 1;
-        var stretchFactorInputEl = figure.select("input.stretch-factor");
+        var stretchFactorInputEl = figureEl.select("input.stretch-factor");
         var timeDomainIsSelected;
         var horizontalDomainEnd;
         var horizontalScaleNeedsUpdate = false;
@@ -100,18 +100,16 @@ define(["util"], function (util) {
                 horizontalAxis.scale(transform.rescaleX(horizontalScale))
             );
             currentSignalAxisGroup.call(
-                currentSignalAxis.scale(d3.event.transform.rescaleY(
-                    currentSignalScale
-                ))
+                currentSignalAxis.scale(transform.rescaleY(currentSignalScale))
             );
             zAxisGroup.call(
-                zAxis.scale(d3.event.transform.rescaleY(zScale))
+                zAxis.scale(transform.rescaleY(zScale))
             );
         };
         var zoom = d3.zoom().on("zoom", zoomed);
         svgEl.call(zoom);
 
-        var x = function (d, i) {
+        var xValue = function (d, i) {
             return horizontalScale(
                 timeDomainIsSelected
                     ? d[4] - startTime()
@@ -120,13 +118,13 @@ define(["util"], function (util) {
         };
 
         var zLine = d3.line()
-            .x(x)
+            .x(xValue)
             .y(function (d) {
                 return zScale(d[2]);
             });
 
         var currentSignalLine = d3.line()
-            .x(x)
+            .x(xValue)
             .y(function (d) {
                 return currentSignalScale(util.voltFromInteger(d[3]));
             });
@@ -268,18 +266,18 @@ define(["util"], function (util) {
             renderIsPending = true;
         });
 
-        figure.select("button.fit-width").on("click", function () {
+        figureEl.select("button.fit-width").on("click", function () {
             fitWidth();
             renderIsPending = true;
         });
 
-        figure.select("#" + spec.modeName + "-horizontal-time")
+        figureEl.select("#" + spec.modeName + "-horizontal-time")
             .on("click", function () {
                 selectTimeDomain();
                 renderIsPending = true;
             });
 
-        figure.select("#" + spec.modeName + "-horizontal-index")
+        figureEl.select("#" + spec.modeName + "-horizontal-index")
             .on("click", function () {
                 selectIndexDomain();
             });
@@ -297,7 +295,25 @@ define(["util"], function (util) {
                 render();
             }
 
-// todo:            console.log(d3.mouse(svgEl));
+            mainGroup.on("mousemove", function () {
+                var position = d3.mouse(mainGroup.node());
+                var positionEl = figureEl.select(".position");
+                var x = position[0]; // px
+                var y = position[1]; // px
+                var horizontal = transform.rescaleX(horizontalScale).invert(x);
+                positionEl
+                    .select(".horizontal")
+                    .text(d3.format("d")(horizontal));
+                var currentSignal =
+                        transform.rescaleY(currentSignalScale).invert(y);
+                positionEl
+                    .select(".current-signal")
+                    .text(d3.format(".2f")(currentSignal));
+                var z = transform.rescaleY(zScale).invert(y);
+                positionEl
+                    .select(".z")
+                    .text(d3.format("d")(z));
+            });
             window.requestAnimationFrame(animationFrame);
         };
 
